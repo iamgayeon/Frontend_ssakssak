@@ -31,6 +31,7 @@ const logout = () => {
   align-items: center;
   padding: 0 20px;
   color: #fff;
+  width:100%;
 }
 
 .logout {

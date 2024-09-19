@@ -1,7 +1,12 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap'); */
 @import url('//fonts.googleapis.com/earlyaccess/notosanskr.css');
+
 * {
   font-family: 'Noto Sans KR';
+}
+
+.body {
+  width: max-content;
 }
 
 .avatar {
@@ -24,6 +29,7 @@
   width: 80px;
   height: 80px;
 }
+
 /* 페이지 네이션 */
 
 .pagination-container {
@@ -36,8 +42,10 @@
   width: 40px;
   /* border-radius: 20px; */
   cursor: pointer;
-  background-color: white; /*rgb(242, 242, 242);*/
-  border: 1px solid white; /* rgb(217, 217, 217);*/
+  background-color: white;
+  /*rgb(242, 242, 242);*/
+  border: 1px solid white;
+  /* rgb(217, 217, 217);*/
   color: black;
 }
 

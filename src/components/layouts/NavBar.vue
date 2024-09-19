@@ -11,7 +11,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
 
 <template>
   <!-- 네비게이션 바 -->
-  <nav class="navbar navbar-expand-md" style="background-color: #fff; width: 100%;">
+  <nav class="navbar navbar-expand-md" style="background-color: #fff">
     <div class="container-fluid"> <!-- 수정: container를 container-fluid로 변경 -->
       <!-- 로고 및 제목 -->
       <a class="navbar-brand d-flex align-items-center" href="#">
@@ -72,6 +72,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
 <!-- Custom CSS -->
 <style scoped>
 .navbar {
+  display:flex;
   width: 100%; /* 가로 전체를 채우도록 설정 */
 }
 
@@ -82,6 +83,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
   font-weight: bold;
   color: #333;
   transition: color 0.3s ease;
+  width:100%;
 }
 
 .nav-link i {

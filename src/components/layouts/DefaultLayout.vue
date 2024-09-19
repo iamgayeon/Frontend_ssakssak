@@ -5,7 +5,7 @@ import Footer from './Footer.vue';
 </script>
 
 <template>
-  <div class="container">
+  <div id="container">
     <Header />
     <NavBar />
     <div :style="{backgroundColor : '#F6F4E2'}" class="content">
@@ -14,5 +14,11 @@ import Footer from './Footer.vue';
     <Footer />
   </div>
 </template>
+
+<style scoped>
+#container{
+  width:100vw;
+}
+</style>
 
 
