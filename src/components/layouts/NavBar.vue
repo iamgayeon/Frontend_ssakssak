@@ -46,7 +46,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/student/stock">
               <i class="fas fa-edit" style="color: #1e90ff;"></i>
               <span>주식</span>
             </a>
@@ -72,8 +72,9 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
 <!-- Custom CSS -->
 <style scoped>
 .navbar {
-  display:flex;
-  width: 100%; /* 가로 전체를 채우도록 설정 */
+  display: flex;
+  width: 100%;
+  /* 가로 전체를 채우도록 설정 */
 }
 
 .nav-link {
@@ -83,7 +84,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
   font-weight: bold;
   color: #333;
   transition: color 0.3s ease;
-  width:100%;
+  width: 100%;
 }
 
 .nav-link i {
