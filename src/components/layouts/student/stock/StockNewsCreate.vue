@@ -1,4 +1,5 @@
 <script setup>
+import StockCreateNewsModal from './StockCreateNewsModal.vue';
 
 import { ref } from 'vue'
 
@@ -52,6 +53,19 @@ const newsData = ref([
 const deleteNews = (title) => {
     newsData.value = newsData.value.filter(news => news.title !== title);
 }
+
+const isCreateModal = ref(false);
+
+const openCreateModal = () => {
+    isCreateModal.value = !isCreateModal.value;
+}
+
+const handleFormSubmit = (formData) => {
+    console.log(formData);
+    newsData.value.push(formData);
+    openCreateModal();
+}
+
 </script>
 
 <template>
@@ -63,7 +77,7 @@ const deleteNews = (title) => {
             <div class="card-body p-0">
                 <ul class="list-group">
                     <li class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-center"
-                        v-for="(news, idx) in newsData" :key="news.title"
+                        v-for="(news, idx) in newsData" :key="idx"
                         style="border-bottom: 1px solid rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
                         <span class="fw-semibold">{{ news.title }}</span>
                         <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteNews(news.title)">
@@ -72,11 +86,14 @@ const deleteNews = (title) => {
                     </li>
                 </ul>
                 <div class="mt-3">
-                    <button class="btn btn-primary btn-lg w-100">
+                    <button class="btn btn-primary btn-lg w-100" @click="openCreateModal">
                         새 뉴스 만들기
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <StockCreateNewsModal v-if="isCreateModal" @submitForm="handleFormSubmit" @close="openCreateModal"/>
+    
 </template>

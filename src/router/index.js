@@ -4,6 +4,7 @@ import authRotes from "./auth";
 import boardRotes from "./board";
 import travelRoutes from "./travel";
 import galleryRoutes from "./gallery";
+import studentRoutes from './student';
 import StudentStockPage from "@/pages/student/stock/StudentStockPage.vue";
 import TeacherStockPage from "@/pages/teacher/stock/TeacherStockPage.vue";
 

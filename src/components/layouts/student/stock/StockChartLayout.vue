@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import StockChart from './StockChart.vue';
 import StockTrade from './StockTrade.vue';
 
-
+const stock = ref(98);
 </script>
 
 <template>
@@ -34,16 +34,13 @@ import StockTrade from './StockTrade.vue';
                     <p class="fs-4 fw-semibold">내가 가지고 있는 씨드 : 3,500 씨드</p>
                     <p class="fs-5 text-primary fw-semibold"><span class="fs-6 text-muted pe-2">어제보다</span>-1씨드 (-1.4%)
                     </p>
-
-                    <!-- 추가 정보 -->
                     <hr>
                     <p class="mb-1">전일 종가: <span class="fw-bold">85 씨드</span></p>
                     <p class="mb-1">최고 가격 (30일): <span class="fw-bold text-danger">120 씨드</span></p>
                     <p class="mb-1">최저 가격 (30일): <span class="fw-bold text-primary">80 씨드</span></p>
                     <hr>
                     <div>
-                        <!-- 학생, 선생 정보에 따라서 매수/매도 컴포넌트 안보이게 함 -->
-                        <StockTrade />
+                        <StockTrade :stock="stock"/>
                     </div>
                 </div>
                 <div class="col-7">
