@@ -153,8 +153,14 @@
   </div>
 </div>
 </template>
+<script>
+export default {
+  name: 'StudentBank'
+}
+</script>
 
 <script setup>
+
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -163,6 +169,7 @@ const router = useRouter();
 const goToSavingPlan = (id) => {
 router.push(`/saving-plan/${id}`);
 };
+
 
 const savingsList = ref([
   {
@@ -260,6 +267,7 @@ if (selectedProduct.value === '숲속적금') {
   max-width: 960px; /* 카드의 최대 너비 설정 */
   width: 100%; /* 부모 요소에 따라 카드 크기 조정 */
   margin: 0 auto; /* 수평 가운데 정렬 */
+  color : #50495B;
 }
 
 .card-header {
@@ -267,6 +275,8 @@ if (selectedProduct.value === '숲속적금') {
   padding: 10px;
   border-bottom: 1px solid #ccc;
   border-radius: 10px 10px 0 0; /* 상단 모서리 둥글게 */
+  color : #50495B;
+
 }
 
 .title {
@@ -289,6 +299,8 @@ if (selectedProduct.value === '숲속적금') {
   border: 1px solid #f0f0f0e2;
   padding: 10px;
   text-align: center;
+  color : #50495B;
+
 }
 
 /* 상단 모서리 둥글게 */
@@ -335,6 +347,8 @@ if (selectedProduct.value === '숲속적금') {
   padding: 20px;
   background-color: #f8f6e9; /* 배경색 */
   width: 100%;
+  color : #50495B;
+
 }
 
 .savingCard {
@@ -347,6 +361,8 @@ if (selectedProduct.value === '숲속적금') {
   text-align: center;
   cursor: pointer;
   transition: transform 0.2s; /* 카드에 호버 효과 */
+  color : #50495B;
+
 }
 
 .savingCard:hover {
@@ -398,12 +414,16 @@ border-radius: 12px;
 width: 960px;
 margin: 30px auto;
 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+color : #50495B;
+
 }
 
 .calculator-container {
 display: flex;
 justify-content: space-between;
 align-items: center;
+color : #50495B;
+
 }
 
 .input-section, .result-section {
@@ -499,7 +519,7 @@ color: #555;
 }
 .styled-select {
 background-color: #fff;
-color: #333;
+color : #50495B;
 padding: 10px;
 border-radius: 6px;
 border: 1px solid #ddd;
