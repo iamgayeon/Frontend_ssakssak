@@ -28,10 +28,10 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
       <div :class="navClass" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <router-link class="nav-link" to="/">
               <i class="fas fa-home" style="color: #ffc107;"></i>
               <span>홈</span>
-            </a>
+            </router-link>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">
@@ -40,10 +40,10 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <router-link class="nav-link" to="/student/bank">
               <i class="far fa-file-alt" style="color: #32cd32;"></i>
               <span>은행</span>
-            </a>
+            </router-link>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">
@@ -52,7 +52,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/event">
               <i class="far fa-calendar-alt" style="color: #9370db;"></i>
               <span>이벤트</span>
             </a>
