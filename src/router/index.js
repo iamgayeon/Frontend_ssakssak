@@ -4,6 +4,8 @@ import authRotes from './auth';
 import boardRotes from './board';
 import travelRoutes from './travel';
 import galleryRoutes from './gallery';
+import studentRoutes from './student';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +19,7 @@ const router = createRouter({
     ...boardRotes,
     ...travelRoutes,
     ...galleryRoutes,
+    ...studentRoutes
   ],
 });
 
