@@ -17,7 +17,10 @@ import Footer from './Footer.vue';
 
 <style scoped>
 #container{
+  display:flex;
+  flex-direction: column;
   width:100vw;
+  justify-content: ;
 }
 </style>
 
