@@ -1,7 +1,7 @@
 <script setup>
 import Header from './Header.vue';
-import NavBar from './TeacherNavBar.vue';
-// import NavBar from './StudentNavBar.vue';
+// import NavBar from './TeacherNavBar.vue';
+import NavBar from './StudentNavBar.vue';
 import Footer from './Footer.vue';
 </script>
 

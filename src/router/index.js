@@ -6,13 +6,12 @@ import galleryRoutes from './gallery';
 import studentRoutes from './student';
 import teacherRoutes from './teacher';
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: "/",
+      name: "home",
       component: HomePage,
     },
     ...authRotes,
