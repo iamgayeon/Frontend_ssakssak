@@ -4940,7 +4940,7 @@ fieldset:disabled .btn {
   color: #fff;
 }
 
-.card {
+.card{
   position: relative;
   display: -webkit-box;
   display: flex;
@@ -4977,10 +4977,6 @@ fieldset:disabled .btn {
   border-bottom-left-radius: 0.57rem;
 }
 
-.card > .card-header + .list-group,
-.card > .list-group + .card-footer {
-  border-top: 0;
-}
 
 .card-body {
   -webkit-box-flex: 1;
@@ -4988,9 +4984,7 @@ fieldset:disabled .btn {
   padding: 1rem 1rem;
 }
 
-.card-title {
-  margin-bottom: 0.5rem;
-}
+
 
 .card-subtitle {
   margin-top: -0.25rem;
@@ -5009,11 +5003,13 @@ fieldset:disabled .btn {
   margin-left: 1rem;
 }
 
-.card-header {
-  padding: 0.5rem 1rem;
+.card-header-kidz {
+  padding: 1.3rem 1.8rem;
   margin-bottom: 0;
   background-color: rgba(0, 0, 0, 0.03);
   border-bottom: 0 solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.57rem;
+  
 }
 
 .card-header:first-child {
@@ -5021,14 +5017,9 @@ fieldset:disabled .btn {
 }
 
 .card-footer {
-  padding: 0.5rem 1rem;
-  background-color: rgba(0, 0, 0, 0.03);
   border-top: 0 solid rgba(0, 0, 0, 0.125);
 }
 
-.card-footer:last-child {
-  border-radius: 0 0 0.57rem 0.57rem;
-}
 
 .card-header-tabs {
   margin-right: -0.5rem;
@@ -5104,10 +5095,7 @@ fieldset:disabled .btn {
   .card-group > .card:not(:last-child) .card-header {
     border-top-right-radius: 0;
   }
-  .card-group > .card:not(:last-child) .card-img-bottom,
-  .card-group > .card:not(:last-child) .card-footer {
-    border-bottom-right-radius: 0;
-  }
+  .
   .card-group > .card:not(:first-child) {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
@@ -5116,10 +5104,7 @@ fieldset:disabled .btn {
   .card-group > .card:not(:first-child) .card-header {
     border-top-left-radius: 0;
   }
-  .card-group > .card:not(:first-child) .card-img-bottom,
-  .card-group > .card:not(:first-child) .card-footer {
-    border-bottom-left-radius: 0;
-  }
+  
 }
 
 .accordion-button {

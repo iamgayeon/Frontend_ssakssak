@@ -2,6 +2,7 @@
   <!-- Custom css -->
   <link href="src/assets/css/kidz.css" id="option_style" rel="stylesheet">
 
+  <!-- 총 자산 섹션 -->
   <section class="challenge-section py-4">
     <div class="container box-container">
       <h3 class="mb-4">총 보유자산 정보</h3>
@@ -34,51 +35,26 @@
             <div class="percentage">{{ item.percentage }}%</div>
           </div>
           <div class="amount">{{ item.amount }}원</div>
-          <div class="comparison" v-if="item.comparison">{{ item.comparison }}</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- 챌린지 섹션 -->
-<!-- 챌린지 섹션 -->
-<section class="challenge-section py-4">
-  <div class="container box-container">
-    <h3 class="mb-4">현재 참여중인 챌린지 정보</h3>
-
-    <!-- Grid Container -->
-    <div class="card-grid">
-      
-      <!-- Item 1 -->
-      <div class="card btn btn-outline-secondary w-100 h-100 align-items-start text-wrap text-start rounded-4 px-0 px-xl-2 py-4 py-xl-5">
-        <div class="card-body pb-0 pt-3 pt-xl-0">
-          <span class="badge bg-info fs-xs rounded-pill" style="font-size: 0.9rem; font-weight: normal;">챌린지 진행중</span> <!-- 글씨 크기 조정 -->
-          <h4 class="h5 my-2 my-xl-3">우리반 금융퀴즈왕 찾아라!</h4>
+  <section class="challenge-section py-4">
+    <div class="container box-container">
+      <h3 class="mb-4">현재 참여중인 챌린지 정보</h3>
+      <div class="card-grid">
+        <div class="card btn btn-outline-secondary w-100 h-100 align-items-start text-wrap text-start rounded-4 px-0 px-xl-2 py-4 py-xl-5" v-for="(challenge, index) in challenges" :key="index">
+          <div class="card-body pb-0 pt-3 pt-xl-0">
+            <span class="badge" :class="{'bg-info': index === 0, 'bg-success': index === 1, 'bg-warning': index === 2}" style="font-size: 0.9rem;">챌린지 진행중</span>
+            <h4 class="h5 my-2 my-xl-3">{{ challenge.title }}</h4>
+          </div>
+          <div class="card-footer">참여중</div>
         </div>
-        <div class="card-footer w-100 bg-transparent border-0 text-body fs-sm fw-normal pt-0 pb-3 pb-xl-0">참여중</div>
       </div>
-
-      <!-- Item 2 -->
-      <div class="card btn btn-outline-secondary w-100 h-100 align-items-start text-wrap text-start rounded-4 px-0 px-xl-2 py-4 py-xl-5">
-        <div class="card-body pb-0 pt-3 pt-xl-0">
-          <span class="badge bg-success fs-xs rounded-pill"style="font-size: 0.9rem; font-weight: normal;">챌린지 진행중</span>
-          <h4 class="h5 my-2 my-xl-3">출석 췤! 5일 출석 도전</h4>
-        </div>
-        <div class="card-footer w-100 bg-transparent border-0 text-body fs-sm fw-normal pt-0 pb-3 pb-xl-0">참여중</div>
-      </div>
-
-      <!-- Item 3 -->
-      <div class="card btn btn-outline-secondary w-100 h-100 align-items-start text-wrap text-start rounded-4 px-0 px-xl-2 py-4 py-xl-5">
-        <div class="card-body pb-0 pt-3 pt-xl-0">
-          <span class="badge bg-warning fs-xs rounded-pill"  style="font-size: 0.9rem; font-weight: normal;">챌린지 종료</span>
-          <h4 class="h5 my-2 my-xl-3">차곡차곡 돈 모으는 저축왕</h4>
-        </div>
-        <div class="card-footer w-100 bg-transparent border-0 text-body fs-sm fw-normal pt-0 pb-3 pb-xl-0">참여 완료</div>
-      </div>
-
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- 쿠폰 섹션 -->
   <section class="coupons-section py-4">
@@ -90,7 +66,9 @@
           <div class="coupon-content"></div>
           <span class="coupon-title">{{ coupon.title }}</span>
           <p class="coupon-description">{{ coupon.description }}</p>
-          <button class="coupon-button">쿠폰 사용</button>
+          <button class="btn btn-light" 
+            style="background-color: #FFA726; border: none; color: white; padding: 10px 20px; font-size: 0.9em;" 
+            @click="useCoupon(index)">쿠폰 사용</button>
         </div>
       </div>
     </div>
@@ -102,7 +80,7 @@
       <h3 class="mb-4">나의 리워드 정보</h3>
       <div class="accordion" id="accordionOne">
         <div class="card mb-3" v-for="(reward, index) in rewards" :key="index">
-          <div class="card-header" :class="reward.bgClass" :id="'heading' + index">
+          <div class="card-header-kidz" :class="reward.bgClass" :id="'heading' + index">
             <h5 class="icon-bg collapsed" style="color: white;" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="false" :aria-controls="'collapse' + index">
               {{ reward.title }}
             </h5>
@@ -124,30 +102,12 @@ export default {
     return {
       totalAsset: '50,000',
       assetItems: [
-        {
-          name: '예금',
-          percentage: 60, // 예금 60%
-          amount: '30,000',
-          color: '#FFA726',
-          icon: '₩',
-        },
-        {
-          name: '적금',
-          percentage: 30, // 적금 30%
-          amount: '15,000',
-          color: '#42A5F5',
-          icon: '₩',
-        },
-        {
-          name: '주식',
-          percentage: 10, // 주식 10%
-          amount: '5,000',
-          color: '#66BB6A',
-          icon: 'P',
-        },
+        { name: '예금', percentage: 60, amount: '30,000', color: '#FFA726', icon: '₩' },
+        { name: '적금', percentage: 30, amount: '15,000', color: '#42A5F5', icon: '₩' },
+        { name: '주식', percentage: 10, amount: '5,000', color: '#66BB6A', icon: 'P' },
       ],
       coupons: [
-        { count: 1, title: '일기 1회 면제 쿠폰', description: '원하는 날 하루 일기 쓰기를 쉬어도 괜찮아요!' },
+        { count: 2, title: '일기 1회 면제 쿠폰', description: '원하는 날 하루 일기 쓰기를 쉬어도 괜찮아요!' },
         { count: 1, title: '10분 노래듣기 쿠폰', description: '점심 시간에 원하는 노래를 들을 수 있어요!' },
         { count: 1, title: '점심 먼저 먹기 쿠폰', description: '점심 식사를 기다리지 않고 먼저 먹을 수 있어요!' },
       ],
@@ -158,23 +118,15 @@ export default {
         { title: '나는야 보조 선생님 +80 씨드', description: '우리반 보조 선생님 나야나', bgClass: 'bg-info' },
       ],
       challenges: [
-        {
-          title: "우리반 금융퀴즈왕 챌린지",
-          description: "금융퀴즈를 풀 때마다 늘어나는 리워드를 받자!"
-        },
-        {
-          title: "주식 시장 탐험가 챌린지",
-          description: "오늘은 오를까? 내릴까? 주식 시장 결과 확인해보자!"
-        },
-        {
-          title: "출석 첵! 챌린지",
-          description: "일주일 동안 하루도 빠짐없이 출석하자!"
-        }
-      ]
+        { title: "우리반 금융퀴즈왕 챌린지", description: "금융퀴즈를 풀 때마다 늘어나는 리워드를 받자!" },
+        { title: "출석 췤! 5일 출석 도전", description: "일주일 동안 하루도 빠짐없이 출석하자!" },
+        { title: "차곡차곡 돈 모으는 저축왕", description: "오늘은 오를까? 내릴까? 주식 시장 결과 확인해보자!" }
+      ],
+      showPopup: false,
+      selectedCouponTitle: '',
     };
   },
   methods: {
-    // 각 섹션의 'left' 위치를 계산
     getLeftPosition(index) {
       let totalPercentage = 0;
       for (let i = 0; i < index; i++) {
@@ -182,7 +134,16 @@ export default {
       }
       return totalPercentage;
     },
-  },
+    useCoupon(index) {
+      // 선택한 쿠폰의 count가 0보다 클 때만 사용 가능
+      if (this.coupons[index].count > 0) {
+        this.coupons[index].count--;
+        alert(`${this.coupons[index].title}을(를) 사용했습니다.`);
+      } else {
+        alert('더 이상 사용 가능한 쿠폰이 없습니다.');
+      }
+    }
+  }
 };
 </script>
 
@@ -197,7 +158,7 @@ export default {
   margin: 0 auto;
 }
 
-/* 총자산 스타일 */
+/* 총자산 섹션 스타일 */
 .total-asset {
   text-align: left;
 }
@@ -207,7 +168,6 @@ export default {
   font-weight: bold;
 }
 
-/* 바 그래프 스타일 */
 .bar-graph {
   position: relative;
   height: 15px;
@@ -247,6 +207,26 @@ export default {
 
 .details {
   flex: 1;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
 }
 
 .name {
@@ -342,4 +322,60 @@ export default {
 .accordion .card-header {
   cursor: pointer;
 }
+
+.bg-primary {
+  background-color: #f0c24b !important;
+}
+
+.bg-info {
+  background-color: #84bed6 !important;
+}
+
+.bg-danger {
+  background-color: #ea7066 !important;
+}
+
+.bg-success {
+  background-color: #b5d56a !important;
+}
+
+
+.container,
+.container-fluid,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl {
+  width: 100%;
+  padding-right: var(--bs-gutter-x, 0.75rem);
+  padding-left: var(--bs-gutter-x, 0.75rem);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.card{
+  position: relative;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+          flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #f8f8f8;
+  background-clip: border-box;
+  border: 0 solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.57rem;
+}
+
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+
 </style>

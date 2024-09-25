@@ -30,7 +30,7 @@ const logout = () => {
   justify-content: flex-end;
   align-items: center;
   padding: 0 20px;
-  color: #fff;
+  color: #f8f6e9;
   width:100%;
 }
 
