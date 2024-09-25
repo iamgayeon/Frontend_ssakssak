@@ -31,7 +31,6 @@ const closePop = () => {
 </script>
 <template>
     <div class="modal-wrap">
-
         <div class="modal-container p-4 shadow-lg rounded bg-white">
             <div class="modal-header mb-4 d-flex justify-content-between align-items-center">
                 <span class="fs-3 fw-bold">싹싹주식 매수하기</span>
