@@ -6,6 +6,7 @@
         <div class="header">
           지난 주 우리반 퀴즈왕!
         </div>
+        <RankingChart/>
       </div>
 
       <div class="event-card">
@@ -50,14 +51,15 @@
 
 import { useRouter } from 'vue-router';
 import BarChart from './BarChart.vue';
+import RankingChart from './Ranking.vue';
 const router = useRouter();
 
 export default {
   name: 'StudentEvent',
   components: {
     BarChart,
+    RankingChart
   },
-
 
     data() {
       return {
@@ -124,7 +126,6 @@ export default {
     margin-bottom: 20px;
     padding : 5px;
     color: #50495B;
-    display: flex;
     justify-content: center;
     align-items: center;
     border-bottom: 1px solid #ccc; 
