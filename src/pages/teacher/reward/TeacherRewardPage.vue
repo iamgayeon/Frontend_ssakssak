@@ -46,6 +46,7 @@ const toggleAllSelected = () => {
 const toggleAllDeselect = () => {
     selectedStudents.value = []
 }
+
 const rewardList = ref([
     {
         name: '선생님을 매우 잘 도와줌',
@@ -63,7 +64,7 @@ const rewardList = ref([
         name: '선생님을 매우 잘 도와줌',
         amount: '300',
     },
-])
+]);
 
 const students = ref([
     {
@@ -91,98 +92,158 @@ const students = ref([
         name: '유진',
         seed: '1200',
     },
-])
+    {
+        sno: '5',
+        name: '유진',
+        seed: '1200',
+    },
+    {
+        sno: '5',
+        name: '유진',
+        seed: '1200',
+    },
+    {
+        sno: '5',
+        name: '유진',
+        seed: '1200',
+    },
+    {
+        sno: '5',
+        name: '유진',
+        seed: '1200',
+    },
+    {
+        sno: '5',
+        name: '유진',
+        seed: '1200',
+    },
+]);
 
-const test = (reward) => {
-    alert(reward.value);
-}
+// const rewardPaymentDetails = ref([
+//     {
+//         date: '2024-09-11',
+//         name: '박민주',
+//         rewardName: '선생님을 매우 잘 도와줌',
+//         reward
+//     }
+// ])
 </script>
 <template>
     <div class="container mt-5">
         <div class="row">
-            <!-- 리워드 목록 카드 -->
-            <div class="col-12 col-md-6 mb-4">
-                <div class="card shadow-sm p-2">
-                    <div class="">
-                        <span class="fs-3 fw-bold ms-3">현재 리워드 목록</span>
+            <div class="col-12 col-md-6 reward-list">
+                <div class="card shadow-sm">
+                    <div class="mt-4 ms-4">
+                        <span class="fs-2 fw-bold ms-3">현재 리워드 목록</span>
                     </div>
-                    <div class="card-body">
-                        <table class="table table-borderless">
-                            <thead class="table-secondary fs-5">
-                                <tr>
-                                    <th>리워드 목록</th>
-                                    <th>리워드 금액</th>
-                                    <th>삭제</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(reward, idx) in rewardList" :key="idx" >
-                                    <td @click="toggleRewardSelect(idx)">{{ reward.name }}</td>
-                                    <td>{{ reward.amount }} 씨드</td>
-                                    <td><button type="button" class="btn btn-sm btn-outline-danger"
-                                            @click="deleteReward(idx)">
-                                            <i class="bi bi-trash"></i>
-                                        </button></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="card-body pt-0 mt-3">
+                        <div class="d-flex row m-0 mb-2" style="width: 100%">
+                            <div class="col-6 text-center">
+                                <span class="h4">리워드 명</span>
+                            </div>
+                            <div class="col-4 text-center">
+                                <span class="h4 ">금액</span>
+                            </div>
+                            <div class="col-2 text-center">
+                                <span class="h4">삭제</span>
+                            </div>
+                        </div>
                         <hr>
-                        <form @submit.prevent="addReward">
-                            <div class="mb-3 d-flex justify-content-between align-items-center">
-                                <label class="form-label fs-5 fw-bold reward-label ">리워드 명</label>
-                                <input type="text" class="form-control reward-input" v-model="rewardName"
-                                    placeholder="ex) 밥을 남기지 않고 잘 먹어요">
+                        <div class="reward-list-wrap d-flex align-items-center" v-if="!rewardList">
+                            <div class="m-auto">
+                                <h2>생성된 리워드가 없습니다.. !</h2>
                             </div>
-                            <div class="d-flex align-items-center reward-add-box">
-                                <label class="form-label fs-5 fw-bold reward-amount">금액</label>
-                                <input type="text" class="form-control me-2 w-50 text-end" v-model="rewardAmount"
-                                    placeholder="ex) 300"
-                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                <span class="me-4"> 씨드 </span>
-                                <button class="btn btn-success" type="submit">리워드 추가</button>
+                        </div>
+                        <div class="reward-list-wrap" v-if="rewardList">
+                            <div v-for="(reward, idx) in rewardList" :key="idx" class="d-flex text-center py-2"
+                                style="width: 100%;">
+                                <div class="col-6 text-center" style="overflow-x: auto;">
+                                    <span class="fs-5 text-dark">{{ reward.name }}</span>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <span class="fs-5 text-dark">{{ reward.amount }}</span>
+                                </div>
+                                <div class="col-2 text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                        @click="deleteReward(idx)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </form>
+                        </div>
+
+                        <div class="mt-2">
+                            <form @submit.prevent="addReward">
+                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                    <label class="form-label fs-5 fw-bold reward-label ">리워드 명</label>
+                                    <input type="text" class="form-control reward-input" v-model="rewardName"
+                                        placeholder="ex) 밥을 남기지 않고 잘 먹어요">
+                                </div>
+                                <div class="d-flex align-items-center reward-add-box">
+                                    <label class="form-label fs-5 fw-bold reward-amount">금액</label>
+                                    <input type="text" class="form-control me-2 w-50 text-end" v-model="rewardAmount"
+                                        placeholder="ex) 300"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    <span class="me-4"> 씨드 </span>
+                                    <button class="btn btn-success px-3" type="submit">리워드 추가</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 학생 목록 카드 -->
-            <div class="col-12 col-md-6 mb-4">
-                <div class="card shadow-sm">
-                    <div class="d-flex justify-content-between mt-3 px-4">
-                        <span class="fs-3 fw-bold">학생 목록</span>
-                        <div>
-                            <button class="btn btn-primary me-2" @click="toggleAllSelected">전체선택</button>
-                            <button class="btn btn-outline-primary" @click="toggleAllDeselect">전체선택해제</button>
+            <div class="col-12 col-md-6 std-list card" style="overflow-y: hidden;">
+                <div class="" style="max-height: 100%;">
+                    <div class="d-flex justify-content-between mt-4 ms-4">
+                        <span class="fs-2 fw-bold ms-3">학생 목록</span>
+                        <div class="p-0 me-4">
+                            <button class="btn btn-primary me-2 py-2" @click="toggleAllSelected">전체선택</button>
+                            <button class="btn btn-outline-primary me-2 px-3 py-2"
+                                @click="toggleAllDeselect">전체선택해제</button>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <table class="table table-borderless">
-                            <thead class="table-secondary fs-5">
-                                <tr>
-                                    <th>선택</th>
-                                    <th>번호</th>
-                                    <th>이름</th>
-                                    <th>보유 씨드</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="student in students" :key="student.sno">
-                                    <td><input type="checkbox" :value="student"
+                    <div class="p-0 mt-3 text-center d-flex flex-column" style="height: 100%">
+                        <div class="d-flex row m-0 mb-2" style="width: 100%">
+                            <div class="col-2 text-center">
+                                <span class="h4">선택</span>
+                            </div>
+                            <div class="col-2 text-center">
+                                <span class="h4 ">번호</span>
+                            </div>
+                            <div class="col-4 text-center">
+                                <span class="h4">이름</span>
+                            </div>
+                            <div class="col-4 text-center">
+                                <span class="h4">보유 씨드</span>
+                            </div>
+                        </div>
+                        <div class="std-list-wrap" style="overflow-y: scroll;">
+                            <div v-for="student in students" :key="student.sno" class="d-flex text-center py-2"
+                                style="width: 100%;">
+                                <div class="col-2">
+                                    <input type="checkbox" :value="student"
                                             @change="toggleStudentSelection(student)"
-                                            :checked="selectedStudents.includes(student)" /></td>
-                                    <td>{{ student.sno }}</td>
-                                    <td>{{ student.name }}</td>
-                                    <td>{{ student.seed }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                            :checked="selectedStudents.includes(student)" />
+                                </div>
+                                <div class="col-2 text-center" style="overflow-x: auto;">
+                                    <span class="fs-5 text-dark">{{ student.sno }}</span>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <span class="fs-5 text-dark">{{ student.name }}</span>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <span class="fs-5 text-dark">{{ student.seed }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card mt-3">
             <div class="m-4">
                 <div class="mb-2">
                     <span class="fs-3 fw-bold">리워드 적용 학생</span>
@@ -197,7 +258,7 @@ const test = (reward) => {
                 <div class="mb-2">
                     <span class="fs-3 fw-bold">적용 리워드</span>
                 </div>
-                <div class="custom-btn std-name me-2">{{ selectedReward.name }}</div>
+                <div class="custom-btn std-name me-2" v-if="selectedReward">{{ selectedReward.name }}</div>
             </div>
             <div class="text-end p-3">
                 <button class="btn btn-warning">리워드 지급</button>
@@ -208,14 +269,67 @@ const test = (reward) => {
             <div>
                 <span>리워드 지급 목록</span>
             </div>
+            <div>
+                <table class="table table-borderless">
+                    <thead class="table-secondary fs-5">
+                        <tr>
+                            <th>선택</th>
+                            <th>번호</th>
+                            <th>이름</th>
+                            <th>보유 씨드</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="student in students" :key="student.sno">
+                            <td><input type="checkbox" :value="student" @change="toggleStudentSelection(student)"
+                                    :checked="selectedStudents.includes(student)" /></td>
+                            <td>{{ student.sno }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.seed }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
 .container {
-    max-width: 90vw;
+    max-width: 80vw;
 }
+
+.reward-list, .std-list {
+    height: 500px;
+    max-height: 500px;
+}
+
+.reward-list-wrap {
+    height: 200px;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.reward-list-wrap::-webkit-scrollbar,
+.std-list-wrap::-webkit-scrollbar {
+    width: 10px;
+}
+
+.reward-list-wrap::-webkit-scrollbar-thumb,
+.std-list-wrap::-webkit-scrollbar-thumb {
+    background: rgb(255, 187, 187);
+    border-radius: 10px;
+}
+
+.reward-list-wrap::-webkit-scrollbar-button,
+.std-list-wrap::-webkit-scrollbar-button {
+    display: none;
+}
+
+.std-list-wrap {
+    height: 340px;
+}
+
 
 .reward-input {
     width: 80%;
@@ -280,4 +394,31 @@ const test = (reward) => {
 .std-name:hover {
     color: #000;
 }
+
+.btn-primary {
+    background-color: #00A3FF; 
+    border-color: #00A3FF ;
+}
+
+.btn-outline-primary {
+    color: #00A3FF;
+    border-color: #00A3FF ;
+    --ar-btn-hover-bg: white;
+
+}
+
+.btn-outline-primary:hover {
+    color: white;
+}
+
+.btn-outline-primary:after {
+    background-color: #ffffff;
+    color: white;
+}
+
+.btn:hover {
+    border-color: #00A3FF;
+    background-color: #00A3FF;
+}
+
 </style>
