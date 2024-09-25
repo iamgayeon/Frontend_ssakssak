@@ -1,6 +1,7 @@
 <script setup>
 import Header from './Header.vue';
-import NavBar from './NavBar.vue';
+import NavBar from './TeacherNavBar.vue';
+// import NavBar from './StudentNavBar.vue';
 import Footer from './Footer.vue';
 </script>
 
@@ -8,7 +9,7 @@ import Footer from './Footer.vue';
   <div id="container">
     <Header />
     <NavBar />
-    <div :style="{backgroundColor : '#F6F4E2'}" class="content">
+    <div :style="{backgroundColor : '#f8f6e9'}" class="content">
       <slot></slot>
     </div>
     <Footer />
@@ -20,7 +21,7 @@ import Footer from './Footer.vue';
   display:flex;
   flex-direction: column;
   width:100vw;
-  justify-content: ;
+
 }
 </style>
 

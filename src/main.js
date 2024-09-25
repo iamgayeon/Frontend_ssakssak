@@ -1,8 +1,10 @@
-import "bootstrap/dist/css/bootstrap.css";
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'vue-awesome-paginate/dist/style.css';
+import './assets/main.css';
+import './assets/css/kidz.css';
+import './assets/css/theme.min.css';
 import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
-import "vue-awesome-paginate/dist/style.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import "./assets/main.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
