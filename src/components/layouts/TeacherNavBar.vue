@@ -61,7 +61,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/tesxacher/stock">
+            <router-link class="nav-link" to="/teacher/stock">
               <i class="fa fa-line-chart" style="color: #ff69b4;"></i>
               <span>주식관리</span>
             </router-link>

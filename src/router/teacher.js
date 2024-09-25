@@ -27,12 +27,12 @@ export default [
     {
       path: '/teacher/stock',
       name: 'TeacherStock',
-      component: () => import('../pages/teacher/stock/TeacherStock.vue'),
+      component: () => import('../pages/teacher/stock/TeacherStockPage.vue'),
     },
     {
         path: '/teacher/reward',
         name: 'TeacherReword',
-        component: () => import('../pages/teacher/reward/TeacherReward.vue'),
+        component: () => import('../pages/teacher/reward/TeacherRewardPage.vue'),
       },
   ];
   

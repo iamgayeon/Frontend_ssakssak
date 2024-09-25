@@ -25,7 +25,8 @@ export default [
     component: () => import('../pages/student/store/StudentStorePage.vue'),
   },
   {
-    path: '/reward',
-    component: () => import('../pages/teacher/reward/TeacherRewardPage.vue')
-  }
+    path: '/student/stock',
+    name: 'StudentStock',
+    component: () => import('../pages/student/stock/StudentStockPage.vue'),
+  },
 ];

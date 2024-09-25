@@ -4,8 +4,6 @@ import authRotes from './auth';
 import boardRotes from './board';
 import galleryRoutes from './gallery';
 import studentRoutes from './student';
-import StudentStockPage from "@/pages/student/stock/StudentStockPage.vue";
-import TeacherStockPage from "@/pages/teacher/stock/TeacherStockPage.vue";
 import teacherRoutes from './teacher';
 
 const router = createRouter({
@@ -15,15 +13,6 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomePage,
-    },
-    {
-      path: "/student/stock",
-      name: "StudentStockPage",
-      component: StudentStockPage,
-    },
-    {
-      path: "/teacher/stock",
-      component: TeacherStockPage,
     },
     ...authRotes,
     ...boardRotes,
