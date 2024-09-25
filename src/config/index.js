@@ -13,7 +13,7 @@ export default {
     },
     {
       title: '은행',
-      url: '/gallery/list',
+      url: '/student/bank',
     },
     {
       title: '주식',
@@ -21,7 +21,7 @@ export default {
     },
     {
       title: '이벤트',
-      url: '/event/list',
+      url: '/student/event',
     },
     {
       title: '프로필',

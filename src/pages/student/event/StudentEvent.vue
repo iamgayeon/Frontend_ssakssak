@@ -1,9 +1,38 @@
 <template>
+
     <div class="container">
       <!-- 왼쪽 카드: 금융 테스트 -->
-      <div class="card">
+      <div class="event-card">
         <div class="header">
-          금융 테스트로<br />알아보는 나만의 티니핑은?
+          지난 주 우리반 퀴즈왕!
+        </div>
+      </div>
+
+      <div class="event-card">
+        <div class="header">
+          우리반 자산 랭킹은?
+          <div class="description"/>
+        </div>
+      <BarChart />
+      </div>
+
+            <!-- 오른쪽 카드: 오늘의 금융퀴즈 -->
+            <div class="event-card">
+              <div class="header">오늘의 금융퀴즈</div>
+              <div class="quiz-body">
+                <div class="quiz-question">
+                  <div class="quiz-label">문제</div>
+                  <div class="quiz-text">{{ currentQuiz.question }}</div>
+                </div>
+                <div class="quiz-options">
+                  <button v-for="(option, index) in currentQuiz.options" :key="index" class="quiz-option">{{ option }}</button>
+                </div>
+              </div>
+            </div>
+
+      <div class="event-card">
+        <div class="header">
+          나만의 금융핑 테스트
         </div>
         <div class="image-container">
           <img src="@/assets/images/tinyping2.png" alt="티니핑 캐릭터들" class="characters"/>
@@ -13,28 +42,23 @@
         </div>
       </div>
   
-      <!-- 오른쪽 카드: 오늘의 금융퀴즈 -->
-      <div class="card">
-        <div class="header">오늘의 금융퀴즈</div>
-        <div class="quiz-body">
-          <div class="quiz-question">
-            <div class="quiz-label">문제</div>
-            <div class="quiz-text">{{ currentQuiz.question }}</div>
-          </div>
-          <div class="quiz-options">
-            <button v-for="(option, index) in currentQuiz.options" :key="index" class="quiz-option">{{ option }}</button>
-          </div>
-        </div>
-      </div>
+
     </div>
   </template>
   
   <script>
 
 import { useRouter } from 'vue-router';
+import BarChart from './BarChart.vue';
 const router = useRouter();
 
-  export default {
+export default {
+  name: 'StudentEvent',
+  components: {
+    BarChart,
+  },
+
+
     data() {
       return {
         quizzes: [
@@ -77,16 +101,16 @@ const router = useRouter();
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 20px;
+    gap: 10px;
     margin-top: 40px;
   }
   
   /* 카드 기본 스타일 */
-  .card {
+  .event-card {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 400px;
+    width: 300px;
     height: 500px;
     padding: 20px;
     text-align: center;
@@ -94,36 +118,39 @@ const router = useRouter();
   
   /* 헤더 스타일 통일 */
   .header, .quiz-header {
-    background-color: #FFCF45;
+    background-color: #fff;
     height: 100px;
-    border-radius: 10px;
-    padding: 10px;
     font-size: 1.2rem;
-    font-weight: bold;
-    color: #fff;
+    margin-bottom: 20px;
+    padding : 5px;
+    color: #50495B;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-bottom: 1px solid #ccc; 
+    padding-bottom: 10px;
+
   }
   
   /* 이미지 컨테이너 */
 
   
   .characters {
-    width: 80%;
+    margin-top: 25px;
+    width: 90%;
     height: auto;
   }
   
   /* 버튼 스타일 */
   .button-container {
-    margin-top: 20px;
+    margin-top: 10px;
   }
   
   button {
     background-color: #5DA6FE;
     color: #fff;
     font-size: 1.1rem;
-    padding: 10px 20px;
+    padding: 5px 20px;
     border: none;
     border-radius: 30px;
     cursor: pointer;
@@ -133,36 +160,40 @@ const router = useRouter();
     margin: 0 auto;
   }
   
-  button:hover {
-    background-color: #36a93a;
-  }
-  
   /* 퀴즈 스타일 */
   .quiz-body {
-    margin-top: 20px;
+    margin-top: 30px;
   }
+  
   
   .quiz-question {
     background-color: #DCF0FB;
     border-radius: 10px;
-    padding: 15px;
+    padding: 20px;
     font-size: 1.1rem;
-    margin-bottom: 20px;
+    color:#3F51B5;
+    height:160px;
+    margin-top: 20px;
   }
   
   .quiz-label {
-    background-color: #f7c642;
+    background-color: #3F51B5;
     display: inline-block;
     padding: 5px 10px;
-    border-radius: 15px;
-    color: white;
+    border-radius: 10px;
+    color: #fff;
     font-weight: bold;
   }
   
+  .quiz-text{
+    padding-top : 20px;
+  }
+
   .quiz-options {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+    margin-top : 50px;
   }
   
   .quiz-option {

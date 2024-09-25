@@ -20,7 +20,7 @@ import Footer from './Footer.vue';
   display:flex;
   flex-direction: column;
   width:100vw;
-  justify-content: ;
+
 }
 </style>
 
