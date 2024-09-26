@@ -18,4 +18,12 @@ import DefaultLayout from './components/layouts/DefaultLayout.vue';
   margin: 0;
   padding: 0;
 }
+
+.btn-primary{
+  background-color: #00A3FF;
+}
+
+.btn-danger{
+  background-color: #EF5858;
+}
 </style>
