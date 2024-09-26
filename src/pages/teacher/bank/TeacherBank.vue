@@ -8,7 +8,7 @@
       <div class="row mb-2" style="margin-top:20px; margin-left: 38px; margin-right: 38px;">
           <!-- 첫 번째 카드 -->
           <div class="col-md-6">
-            <div class="card shadow-sm p-4 card-custom" style="margin-bottom: 30px;">
+            <div class="card shadow-sm p-4 card-custom" style="margin-bottom: 10px;">
               <img src="@/assets/images/safe.png" alt="금고 이미지" class="icon" />
               <p class="text-right card-text-custom">
                 현재 국고에는<br />50,000 씨드가 있어요
@@ -18,7 +18,7 @@
         
           <!-- 두 번째 카드 -->
           <div class="col-md-6">
-            <div class="card shadow-sm p-4 card-custom" style="margin-bottom: 30px;">
+            <div class="card shadow-sm p-4 card-custom" style="margin-bottom: 10px;">
               <img src="@/assets/images/coin.png" alt="코인 이미지" class="icon" />
               <p class="text-right card-text-custom">
                이번주 세금으로 거둔 금액은<br />10,000 씨드입니다
@@ -28,7 +28,7 @@
       </div>
       
       <!-- 적금 상품 목록 섹션 및 새 적금 등록 버튼 -->
-      <div class="section national-status p-3 mb-2 d-flex justify-content-between align-items-center flex-wrap" style="margin-top: 10px; margin-left: 50px; margin-right: 50px;">
+      <div class="section national-status p-3 mb-1 d-flex justify-content-between align-items-center flex-wrap" style="margin-left: 50px; margin-right: 50px;">
           <h3 class="section-title" style="margin: 0; margin-left: 20px;">적금 상품 목록</h3>
         
           <div>
@@ -59,17 +59,15 @@
                         <!-- 상품 특징 -->
                         <div class="form-group">
                             <label for="saving-point">상품특징<span class="required-asterisk">*</span></label>
-                            <input type="text" id="saving-point" v-model="savingpoint" placeholder="상품특징을 입력해주세요.">
+                            <input type="text" id="saving-point" v-model="savingPoint" placeholder="상품특징을 입력해주세요.">
                         </div>
 
                         <!-- 가입 대상 -->
                         <div class="form-group">
                             <label for="saving-person">가입대상<span class="required-asterisk">*</span></label>
-                            <input type="text" id="saving-person" v-model="savingperson" placeholder="가입대상을 입력해주세요.">
+                            <input type="text" id="saving-person" v-model="savingPerson" placeholder="가입대상을 입력해주세요.">
                         </div>
 
-                        
-                        
                         <!-- 예치 기간 -->
                         <div class="form-group">
                           <label for="period">예치기간 <span class="required-asterisk">*</span></label>
@@ -77,9 +75,6 @@
                             <option value="2주">2주</option>
                             <option value="4주">4주</option>
                             <option value="8주">8주</option>
-                            <option value="1개월">1개월</option>
-                            <option value="3개월">3개월</option>
-                            <option value="5개월">5개월</option>
                           </select>
                         </div>
               
@@ -89,7 +84,6 @@
                           <select id="frequency" v-model="frequency" placeholder="입금 주기를 선택해주세요">
                             <option value="1일">1일</option>
                             <option value="1주">1주</option>
-                            <option value="1개월">1개월</option>
                           </select>
                         </div>
               
@@ -157,126 +151,55 @@
   
       <!-- 적금 카드 섹션 -->
       <div class="card-container">
-          <div class="card-safe">
-            <h4 class="no-bold">새싹적금</h4>
-            <img src="@/assets/images/tree1.png" alt="새싹적금 아이콘" class="card-icon" />
+        <!-- 기존 적금들 -->
+        <div v-for="(saving, index) in savings" :key="saving.name" class="card-safe">
+            <div class="d-flex justify-content-between align-items-center">
+              <!-- 삭제 버튼 -->
+              <button @click="deleteSaving(saving.name)" class="delete-btn">X</button>
+            </div>
+            <img :src="saving.image" class="card-icon" />
+            <h4 class="text-center">{{ saving.name }}</h4>
             <div class="interest">
-              <span class="interest-rate">기본 금리: 2%</span>
-              <span class="interest-rate">우대 금리: 5%</span>
+              <span class="interest-rate">기본 금리: {{ saving.basicRate }}%</span>
+              <span v-if="saving.extraRate" class="interest-rate">우대 금리: {{ saving.extraRate }}%</span>
             </div>
             <div class="details">
-              <span class="details-deposit">
-              <i class="fa fa-leaf"></i> 
-                <strong> 매일 최대 30 씨드 입금 가능</strong><br>
-              </span>
+                <span class="details-deposit">
+                    <i v-if="saving.period === '2주'" class="fa fa-leaf"></i>
+                    <i v-else class="fa fa-tree"></i>
+                    <!-- 조건에 따라 다른 문구 출력 -->
+                    <strong v-if="saving.period === '2주'"> 매일 최대 {{ saving.maxAmount }} 씨드 입금 가능</strong>
+                    <strong v-else> 매주 최대 {{ saving.maxAmount }} 씨드 입금 가능</strong><br>
+                  </span>
             </div>
+
             <hr />
             <div class="description">
               <table>
                   <tr>
                       <th>상품특징</th>
-                      <td>낙농협회장, 환경미화원, 우체부, 사서에게 우대 이율을 제공</td>
+                      <td>{{ saving.point }}</td>
                   </tr>
                   <tr>
                       <th>가입대상</th>
-                      <td>2학년 7반 학생</td>
+                      <td>{{ saving.person }}</td>
                   </tr>
                   <tr>
                       <th>예치기간</th>
-                      <td>2주</td>
+                      <td>{{ saving.period }}</td>
                   </tr>
                   <tr>
                       <th>저축금액</th>
-                      <td>일 1씨드 ~ 30씨드</td>
+                      <td>최대 {{ saving.maxAmount }} 씨드</td>
                   </tr>
               </table>
               <br>
+            </div>
           </div>
-            <button class="edit-button">내용 편집하기</button>
-          </div>
-        
-          <div class="card-safe">
-            <h4 class="no-bold">나무적금</h4>
-            <img src="@/assets/images/tree2.png" alt="나무적금 아이콘" class="card-icon" />
-            <div class="interest">
-              <span class="interest-rate">기본 금리: 5%</span>
-            </div>
-            <div class="details">
-              <span class="details-deposit">
-                <i class="fab fa-pagelines"></i>
-                <strong> 매주 최대 50 씨드 입금 가능</strong>
-              </span>
-            </div>
-            <hr />
-            <div class="description">
-              <div class="description">
-                  <table>
-                      <tr>
-                          <th>상품특징</th>
-                          <td>2학년 7반 학생이면 누구나 가입 가능한 금융싹싹의 대표 적금</td>
-                      </tr>
-                      <tr>
-                          <th>가입대상</th>
-                          <td>2학년 7반 학생</td>
-                      </tr>
-                      <tr>
-                          <th>예치기간</th>
-                          <td>4주</td>
-                      </tr>
-                      <tr>
-                          <th>저축금액</th>
-                          <td>주 1씨드 ~ 50씨드</td>
-                      </tr>
-                  </table>
-                  <br>
-              </div>
-            </div>
-            <button class="edit-button">내용 편집하기</button>
-          </div>
-        
-          <div class="card-safe">
-            <h4 class="no-bold">숲속적금</h4>
-            <img src="@/assets/images/tree3.png" alt="숲속적금 아이콘" class="card-icon" />
-            <div class="interest">
-              <span class="interest-rate">기본 금리: 15%</span>
-            </div>
-            <div class="details">
-              <span class="details-deposit">
-                <i class="fa fa-tree"></i>
-                <strong> 매주 최대 100 씨드 입금 가능</strong>
-              </span>
-  
-            </div>
-            <hr />
-            <div class="description">
-              <div class="description">
-                  <table>
-                      <tr>
-                          <th>상품특징</th>
-                          <td>높은 이율을 제공하여 자산을<br>키워주는 똑똑한 적금</td>
-                      </tr>
-                      <tr>
-                          <th>가입대상</th>
-                          <td>2학년 7반 학생</td>
-                      </tr>
-                      <tr>
-                          <th>예치기간</th>
-                          <td>8주</td>
-                      </tr>
-                      <tr>
-                          <th>저축금액</th>
-                          <td>주 1씨드 ~ 50씨드</td>
-                      </tr>
-                  </table>
-                  <br>
-              </div>
-            </div>
-            <button class="edit-button">내용 편집하기</button>
-          </div>
-        </div>
+      </div>
     </div>
   </template>
-  
+
   <script>
   export default {
     data() {
@@ -285,14 +208,45 @@
         isCompleted: false,  // 완료 메시지 모달 상태
         showWarningModal: false,
         selectedJobs: [],
+        savings: [
+          {
+            name: "새싹적금",
+            basicRate: 2,
+            extraRate: 5,
+            point: "낙농협회장, 환경미화원, 우체부, 사서에게 우대 이율을 제공",
+            person: "2학년 7반 학생",
+            period: "2주",
+            maxAmount: "30",
+            image: "/public/tree1.png"
+          },
+          {
+            name: "나무적금",
+            basicRate: 5,
+            point: "2학년 7반 학생이면 누구나 가입 가능한 금융싹싹의 대표 적금",
+            person: "2학년 7반 학생",
+            period: "4주",
+            maxAmount: "50",
+            image: "/public/tree2.png"
+          },
+          {
+            name: "숲속적금",
+            basicRate: 15,
+            point: "높은 이율을 제공하여 자산을 키워주는 똑똑한 적금",
+            person: "2학년 7반 학생",
+            period: "8주",
+            maxAmount: "100",
+            image: "/public/tree3.png"
+          }
+        ],
+        // 새 적금 데이터
         savingName: '',
         period: '',
         frequency: '',
         basicRate: '',
         maxAmount: '',
         extraRate: '',
-        savingpoint: '',
-        savingperson: '',
+        savingPoint: '',
+        savingPerson: '',
         jobs: [
           { name: "회사원" },
           { name: "경찰" },
@@ -314,11 +268,21 @@
       },
       submitForm() {
          // 필수 입력 항목 확인
-        if (!this.savingName || !this.period || !this.frequency || !this.basicRate || !this.maxAmount || !this.savingpoint || !this.savingperson) {
+        if (!this.savingName || !this.period || !this.frequency || !this.basicRate || !this.maxAmount || !this.savingPoint || !this.savingPerson) {
         // 필수 정보가 입력되지 않았을 때 경고 모달 표시
         this.showWarningModal = true;
         } else {
-        // 필수 정보가 모두 입력된 경우
+        // 새로운 적금 등록
+        this.savings.push({
+          name: this.savingName,
+          basicRate: this.basicRate,
+          extraRate: this.extraRate,
+          point: this.savingPoint,
+          person: this.savingPerson,
+          period: this.period,
+          maxAmount: this.maxAmount,
+          image: "/public/safeimage.png"  // 기본 이미지 추가
+        });
         this.isModalOpen = false;  // 모달 닫기
         this.isCompleted = true;  // 완료 메시지 모달 열기
       }
@@ -328,6 +292,11 @@
       },
       closeWarningModal() {
       this.showWarningModal = false;  // 경고 모달 닫기
+      },
+      deleteSaving(name) {
+        console.log(name);
+        this.savings = this.savings.filter((saving) => saving.name !== name);
+        console.log(this.savings); // 상태 변화 확인을 위한 로그
       },
       handleJobSelection(job) {
         if (this.selectedJobs.length >= 4 && !this.selectedJobs.includes(job)) {
@@ -339,9 +308,23 @@
       }
     }
   };
-  </script>
+</script>
   
   <style scoped>
+  .delete-btn {
+    border: none;
+    color: white;
+    padding: 5px 1px;
+    width: 30px;
+    cursor: pointer;
+    border-radius: 3px;
+
+  }
+
+  .delete-btn:hover {
+    background-color: #d9534f;
+  }
+
   .card-custom {
     display: flex;
     align-items: center;
@@ -394,24 +377,33 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 1.5rem; /* 카드 내부 여백 줄이기 */
   }
   
   .card-safe {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    width: 430px; /* 너비를 430px로 증가 */
-    padding: 20px;
+    width: 100%; /* 카드 너비를 100%로 설정하여 그리드 셀에 맞추기 */
+    max-width: 390px; /* 카드의 최대 너비를 설정 */
+    padding: 15px;
     text-align: center;
+    align-content: center;
+    margin: 0; /* 좌우 여백 제거 */
   }
   
-  .card-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 5px; /* 카드 간격을 줄임 */
-    padding: 50px; /* 좌우 패딩을 조정하여 라인 정렬 */
-  }
+  /* 적금 이름 중앙 정렬 */
+    .card-safe h4 {
+    text-align: center;
+    }
+  
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 한 줄에 3개의 카드 배치 */
+        grid-gap: 20px; /* 카드 간의 간격을 20px로 설정 */
+        padding: 20px;
+        align-items: stretch;
+        justify-items: center; /* 카드들이 중앙에 맞춰지도록 설정 */
+    }
   
   /* 카드 안의 이미지와 텍스트 간의 간격 줄이기 */
   .icon {
@@ -447,21 +439,7 @@
     margin-bottom: 8px;
     font-size: 0.9rem;
   }
-  
-  .edit-button {
-    background-color: #00A3FF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    width: 100%;
-    cursor: pointer;
-  }
-  
-  .edit-button:hover {
-    background-color: #008CFF;
-  }
-  
+
   .card h3 {
     font-size: 1.2rem;
     margin-bottom: 20px;
@@ -469,7 +447,7 @@
   
   .card-icon {
     width: 60px;
-    height: auto;
+    height: 60px;
     margin-bottom: 10px;
   }
   
@@ -642,6 +620,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      text-align: center;
     }
   
     .button-group {
