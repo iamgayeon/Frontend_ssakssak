@@ -100,7 +100,7 @@ export default {
   methods: {
     goToTest() {
       // 테스트 페이지로 이동하는 함수
-      this.$router.push('/test');
+      this.$router.push('/student/event/test');
     },
     getQuizOfTheDay() {
       // 오늘 날짜에 맞는 퀴즈를 설정 (퀴즈가 매일 바뀌도록)
