@@ -36,10 +36,10 @@ const couponBuy = () => {
                 <div class="row">
                     <span class="d-block mt-2 text-muted fs-6">쿠폰</span>
                     <div class="mb-2">
-                        <span class="fs-5 fw-bold">{{ coupon.name }}</span>
+                        <span class="fs-5 fw-bold d-block coupon-name">{{ coupon.name }}</span>
                     </div>
                     <div class="mb-4">
-                        <span class="fs-5 fw-semibold text-success">{{ coupon.price }} 씨드</span>
+                        <span class="fs-5 fw-semibold primary">{{ coupon.price }} 씨드</span>
                     </div>
 
 
@@ -80,31 +80,41 @@ const couponBuy = () => {
     height: 45px;
 }
 
-.button {
-    position: relative;
-    border: 0;
-    width: 40px;
-    height: 40px;
-    display: inline-block;
-    text-align: center;
-    color: white;
-    border-radius: 10px;
+.coupon-name {
+  white-space: nowrap; /* 한 줄로 표시 */
+  overflow: hidden; /* 넘치는 부분 숨김 */
+  text-overflow: ellipsis; /* 말줄임표(...) 추가 */
 }
 
-.button:active {
+.primary {
+    color: #00A3FF;
+}
+
+.btn:active {
     top: 4px;
 }
 
-.button.green {
-    background-color: #9abf7f;
+
+.btn-primary {
+    background-color: #00A3FF;
+    border-color: #00A3FF;
 }
 
-.button.green {
-    box-shadow: 0px 4px 0px #87a86f;
+.btn-outline-primary {
+    color: #00A3FF;
+    border-color: #00A3FF;
+    --ar-btn-hover-bg: white;
+
 }
 
-.button.green:active {
-    box-shadow: 0 0 #87a86f;
-    background-color: #87a86f;
+.btn-outline-primary:hover {
+    color: white;
+    background-color: #00A3FF;
+}
+
+
+.btn-outline-primary:after {
+    background-color: #ffffff;
+    color: #00A3FF;
 }
 </style>
