@@ -9,8 +9,8 @@
         <p class="mb-2">매주 학생 활동으로 발생한 세금을 한 눈에 확인해 볼 수 있습니다.</p>
         <p class="mb-4">이번주 쌓인 세금을 통해 학생들의 거래량을 확인해보세요.</p>
         <router-link class="button-container d-flex align-items-center" style="gap: 20px;">
-            <router-link to="/teacher/bank"><button class="btn btn-warning mr-6">세율 확인</button></router-link>
-            <router-link to="/teacher/bank"></router-link><button class="btn btn-primary">적립 세금 : $20,000</button></router-link>
+            <router-link class="router1" to="/teacher/bank"><button class="btn btn-warning mr-6">세율 확인</button></router-link>
+            <router-link class="router1" to="/teacher/bank"></router-link><button class="btn btn-primary">적립 세금 : $20,000</button></router-link>
             <!-- {{ accumulatedTax.toLocaleString() }} -->
         </div>
       </div>
@@ -55,6 +55,7 @@ const props = defineProps({
   
   .button-container .btn {
     padding: 10px 20px;
+    text-decoration: none;
   }
   
   .button-container .btn-warning {
@@ -76,6 +77,9 @@ const props = defineProps({
   
   .button-container .btn:hover {
     box-shadow: none; /* hover 상태에서도 그림자 제거 */
+  }
+  .router1{
+    text-decoration: none;
   }
   </style>
   
