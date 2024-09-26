@@ -29,4 +29,9 @@ export default [
     name: 'StudentStock',
     component: () => import('../pages/student/stock/StudentStockPage.vue'),
   },
+  {
+    path: '/student/event/test',
+    name: 'StudentTest',
+    component: () => import('../pages/student/event/MoneyPing.vue'),
+  },
 ];

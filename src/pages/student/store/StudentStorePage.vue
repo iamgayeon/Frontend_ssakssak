@@ -40,7 +40,7 @@ const coupons = ref([
         quantity: 8
     },
     {
-        name: "하루 동안 조별 활동 리더 쿠폰",
+        name: "하루 동안 조별 활동 리더 쿠폰길이 벗어나는 경우 테스트하기 위해 길게 적어놓음",
         description:
             "이 쿠폰을 사용하면 하루 동안 조별 활동에서 리더로 활동할 수 있는 기회를 얻게 됩니다. 친구들과 함께 활동을 주도하며 협동심과 리더십을 기를 수 있는 특별한 기회입니다.",
         price: 300,
@@ -63,9 +63,9 @@ const couponBuy = () => {
 
 <template>
     <div class="container mt-5">
-        <div class="row">
+        <div class="row g-0">
             <div class="col-12 col-md-6 col-lg-4 mb-4" v-for="(coupon, idx) in coupons" :key="idx">
-                <StoreItem :coupon="coupon" @couponBuy="couponBuy" />
+                <StoreItem :coupon="coupon" @couponBuy="couponBuy"  />
             </div>
         </div>
     </div>

@@ -60,7 +60,7 @@ const couponBuy = () => {
                         <span class="d-block fs-5 fw-bold">{{coupon.name}}</span>
                     </div>
                     <div class="text-end mb-2">
-                        <span class="fs-5 fw-semibold text-success">{{ coupon.price }} 씨드</span>
+                        <span class="fs-5 fw-semibold primary">{{ coupon.price }} 씨드</span>
                     </div>
                     <div>
                         {{ coupon.description }}
@@ -71,15 +71,15 @@ const couponBuy = () => {
 
                     <div class="mb-3 d-flex justify-content-between">
                         <div class="d-flex">
-                            <button class="button green small fs-5" @click="minusQuantity">-</button>
+                            <button class="button cyan small fs-5" @click="minusQuantity">-</button>
                             <input type="text" class="form-control text-center fs-6 fw-semibold" v-model="quantity">
-                            <button class="button green small fs-5" @click="plusQuantity">+</button>
+                            <button class="button cyan small fs-5" @click="plusQuantity">+</button>
                         </div>
                         <div class="fs-4 fw-semibold text-danger"><span>{{ totalPrice }} 씨드</span>
                         </div>
                     </div>
                     <div class="text-end">
-                        <button class="btn btn-success" @click="couponBuy">구매하기</button>
+                        <button class="btn btn-primary" @click="couponBuy">구매하기</button>
                     </div>
                     
                 </div>
@@ -127,7 +127,8 @@ const couponBuy = () => {
 }
 
 .form-control {
-    width: 50px;
+    border-radius: 5px;
+    width: 80px;
     height: 40px;
 }
 
@@ -139,7 +140,7 @@ const couponBuy = () => {
     display: inline-block;
     text-align: center;
     color: white;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 .button:active {
@@ -178,6 +179,16 @@ const couponBuy = () => {
     outline: none;
 }
 
+.cyan {
+    background-color: #7fccde;
+    box-shadow: 0px 4px 0px #73B9C9;
+}
+
+.cyan:active {
+    box-shadow: 0 0 #73B9C9;
+    background-color: #70B4C4;
+}
+
 /* 1 */
 .btn-1 {
     background: rgb(6, 14, 131);
@@ -188,5 +199,37 @@ const couponBuy = () => {
 .btn-1:hover {
     background: rgb(0, 3, 255);
     background: linear-gradient(0deg, rgba(0, 3, 255, 1) 0%, rgba(2, 126, 251, 1) 100%);
+}
+
+.primary {
+    color: #00A3FF;
+}
+
+.btn:active {
+    top: 4px;
+}
+
+
+.btn-primary {
+    background-color: #00A3FF;
+    border-color: #00A3FF;
+}
+
+.btn-outline-primary {
+    color: #00A3FF;
+    border-color: #00A3FF;
+    --ar-btn-hover-bg: white;
+
+}
+
+.btn-outline-primary:hover {
+    color: white;
+    background-color: #00A3FF;
+}
+
+
+.btn-outline-primary:after {
+    background-color: #ffffff;
+    color: #00A3FF;
 }
 </style>
