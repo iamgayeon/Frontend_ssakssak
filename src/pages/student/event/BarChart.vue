@@ -8,6 +8,7 @@
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 
+// Chart.js 플러그인 등록 (전역 등록 없음)
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 export default {
@@ -36,7 +37,7 @@ export default {
             beginAtZero: true,
             ticks: {
               callback: function(value) {
-                return value.toLocaleString() + '원';  // 단위 K 추가
+                return value.toLocaleString() + '원';  // 단위 '원' 추가
               }
             },
             grid: {
@@ -63,7 +64,7 @@ export default {
           }
         }
       }
-    }
+    };
   }
 }
 </script>
