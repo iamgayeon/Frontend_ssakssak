@@ -45,7 +45,7 @@ const progressValue = ref(80); // 초기값을 80%로 설정
       <section class="col" id="sec1">
         <div class="card p-3">
           <div class="card-body">
-              <router-link to="/teacher/bank">
+              <router-link class="router1" to="/teacher/bank">
             <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
               <i class="bi bi-currency-exchange text-primary lead pe-1 me-2"></i>
               <h2 class="h4 mb-0">국고 확인</h2>
@@ -154,5 +154,9 @@ const progressValue = ref(80); // 초기값을 80%로 설정
 .modal-dialog {
   max-width: 500px;
   width: 100%;
+}
+
+.router1{
+  text-decoration: none;
 }
 </style>

@@ -40,7 +40,7 @@ const stock = ref(98);
             </div>
       
             <div class="col-7" style="min-width: 500px;"> <!-- 차트의 최소 너비 설정 -->
-                <router-link  to="/teacher/stock">
+                <router-link class="router1" to="/teacher/stock">
               <StockChart />
             </router-link>
             </div>
@@ -55,5 +55,9 @@ const stock = ref(98);
 .chart-image{
     width: 50px;
     height: 40px;
+}
+
+.router1{
+  text-decoration: none;
 }
 </style>
