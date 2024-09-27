@@ -1,7 +1,13 @@
 <template>
+  <div class="container">
+    <div class="card">
+      <div class="card-header"><h4>우리반 씨드 랭킹</h4></div>
+      <span class="card-body">성공은 작은 습관에서 시작됩니다! 꾸준한 자산 관리를 통해 랭킹에 도전해보세요!</span>
   <div class="chart-container">
     <Bar :data="chartData" :options="chartOptions" />
-  </div>
+</div>
+</div>
+</div>
 </template>
 
 <script setup>
@@ -106,5 +112,22 @@ const chartOptions = {
   position: relative;
   height: 350px;
   width: auto;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-bottom: 25px;
+  
 }
+.card{
+  width:80vw;
+  height:500px;
+}
+
+.card-header {
+  padding-top:20px;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0px;
+}
+
+
 </style>

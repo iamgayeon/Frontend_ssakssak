@@ -2,7 +2,8 @@
 import Header from './Header.vue';
 // import NavBar from './TeacherNavBar.vue';
 import NavBar from './StudentNavBar.vue';
-import Footer from './Footer.vue';
+import Footer from './StudentFooter.vue';
+// import Footer from './TeacherFooter.vue';
 </script>
 
 <template>
@@ -21,6 +22,7 @@ import Footer from './Footer.vue';
   display:flex;
   flex-direction: column;
   width:100vw;
+  
 
 }
 </style>

@@ -1,7 +1,13 @@
 <template>
+  <div class="container">
+    <div class="card">
+      <div class="card-header"><h4 class="text-muted">지난 주 우리반의 퀴즈왕은?</h4></div>
+      <span class="text-muted card-body">퀴즈에 참여해서 다양한 혜택을 받아보세요!</span>
   <div class="chart-container">
     <Bar :data="chartData" :options="chartOptions" />
-  </div>
+</div>
+</div>
+</div>
 </template>
 
 <script setup>
@@ -29,11 +35,11 @@ ChartJS.register(
 const emojis = ['🥈', '🥇', '🥉']; // 각 순위에 해당하는 이모티콘 설정
 
 const allStudents = [
-  { name: '박선우', assets: 15000 },
-  { name: '박민주', assets: 12000 },
-  { name: '조성혁', assets: 10000 },
-  { name: '정인겸', assets: 8000 },
-  { name: '유유진', assets: 7000 },
+  { name: '박선우', assets: 8 },
+  { name: '박민주', assets: 5 },
+  { name: '조성혁', assets: 6 },
+  { name: '정인겸', assets: 4 },
+  { name: '유유진', assets: 3 },
 ];
 
 const chartData = {
@@ -41,7 +47,7 @@ const chartData = {
   datasets: [
     {
       label: '총 보유자산',
-      data: [12000, 15000, 10000], // 2등, 1등, 3등의 자산을 넣을 배열
+      data: [6, 8, 5], // 2등, 1등, 3등의 자산을 넣을 배열
       backgroundColor: ['#1fa3f7', '#f37fae', '#79dca9'], // 각 등수에 맞는 색상
       borderRadius: 20,
       barThickness: 40,
@@ -58,7 +64,7 @@ const chartOptions = {
       display: false,
       ticks: {
         callback: function (value) {
-          return value.toLocaleString() + '원'; // 단위 '원' 추가
+          return value.toLocaleString() + '번'; // 단위 '원' 추가
         },
       },
       grid: {
@@ -74,7 +80,7 @@ const chartOptions = {
   },
   plugins: {
     datalabels: {
-      anchor: 'end',
+      anchor: 'center',
       align: 'center',
       color: 'blue',
       font: {
@@ -101,7 +107,7 @@ const chartOptions = {
           const index = tooltipItem.dataIndex;
           return `${labels[index]}: ${
             studentNames[index]
-          } - ${tooltipItem.raw.toLocaleString()}원`;
+          } - ${tooltipItem.raw.toLocaleString()}번`;
         },
       },
     },
@@ -161,9 +167,26 @@ const getTopThreeStudents = () => {
 
 <style scoped>
 .chart-container {
-  padding-top: 10px;
   position: relative;
-  height: 350px;
-  width: auto;
+  height: 27vh;
+  width: 398px;
+  padding-bottom:10px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
+
+.container,
+.container-fluid,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl {
+  width: 100%;
+  padding-right: var(--bs-gutter-x, 0.75rem);
+  padding-left: var(--bs-gutter-x, 0.75rem);
+  margin-right: auto;
+  margin-left: auto;
+  height:510px;
+}
+
 </style>
