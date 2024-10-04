@@ -42,6 +42,7 @@ export default {
     login() {
   console.log('로그인 시도');
   if (this.id === '20701'  && this.password === '20170928') {
+    alert('로그인을 성공했습니다');
     console.log('로그인 성공');
     this.$router.push('/student/home'); // 라우터 이동
     this.loginError = false;
