@@ -1,14 +1,24 @@
 <script setup>
+import {ref} from 'vue';
+import api from '@/api/studentStockApi';
+
 import StockChartLayout from '@/components/layouts/student/stock/StockChartLayout.vue';
 import StockNews from '@/components/layouts/student/stock/StockNews.vue';
 import StockHeld from '@/components/layouts/student/stock/StockHeld.vue'
 
 
+const newsList = ref({});
+
+const getNewsList = async () => {
+    newsList.value = await api.getNewsList();
+    console.log('NEWSLIST!!!!>>>>>>' , newsList.value);
+};
+
+getNewsList();
 </script>
 
 <template>
-    <a href="/teacher/stock">선생페이지</a>
-    <div class="container mt-3" style="width: 70vw;">
+    <div class="container mt-3" style="width: 90vw;">
         <div class="row">
             <div class="col-12">
                 <StockChartLayout />
@@ -27,3 +37,5 @@ import StockHeld from '@/components/layouts/student/stock/StockHeld.vue'
         </div>
     </div>
 </template>
+
+<style scoped></style>
