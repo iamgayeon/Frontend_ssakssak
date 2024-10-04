@@ -8,7 +8,7 @@ const router = useRouter();
   <div class="card-group">
     <div class="card">
     <router-link to="/teacher/home">
-      <img src="@/assets/images/student.png" class="card-img-top mx-auto" alt="check-img">
+      <img src="@/assets/images/student2.png" class="card-img-top mx-auto" alt="check-img">
     </router-link>
       <div class="card-body">
         <div class="card-title mb-1" style="color : #F06335">Student_management</div>
