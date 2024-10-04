@@ -15783,7 +15783,7 @@ img.fancybox-image {
   font-size: 1.125rem;
 }
 
-.default {
+/* .default {
   background-image: url("../img/patterns/001.png");
   background-repeat: repeat;
   background-attachment: fixed;
@@ -15830,7 +15830,7 @@ img.fancybox-image {
   background-repeat: repeat;
   background-attachment: fixed;
   background-position: center;
-}
+} */
 
 /* Boxed Layout */
 body.boxed {

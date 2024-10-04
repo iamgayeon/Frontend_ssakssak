@@ -33,6 +33,26 @@ export default [
         path: '/teacher/reward',
         name: 'TeacherReword',
         component: () => import('../pages/teacher/reward/TeacherRewardPage.vue'),
-      },
+    },
+    {
+      path: '/teacher/auth/login',
+      name: 'TeacherLogin',
+      component: () => import('../pages/teacher/auth/TeacherLogin.vue'),
+    },
+    {
+      path: '/teacher/auth/findid',
+      name: 'TeacherFindid',
+      component: () => import('../pages/teacher/auth/TeacherFindid.vue'),
+    },
+    {
+      path: '/teacher/auth/findpw',
+      name: 'TeacherFindpw',
+      component: () => import('../pages/teacher/auth/TeacherFindpw.vue'),
+    },
+    {
+      path: '/teacher/auth/signup',
+      name: 'TeacherSignup',
+      component: () => import('../pages/teacher/auth/TeacherSignup.vue'),
+    },
   ];
   
