@@ -80,19 +80,19 @@ const progressValue = ref(80); // 초기값을 80%로 설정
       </section>
 
       <!-- 주간 씨드 -->
-      <section class="col">
+      <section class="col" id="sec2">
         <div class="card p-3">
           <div class="card-body">
             <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
               <i class="bi bi-calendar-day text-primary lead pe-1 me-2"></i>
-              <h2 class="h4 mb-2">금주의 주간씨드</h2>
+              <h2 class="h4 mb-2">금주의 주급 씨드</h2>
             </div>
             <div class="d-flex align-items-center pb-1 mb-4">
-              <h3 class="h6 mb-0 me-3">주간씨드를 확인하고 변경해보세요!</h3>
-              <button class="btn btn-primary" style="height:30px" @click="openModal">변경하기</button>
+              <h3 class="h6 mb-0 me-3">주급을 확인하고 변경해보세요!</h3>
+              <button class="btn btn-primary" style="height:30px" @click="openModal" id="changebutton">변경하기</button>
             </div>
             <div class="d-flex align-items-center pb-2 mb-3">
-              <span class="text-mute">현재 주간씨드  :   </span>
+              <span class="text-mute">현재 주급씨드  :   </span>
               <span class="text-dark fw-bold">{{seedValue}}<img src="@/assets/images/tree1.png" class="chart-img" style="width: 20px; height: auto;"> <!-- 이미지 크기 고정 --></span>
             </div>
             <div class="alert alert-success d-flex mb-0" style="margin-top: 30px;">
@@ -138,7 +138,10 @@ const progressValue = ref(80); // 초기값을 80%로 설정
     margin-left:5px;
 }
 #sec1{
-    margin-left:20px;
+  margin-left:10px;
+}
+#sec2{
+  margin-right:0px;
 }
 .btn{
     border: none;
