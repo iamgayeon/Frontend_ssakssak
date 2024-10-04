@@ -6,18 +6,18 @@ import Treasury from './treasury.vue';
 </script>
 
 <template>
-    <div class="container mt-3" style="width: 75vw;">
+    <div class="container mt-3" style="width: 100vw;">
         <div class="row">
-            <div class="col-12 mb-6">
+            <div class="chart col-12 mb-6">
                 <StockChart />
             </div>
             <div class="col-12 mb-6">
                 <TeacherDoor />
             </div>
-            <div class="col-12 mb-6">
+            <div class="Tax col-12 mb-6">
                 <TeacherTax />
             </div>
-            <div class="col-12 mb-6">
+            <div class="col-12 mb-6" id="Treasury">
                 <Treasury />
             </div>
         </div>
@@ -26,5 +26,20 @@ import Treasury from './treasury.vue';
 </template>
 
 <style scoped>
+#Treasury{
+    margin : 0px;
+    padding: 0px;
+}
 
+.chart{
+    padding-right: 0px;
+}
+
+.Tax{
+    padding-right: 5px;
+}
+
+.btn{
+    
+}
 </style>
