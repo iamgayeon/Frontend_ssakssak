@@ -34,4 +34,19 @@ export default [
     name: 'StudentTest',
     component: () => import('../pages/student/event/MoneyPing.vue'),
   },
+  {
+    path: '/student/auth/login',
+    name: 'StudentLogin',
+    component: () => import('../pages/student/auth/StudentLogin.vue'),
+  },
+  {
+    path: '/student/auth/changepw',
+    name: 'StudentChangepw',
+    component: () => import('../pages/student/auth/StudentChangepw.vue'),
+  },
+  {
+    path: '/student/auth/findpw',
+    name: 'StudentFindpw',
+    component: () => import('../pages/student/auth/StudentFindpw.vue'),
+  },
 ];
