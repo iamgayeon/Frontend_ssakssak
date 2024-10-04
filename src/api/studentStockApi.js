@@ -10,6 +10,12 @@ export default {
         const {data} = await api.get(`${BASE_URL}/news`);
         console.log('NEWS LIST GET', data);
         return data;
-    }
+    },
+
+    async getChartData() {
+        const {data} = await api.get(`${BASE_URL}/my-stock/1`);
+        console.log('STD 1 hold stock data : ', data);
+        return data;
+    },
 };
 
