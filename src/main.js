@@ -6,6 +6,7 @@ import './assets/css/kidz.css';
 import './assets/css/theme.min.css';
 import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 
+
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import VueAwesomePaginate from "vue-awesome-paginate";
