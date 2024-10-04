@@ -12,7 +12,7 @@ const newsList = ref({});
 const getNewsList = async () => {
     newsList.value = await api.getNewsList();
     console.log('NEWSLIST!!!!>>>>>>' , newsList.value);
-}
+};
 
 getNewsList();
 </script>
