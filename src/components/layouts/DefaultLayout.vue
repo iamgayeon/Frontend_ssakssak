@@ -1,16 +1,40 @@
 <script setup>
 import Header from './Header.vue';
-import NavBar from './TeacherNavBar.vue';
-// import NavBar from './StudentNavBar.vue';
+import TeacherNavBar from './TeacherNavBar.vue';
+import StudentNavBar from './StudentNavBar.vue';
 import Footer from './StudentFooter.vue';
 // import Footer from './TeacherFooter.vue';
+import { isAuthenticated } from '@/util/guards';
+import { ref, watch } from 'vue';
+
+const auth = isAuthenticated();
+const role = ref("");
+watch(
+  () => auth.roles,
+  (roles) => {
+    if (Array.isArray(roles)) {
+      if (roles.includes("ROLE_TEACHER")) {
+        role.value = "ROLE_TEACHER";
+      } else if (roles.includes("ROLE_STUDENT")) {
+        role.value = "ROLE_STUDENT";
+      } else {
+        role.value = "";
+      }
+    } else {
+      role.value = ""; // 로그아웃 시 역할 초기화
+    }
+  },
+  { immediate: true } // 즉시 watch 시작
+);
+
 </script>
 
 <template>
   <div id="container">
     <Header />
-    <NavBar />
-    <div :style="{backgroundColor : '#f8f6e9'}" class="content">
+    <TeacherNavBar v-if="role === 'ROLE_TEACHER'" />
+    <StudentNavBar v-if="role === 'ROLE_STUDENT'" />
+    <div :style="{ backgroundColor: '#f8f6e9' }" class="content">
       <slot></slot>
     </div>
     <Footer />
@@ -18,13 +42,9 @@ import Footer from './StudentFooter.vue';
 </template>
 
 <style scoped>
-#container{
-  display:flex;
+#container {
+  display: flex;
   flex-direction: column;
-  width:100vw;
-  
-
+  width: 100vw;
 }
 </style>
-
-
