@@ -65,4 +65,9 @@ export default [
     component: () => import("../pages/teacher/auth/TeacherSignup.vue"),
     meta: { requiresAuth: false },
   },
+  {
+    path: "/teacher/alarm",
+    component: () => import("../pages/alarm/Alarm.vue"),
+    meta: { requiresAuth: false },
+  },
 ];

@@ -72,6 +72,11 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
               <span>리워드관리</span>
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/teacher/alarm">
+              <span>알림페이지</span>
+            </router-link>
+          </li>
         </ul>
       </div>
     </div>
