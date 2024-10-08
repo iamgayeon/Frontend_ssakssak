@@ -11,8 +11,8 @@
           </div>
 
           <div class="tax-footer" style="margin-top : 15px">
-            <button type="button" class="btn btn-warning" style="margin-right : 15px">세금 확인</button>
-            <button type="button" class="btn btn-warning">세율 변경</button>
+            <button type="button" class="btn btn-warning" style="margin-right : 15px"  @click="openTaxModal">세금 확인</button>
+            <button type="button" class="btn btn-warning"  @click="openTaxRateModal">세율 변경</button>
           </div>
         </div>
         </div>
@@ -24,13 +24,300 @@
         </div>
 
         <div class="saving-footer" style="margin-top : 40px">
-          <button type="button" class="btn btn-primary" id="savingbtn" style="margin-right : 15px">세금 확인</button>
-          <button type="button" class="btn btn-danger" id="saving2btn">세율 변경</button>
+          <router-link to="/teacher/bank"><button type="button" class="btn btn-primary" id="savingbtn" style="margin-right : 15px">예적금 상품 확인</button>
+          </router-link>
+          <button type="button" class="btn btn-danger" id="saving2btn" @click="openModal">예적금 상품 변경</button>
         </div>
       </div>
     </div>
   </div>
+
+  <div>
+
+    <div>
+        <!-- 모달 창 -->
+        <div v-if="isModalOpen" class="modal">
+          <div class="modal-content">
+            
+            <!-- 모달 내용 -->
+            <h4 class="no-bold">새 적금 등록하기</h4>
+            <form @submit.prevent="submitForm" class="form-grid">
+              
+              <!-- 적금 이름 -->
+              <div class="form-group">
+                <label for="saving-name">적금이름 <span class="required-asterisk">*</span></label>
+                <input type="text" id="saving-name" v-model="savingName" placeholder="적금이름을 입력해주세요.">
+              </div>
+
+              <!-- 기본 금리 -->
+              <div class="form-group">
+                  <label for="basic-rate">기본금리(숫자만 입력)<span class="required-asterisk">*</span></label>
+                  <input type="text" id="basic-rate" v-model="basicRate" placeholder="기본 금리를 입력해주세요.">
+              </div>
+
+              <!-- 상품 특징 -->
+              <div class="form-group">
+                  <label for="saving-point">상품특징<span class="required-asterisk">*</span></label>
+                  <input type="text" id="saving-point" v-model="savingPoint" placeholder="상품특징을 입력해주세요.">
+              </div>
+
+              <!-- 가입 대상 -->
+              <div class="form-group">
+                  <label for="saving-person">가입대상<span class="required-asterisk">*</span></label>
+                  <input type="text" id="saving-person" v-model="savingPerson" placeholder="가입대상을 입력해주세요.">
+              </div>
+
+              <!-- 예치 기간 -->
+              <div class="form-group">
+                <label for="period">예치기간 <span class="required-asterisk">*</span></label>
+                <select id="period" v-model="period" placeholder="예치 기간을 선택해주세요">
+                  <option value="2주">2주</option>
+                  <option value="4주">4주</option>
+                  <option value="8주">8주</option>
+                </select>
+              </div>
+    
+              <!-- 입금 주기 -->
+              <div class="form-group">
+                <label for="frequency">입금 주기 <span class="required-asterisk">*</span></label>
+                <select id="frequency" v-model="frequency" placeholder="입금 주기를 선택해주세요">
+                  <option value="1일">1일</option>
+                  <option value="1주">1주</option>
+                </select>
+              </div>
+    
+              <!-- 최대 입금 금액 -->
+              <div class="form-group">
+                <label for="max-amount">최대 입금 금액(숫자만 입력)<span class="required-asterisk">*</span></label>
+                <input type="text" id="max-amount" v-model="maxAmount" placeholder="최대 입금 금액을 설정해주세요">
+              </div>
+    
+              <!-- 우대 금리 설정 -->
+              <div class="form-group">
+                <label for="extra-rate">우대 금리 설정(숫자만 입력)</label>
+                <input type="text" id="extra-rate" v-model="extraRate" placeholder="우대 금리를 설정해주세요">
+              </div>
+    
+              <!-- 우대 금리 직업 -->
+              <div class="form-group">
+                  <label for="selected-Jobs">우대 금리 직업 (최대 4개 선택 가능)</label>
+                  <div class="job-list">
+                  <label v-for="job in jobs" :key="job.name">
+                      <input 
+                      type="checkbox" 
+                      :value="job.name" 
+                      v-model="selectedJobs" 
+                      :disabled="selectedJobs.length >= 4 && !selectedJobs.includes(job.name)" 
+                      /> 
+                      {{ job.name }}
+                  </label>
+                  </div>
+              </div>
+
+              <!-- 선택한 직업 리스트 -->
+              <div class="form-group">
+                  <label for="selected-Jobslist">선택된 우대 금리 직업</label>
+                  <ul>
+                    <li v-for="job in selectedJobs" :key="job">{{ job }}</li>
+                  </ul>
+              </div>
+
+              <!-- 등록 및 취소 버튼 -->
+              <div class="form-group full-width button-group">
+                <button type="submit" class="submit-button">등록</button>
+                <button type="button" @click="closeModal" class="cancel-button">취소</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- 완료 모달 -->
+      <div v-if="isCompleted" class="complete-modal">
+          <div class="modal-content">
+              <p>적금 설정이 완료되었어요</p>
+              <button @click="closeCompleteModal" class="confirm-button">확인</button>
+          </div>
+      </div>
+      <!-- 경고 모달 -->
+      <div v-if="showWarningModal" class="complete-modal">
+          <div class="modal-content">
+          <p>필수 정보를 모두 입력해주세요</p>
+          <button @click="closeWarningModal" class="confirm-button">확인</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- 세금 확인 모달 창 -->
+  <div v-if="isTaxModalOpen" class="tax-modal">
+    <div class="tax-modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">이번 주 우리반 세금 확인</h4>
+        <button class="close-button" @click="closeTaxModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="seedValue">이번주 우리반 적립된 세금은?</label>
+        <input type="text" id="seedValue" v-model="currentWeekTax" class="input-field"/>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" @click="closeTaxModal">닫기</button>
+      </div>
+    </div>
+  </div>
+
+
+   <!-- 세율 변경 모달 창 -->
+   <div v-if="isTaxRateModalOpen" class="tax-modal">
+    <div class="tax-modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">세율 변경하기</h4>
+        <button class="close-button" @click="closeTaxRateModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="newTaxRate">새로운 세율 값:</label>
+        <input type="number" id="newTaxRate" v-model="newTaxRate" class="input-field" placeholder="세율 값을 입력하세요" />
+      </div>
+      <div class="modal-footer">
+        <button class="confirm-button" @click="updateTaxRate">저장</button>
+      </div>
+    </div>
+  </div>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+
+// 모달 및 폼 상태 관리
+const isModalOpen = ref(false);
+const isCompleted = ref(false);
+const showWarningModal = ref(false);
+const selectedJobs = ref([]);
+
+// 적금 데이터
+const savings = ref([
+]);
+
+// 새 적금 데이터
+const savingName = ref('');
+const period = ref('');
+const frequency = ref('');
+const basicRate = ref('');
+const maxAmount = ref('');
+const extraRate = ref('');
+const savingPoint = ref('');
+const savingPerson = ref('');
+
+const jobs = ref([
+  { name: "회사원" },
+  { name: "경찰" },
+  { name: "낙농협회장" },
+  { name: "환경미화원" },
+  { name: "우체부" },
+  { name: "사서" },
+  { name: "통계청장" },
+  { name: "한국전력공사대표" }
+]);
+
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+
+const submitForm = () => {
+  if (!savingName.value || !period.value || !frequency.value || !basicRate.value || !maxAmount.value || !savingPoint.value || !savingPerson.value) {
+    showWarningModal.value = true;
+  } else {
+    savings.value.push({
+      name: savingName.value,
+      basicRate: basicRate.value,
+      extraRate: extraRate.value,
+      point: savingPoint.value,
+      person: savingPerson.value,
+      period: period.value,
+      maxAmount: maxAmount.value,
+      image: "/public/safeimage.png" // 기본 이미지 추가
+    });
+    isModalOpen.value = false;
+    isCompleted.value = true;
+  }
+};
+
+const closeCompleteModal = () => {
+  isCompleted.value = false;
+};
+
+const closeWarningModal = () => {
+  showWarningModal.value = false;
+};
+
+const deleteSaving = (name) => {
+  savings.value = savings.value.filter((saving) => saving.name !== name);
+};
+
+const handleJobSelection = (job) => {
+  if (selectedJobs.value.length >= 4 && !selectedJobs.value.includes(job)) {
+    return;
+  }
+  selectedJobs.value = selectedJobs.value.includes(job)
+    ? selectedJobs.value.filter(j => j !== job)
+    : [...selectedJobs.value, job];
+};
+
+
+
+// 모달 상태 관리
+const isTaxModalOpen = ref(false);
+
+// 이번 주 세금 데이터
+const currentWeekTax = ref(0);
+
+// 세금 데이터 예시 (주별 데이터)
+const taxDetails = ref([
+  { id: 1, week: '1주차', amount: 5000 },
+  { id: 2, week: '2주차', amount: 7000 },
+  { id: 3, week: '이번 주', amount: 8000 } // 이번 주 데이터
+]);
+
+// 세금 확인 모달 열기
+const openTaxModal = () => {
+  const currentWeek = taxDetails.value.find(tax => tax.week === '이번 주');
+  if (currentWeek) {
+    currentWeekTax.value = currentWeek.amount;
+  }
+  isTaxModalOpen.value = true;
+};
+
+// 세금 확인 모달 닫기
+const closeTaxModal = () => {
+  isTaxModalOpen.value = false;
+};
+
+
+
+// 세율 변경 모달 상태 관리
+const isTaxRateModalOpen = ref(false);
+const newTaxRate = ref(0); // 세율 초기값
+
+// 세율 변경 모달 열기
+const openTaxRateModal = () => {
+  isTaxRateModalOpen.value = true;
+};
+
+// 세율 변경 모달 닫기
+const closeTaxRateModal = () => {
+  isTaxRateModalOpen.value = false;
+};
+
+// 세율 업데이트 로직
+const updateTaxRate = () => {
+  console.log("새로운 세율: ", newTaxRate.value);
+  // 서버에 세율 업데이트 요청 로직 추가
+  closeTaxRateModal();
+};
+</script>
+
 
 <style scoped>
 .card-container {
@@ -123,4 +410,262 @@
   background-color: #EF5858;
   width:180px;
 }
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* 배경 반투명 설정 */
+  }
+
+  .modal-content {
+      background-color: #fff;
+      text-align: center;
+      padding: 20px;
+      border-radius: 10px;
+      width: 500px;
+      max-width: 80%; /* 화면이 작은 경우에 대비한 최대 너비 */
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .close:hover, .close:focus {
+    color: #000;
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .full-width {
+    grid-column: span 2;
+  }
+  
+  label {
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  
+  input, select {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 120px;
+  }
+  
+  .submit-button {
+    background-color: #00a3ff;
+    color: white;
+    width: 100px;
+    padding: 10px 0;  /* 버튼 높이를 설정 */
+    text-align: center;  /* 텍스트를 가운데 정렬 */
+  }
+  
+  .cancel-button {
+    background-color: #ef5858;
+    color: white;
+    width: 100px;  
+    padding: 10px 0;  /* 버튼 높이를 설정 */
+    text-align: center;  /* 텍스트를 가운데 정렬 */
+  }
+  
+  .form-group div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: center;  /* 버튼들을 양 끝으로 배치 */
+    align-items: center;  /* 버튼을 수직 중앙에 맞춤 */
+    width: 100%;  /* 부모 컨테이너의 전체 너비를 차지 */
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  .multiselect {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .required-asterisk {
+    color: red;  /* 빨간색으로 표시 */
+  }
+
+  .complete-modal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+  }
+  .confirm-button {
+      background-color: #00a3ff;
+      color: white;
+      width: 80px;
+      padding: 10px 0;
+      text-align: center;
+      margin: 0 auto;  /* 버튼을 중앙에 정렬하기 위해 margin을 auto로 설정 */
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;  /* 텍스트를 중앙에 정렬 */
+      align-items: center;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+  }
+  .input-group-text {
+      background-color: #f1f1f1;
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 0 4px 4px 0; /* 오른쪽 모서리만 둥글게 */
+      margin-left: -1px; /* input과 겹쳐지지 않게 함 */
+  }
+
+  .no-bold {
+      font-weight: normal; /* 폰트 두께를 기본(normal)으로 설정하여 볼드체를 제거 */
+      margin-bottom: 20px;
+      margin-top: 10px;
+  }
+ 
+  
+ /* 모달 배경 스타일 */
+ .tax-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.tax-modal-content {
+  background-color: #fff;
+  border-radius: 15px;
+  width: 400px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #999;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.modal-body {
+  margin-bottom: 20px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-button, .confirm-button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+.confirm-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #45a049;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 </style>
+
+
