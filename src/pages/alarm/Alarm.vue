@@ -3,7 +3,7 @@
         <h2 class="text-center p-3 bg-light border rounded">알람 페이지</h2>
         <ul class="list-group">
             <li v-for="(alarm, idx) in alarms" :key="idx" class="list-group-item mb-1 alarm-item" @click="checkAlarm(alarm.id, idx)">
-                {{ alarm.type }}
+                {{ alarm.message }}
             </li>
         </ul>
     </div>
@@ -40,7 +40,6 @@ const fetchAlarmHistory = async () => {
 
 }
 
-
 const getTeacherProfile = async () => {
     // 여기서 store를 사용하여 로그인한 사용자의 정보를 가져옴
     const store = useAuthStore();
@@ -68,7 +67,7 @@ onMounted(() => {
     eventSource.addEventListener('alarm', (event) => {
         const message = event.data;
         console.log(message);
-        alarms.value = [...alarms.value, { type: message }];
+        alarms.value = [...alarms.value, { message: message }];
     });
 
     eventSource.onerror = (error) => {
