@@ -2,9 +2,9 @@
   <div class="header">
     <!-- 알림 버튼 -->
     <div class="notification" @click="toggleNotificationModal">
-      <i class="bi bi-bell-fill"></i>
+      <i class="bi bi-bell-fill" :style="alarmColor ? 'color:green;' : 'color:white;'"></i>
     </div>
-    
+
     <!-- 환영 메시지 -->
     <div class="welcome" v-if="isLogin">
       {{ name }} 환영합니다!
@@ -19,16 +19,15 @@
     <div v-if="isNotificationModalOpen" class="modal-overlay" @click.self="toggleNotificationModal">
       <div class="modal-content">
         <div class="modal-body">
-          <!-- 알림 목록을 가로로 채우기 -->
           <div class="notifications-container">
             <ul>
-              <li v-for="notification in notifications" :key="notification.id" class="notification-item">
+              <li v-for="(alarm, idx) in alarms" :key="idx" class="notification-item"
+                @click="checkAlarm(alarm.id, idx)">
                 <i class="bi bi-info-circle-fill"></i>
                 <div>
-                  <p>{{ notification.message }}</p>
-                  <small>{{ notification.time }}</small> <!-- 시간 부분을 검정색으로 수정 -->
+                  <p>{{ alarm.message }}</p>
+                  <!-- <small>{{ notification.time }}</small> 시간 부분을 검정색으로 수정 -->
                 </div>
-                <button @click="deleteNotification(notification.id)" class="delete-btn">삭제</button>
               </li>
             </ul>
           </div>
@@ -41,8 +40,9 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 // 스토어와 라우터 설정
 const router = useRouter();
@@ -54,13 +54,6 @@ const isLogin = computed(() => store.isLogin);
 
 // 알림 모달 열림/닫힘 상태
 const isNotificationModalOpen = ref(false);
-
-// 알림 목록 (예시 데이터)
-const notifications = ref([
-  { id: 1, message: '새로운 과제가 있습니다.', time: '23분 전' },
-  { id: 2, message: '수업이 곧 시작됩니다.', time: '32분 전' },
-  { id: 3, message: '새로운 알림이 도착했습니다.', time: '23시간 전' }
-]);
 
 // 알림 모달 열기/닫기
 const toggleNotificationModal = () => {
@@ -77,6 +70,84 @@ const logout = () => {
   store.logout();
   router.push('/');
 };
+
+
+const alarms = ref([]);
+const alarmColor = ref(false);
+let eventSource;
+
+const TeacherProfile = ref({
+  usernmae: '',
+});
+
+const fetchAlarmHistory = async () => {
+  try {
+    const teacher = await getTeacherProfile();
+
+    const response = await axios.get(`/api/alarm/history`, {
+      params: {
+        username: teacher.username,
+      }
+    });
+
+    console.log(response.status);
+    if (response.status === 204) {
+      console.log("no Alarm List");
+      alarmColor.value = false;
+      alarms.value = [];
+    } else {
+      alarmColor.value = true;
+      alarms.value = response.data;
+    }
+
+  } catch (error) {
+    console.error('Failed : ', error);
+  }
+
+}
+
+const getTeacherProfile = async () => {
+  const store = useAuthStore();
+  TeacherProfile.username = store.username;
+  return TeacherProfile;
+};
+
+const checkAlarm = async (id, idx) => {
+  try {
+    const response = await axios.post(`/api/alarm/checked/` + id);
+    alarms.value.splice(idx, 1);
+    console.log(alarms.value.length);
+    if(alarms.value.length === 0) {
+      alarmColor.value = false;
+    }
+  } catch (error) {
+    console.error("Failed checked alarm", error);
+  }
+};
+
+onMounted(() => {
+
+  fetchAlarmHistory();
+
+  const usertId = 1;
+  eventSource = new EventSource(`/api/alarm/subscribe/${usertId}`);
+
+  eventSource.addEventListener('alarm', (event) => {
+    const alarm = JSON.parse(event.data);
+    alarms.value = [...alarms.value, { id: alarm.id, message: alarm.message }];
+    alarmColor.value = true;
+  });
+
+  eventSource.onerror = (error) => {
+    console.error("Error with SSE connection", error);
+  };
+});
+
+onUnmounted(() => {
+  if (eventSource) {
+    eventSource.close();
+  }
+})
 </script>
 
 <style scoped>
@@ -132,7 +203,8 @@ const logout = () => {
   background-color: white;
   border-radius: 15px;
   padding: 20px;
-  width: 600px;  /* 모달 창 너비 수정 */
+  width: 600px;
+  /* 모달 창 너비 수정 */
   text-align: center;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   position: relative;
@@ -144,7 +216,8 @@ const logout = () => {
 }
 
 .notifications-container {
-  width: 100%; /* 알림 목록이 가로로 꽉 차도록 설정 */
+  width: 100%;
+  /* 알림 목록이 가로로 꽉 차도록 설정 */
 }
 
 .notification-item {
@@ -159,7 +232,8 @@ const logout = () => {
 
 .notification-item i {
   margin-right: 10px;
-  color: #28a745; /* 아이콘 색상을 초록색으로 설정 */
+  color: #28a745;
+  /* 아이콘 색상을 초록색으로 설정 */
 }
 
 .notification-item p {
@@ -167,7 +241,8 @@ const logout = () => {
 }
 
 .notification-item small {
-  color: black; /* 시간 글씨를 검정색으로 설정 */
+  color: black;
+  /* 시간 글씨를 검정색으로 설정 */
 }
 
 .notification-item:hover {
