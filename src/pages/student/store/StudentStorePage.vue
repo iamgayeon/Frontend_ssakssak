@@ -55,9 +55,9 @@ const coupons = ref([
     }
 ]);
 
-const couponBuy = () => {
-    
-} 
+// const buyCoupon = async () => {
+//     const c
+// } 
 
 </script>
 
@@ -65,7 +65,7 @@ const couponBuy = () => {
     <div class="container mt-5">
         <div class="row g-0">
             <div class="col-12 col-md-6 col-lg-4 mb-4" v-for="(coupon, idx) in coupons" :key="idx">
-                <StoreItem :coupon="coupon" @couponBuy="couponBuy"  />
+                <StoreItem :coupon="coupon" @couponBuy="buyCoupon"  />
             </div>
         </div>
     </div>
