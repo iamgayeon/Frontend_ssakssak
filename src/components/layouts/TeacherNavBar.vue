@@ -72,22 +72,16 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
               <span>리워드관리</span>
             </router-link>
           </li>
-          <li class="nav-item">
-            <router-link class="nav-link" to="/teacher/alarm">
-              <span>알림페이지</span>
-            </router-link>
-          </li>
         </ul>
       </div>
     </div>
   </nav>
 </template>
 
-<!-- Custom CSS -->
 <style scoped>
 .navbar {
-  display:flex;
-  width: 100%; /* 가로 전체를 채우도록 설정 */
+  display: flex;
+  width: 100%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -98,7 +92,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
   font-weight: bold;
   color: #333;
   transition: color 0.3s ease;
-  width:100%;
+  width: 100%;
 }
 
 .nav-link i {
