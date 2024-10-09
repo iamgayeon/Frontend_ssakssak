@@ -13,30 +13,29 @@
       </div>
     </div>
 
-    <!-- 우측 주식 뉴스 섹션 -->
-    <div class="news-card">
-      <h3>주식 뉴스</h3>
-      <div class="news-content">
-        <ul class="list-group">
-          <li class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-center"
-              v-for="(news, idx) in newsData" :key="idx"
-              style="border-bottom: 1px solid rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
-            <span class="fw-semibold">{{ news.title }}</span>
-            <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteNews(news.title)">
-              <i class="bi bi-trash"></i>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
+<!-- 우측 주식 뉴스 섹션 -->
+<div class="news-card">
+  <h3>주식 뉴스</h3>
+  <div class="news-content">
+    <ul class="list-group">
+      <li class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-center"
+          v-for="(news, idx) in newsData" :key="idx"
+          style="border-bottom: 1px solid rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
+        <span class="fw-semibold">{{ news.title }}</span>
+        <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteNews(news.title)">
+          <i class="bi bi-trash"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
 
-    <!-- 새 뉴스 생성 모달 -->
-    <StockCreateNewsModal v-if="isCreateModal" @submitForm="handleFormSubmit" @close="openCreateModal"/>
+    
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import StockCreateNewsModal from '@/components/layouts/student/stock/StockNewsCreate.vue';
 import classIcon from '@/assets/images/class_ico.gif'
 import stuIcon from '@/assets/images/stu_ico.gif'
@@ -47,7 +46,7 @@ import reward1 from '@/assets/images/reward1_ico.gif'
 import reward2 from '@/assets/images/reward2_ico.gif'
 
 // 외부 데이터 파일에서 주식 뉴스 데이터 가져오기
-import { newsData as initialNewsData } from '@/api/newData.js';
+import api from '@/api/studentStockApi.js';
 
 // 서비스 데이터
 const services = ref([
@@ -61,12 +60,28 @@ const services = ref([
 ]);
 
 // 주식 뉴스 데이터
-const newsData = ref([...initialNewsData]); // 초기 뉴스 데이터를 불러와서 사용
+const newsData = ref([]); // 빈 배열로 초기화
+
+// API에서 뉴스 데이터를 불러오기
+const fetchNewsData = async () => {
+  try {
+    const data = await api.getNewsList();
+    newsData.value = data;
+  } catch (error) {
+    console.error("뉴스 데이터를 가져오는 중 오류 발생: ", error);
+  }
+};
+
+// 컴포넌트가 마운트될 때 뉴스 데이터를 가져옴
+onMounted(() => {
+  fetchNewsData();
+});
 
 // 새 뉴스 삭제
 const deleteNews = (title) => {
   newsData.value = newsData.value.filter(news => news.title !== title);
-}
+};
+
 
 // 새 뉴스 생성 모달 관련 상태
 const isCreateModal = ref(false);
