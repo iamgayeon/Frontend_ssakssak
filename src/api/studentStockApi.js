@@ -10,6 +10,19 @@ export default {
         const {data} = await api.get(`${BASE_URL}/news`);
         console.log('NEWS LIST GET', data);
         return data;
+    },
+
+    async updateNewsStatus(newsId) {
+        try {
+            const response = await api.put(`${BASE_URL}/news/${newsId}/status`, {
+                status: 'n',
+            });
+            console.log('News status updated:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Error updating news status:', error);
+            throw error;
+        }
     }
 };
 

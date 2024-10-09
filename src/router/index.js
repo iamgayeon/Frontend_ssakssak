@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "../pages/Home.vue";
+import HomeLoginPage from "../pages/HomeLogin.vue";
 import authRotes from "./auth";
 import boardRotes from "./board";
 import galleryRoutes from "./gallery";
@@ -14,6 +15,12 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomePage,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: "/login",
+      name: "homeLogin",
+      component: HomeLoginPage,
       meta: { requiresAuth: false },
     },
     ...authRotes,
