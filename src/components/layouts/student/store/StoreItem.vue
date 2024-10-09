@@ -1,13 +1,12 @@
 <script setup>
 import StoreItemDetails from './StoreItemDetails.vue';
-import { computed, ref } from 'vue';
-
+import { ref } from 'vue';
 
 const isShow = ref(false);
 
 const showModal = () => {
     isShow.value = !isShow.value;
-}
+};
 
 const props = defineProps({
     coupon: {
@@ -19,7 +18,7 @@ const props = defineProps({
 const emit = defineEmits(['couponBuy']);
 
 const couponBuy = () => {
-    emit('couponBuy');
+    emit('couponBuy', props.coupon);
 };
 </script>
 
@@ -29,19 +28,21 @@ const couponBuy = () => {
             <div class="card-body align-items-center">
                 <div class="row">
                     <div class="imgBox">
-                        <img src="@/assets/images/coupon.png" alt="노래 부르기 쿠폰 이미지">
+                        <img src="@/assets/images/coupon.png" alt="쿠폰 이미지">
                     </div>
                 </div>
 
                 <div class="row">
                     <span class="d-block mt-2 text-muted fs-6">쿠폰</span>
                     <div class="mb-2">
-                        <span class="fs-5 fw-bold d-block coupon-name">{{ coupon.name }}</span>
+                        <span class="fs-5 fw-bold d-block coupon-name">{{ coupon.cpName }}</span>
                     </div>
                     <div class="mb-4">
-                        <span class="fs-5 fw-semibold primary">{{ coupon.price }} 씨드</span>
+                        <span class="fs-5 fw-semibold primary">{{ coupon.cpPrice }} 씨드</span>
                     </div>
-
+                    <div class="mb-4">
+                        <span class="fs-6 text-muted">남은 수량: <span class="fw-bold">{{ coupon.cpQuantity }}</span></span>
+                    </div>
 
                     <div>
                         <button class="btn btn-primary btn-lg w-100" @click="showModal">상세보기</button>
@@ -52,10 +53,14 @@ const couponBuy = () => {
 
     </div>
 
-    <StoreItemDetails v-if="isShow" :coupon="coupon" @close="showModal" @couponBuy="couponBuy" />
-
+    <StoreItemDetails 
+        v-if="isShow" 
+        :couponId="coupon.cpId" 
+        :coupon="coupon" 
+        @close="showModal" 
+        @couponBuy="couponBuy" 
+    />
 </template>
-
 
 <style scoped>
 .container {
@@ -81,9 +86,9 @@ const couponBuy = () => {
 }
 
 .coupon-name {
-  white-space: nowrap; /* 한 줄로 표시 */
-  overflow: hidden; /* 넘치는 부분 숨김 */
-  text-overflow: ellipsis; /* 말줄임표(...) 추가 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .primary {
@@ -94,7 +99,6 @@ const couponBuy = () => {
     top: 4px;
 }
 
-
 .btn-primary {
     background-color: #00A3FF;
     border-color: #00A3FF;
@@ -103,18 +107,10 @@ const couponBuy = () => {
 .btn-outline-primary {
     color: #00A3FF;
     border-color: #00A3FF;
-    --ar-btn-hover-bg: white;
-
 }
 
 .btn-outline-primary:hover {
     color: white;
     background-color: #00A3FF;
-}
-
-
-.btn-outline-primary:after {
-    background-color: #ffffff;
-    color: #00A3FF;
 }
 </style>

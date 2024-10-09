@@ -1,44 +1,82 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
+import api from '@/api/studentStoreApi';
 
-const quantity = ref('0');
-const price = ref('300');
+const quantity = ref(1);
+const price = ref(0);
 const isShow = ref(false);
+const confirmModal = ref(false);
+const purchaseCompleteModal = ref(false);
+const couponDetails = ref({});
+
+const props = defineProps({
+    couponId: {
+        type: Number,
+        required: true
+    }
+});
+
+const getCouponDetails = async () => {
+    if (!props.couponId) {
+        console.error('Invalid coupon ID:', props.couponId);
+        return; 
+    }
+    
+    try {
+        const response = await api.getCouponById(props.couponId);
+        couponDetails.value = response;
+        price.value = couponDetails.value.cpPrice;
+        console.log('Coupon Details:', couponDetails.value);
+    } catch (error) {
+        console.error('Failed to fetch coupon details:', error);
+    }
+};
 
 const showModal = () => {
     isShow.value = !isShow.value;
-}
+};
+
+const openConfirmModal = () => {
+    confirmModal.value = true;
+};
+
+const closeConfirmModal = () => {
+    confirmModal.value = false;
+};
+
+const closePurchaseCompleteModal = () => {
+    purchaseCompleteModal.value = false;
+};
 
 const minusQuantity = () => {
-    if (quantity.value > 0) {
+    if (quantity.value > 1) {
         quantity.value--;
     }
-}
+};
 
 const plusQuantity = () => {
     quantity.value++;
-}
+};
 
 const totalPrice = computed(() => {
     return quantity.value * price.value;
-})
+});
 
 const emit = defineEmits(['close', 'couponBuy']);
 
 const close = () => {
     emit('close');
-}
+};
 
-const props = defineProps({
-    coupon: {
-        type: Object,
-        required: true
-    }
-})
+const confirmBuy = () => {
+    emit('couponBuy', { couponId: props.couponId, quantity: quantity.value });
+    closeConfirmModal();
+    purchaseCompleteModal.value = true;
+};
 
-const couponBuy = () => {
-    emit('couponBuy', quantity.value);
-}
+onMounted(() => {
+    getCouponDetails();
+});
 </script>
 
 <template>
@@ -47,7 +85,7 @@ const couponBuy = () => {
             <div class="row card-body align-items-start p-2">
                 <div class="col-4 mt-2">
                     <div class="imgBox">
-                        <img src="@/assets/images/coupon.png" alt="노래 부르기 쿠폰 이미지">
+                        <img src="@/assets/images/coupon.png" alt="쿠폰 이미지">
                     </div>
                 </div>
 
@@ -57,17 +95,15 @@ const couponBuy = () => {
                         <button class="btn btn-outline-secondary text-center" @click="close"><i class="bi bi-x-lg"></i></button>
                     </div>
                     <div>
-                        <span class="d-block fs-5 fw-bold">{{coupon.name}}</span>
+                        <span class="d-block fs-5 fw-bold">{{ couponDetails.cpName }}</span>
                     </div>
                     <div class="text-end mb-2">
-                        <span class="fs-5 fw-semibold primary">{{ coupon.price }} 씨드</span>
+                        <span class="fs-5 fw-semibold primary">{{ couponDetails.cpPrice }} 씨드</span>
                     </div>
                     <div>
-                        {{ coupon.description }}
+                        {{ couponDetails.cpContent }}
                     </div>
-                    <div class="mb-4">
-
-                    </div>
+                    <div class="mb-4"></div>
 
                     <div class="mb-3 d-flex justify-content-between">
                         <div class="d-flex">
@@ -75,18 +111,38 @@ const couponBuy = () => {
                             <input type="text" class="form-control text-center fs-6 fw-semibold" v-model="quantity">
                             <button class="button cyan small fs-5" @click="plusQuantity">+</button>
                         </div>
-                        <div class="fs-4 fw-semibold text-danger"><span>{{ totalPrice }} 씨드</span>
+                        <div class="fs-4 fw-semibold text-danger">
+                            <span>{{ totalPrice }} 씨드</span>
                         </div>
                     </div>
                     <div class="text-end">
-                        <button class="btn btn-primary" @click="couponBuy">구매하기</button>
+                        <button class="btn btn-primary" @click="openConfirmModal">구매하기</button>
                     </div>
                     
                 </div>
             </div>
         </div>
-
     </div>
+
+    <div v-if="confirmModal" class="confirm-modal">
+        <div class="confirm-container shadow-lg p-4">
+            <p class="fs-5 fw-semibold">정말로 구매하시겠습니까?</p>
+            <div class="d-flex justify-content-center mt-3" style="gap: 10px;">
+                <button class="btn btn-primary" @click="confirmBuy">구매</button>
+                <button class="btn btn-secondary" @click="closeConfirmModal">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="purchaseCompleteModal" class="confirm-modal">
+        <div class="confirm-container shadow-lg p-4">
+            <p class="fs-5 fw-semibold">구매가 완료되었습니다!</p>
+            <div class="d-flex justify-content-center mt-3">
+                <button class="btn btn-primary" @click="closePurchaseCompleteModal">확인</button>
+            </div>
+        </div>
+    </div>
+
 </template>
 
 <style scoped>
@@ -100,7 +156,6 @@ const couponBuy = () => {
     z-index: 10;
 }
 
-/* modal or popup */
 .modal-container {
     position: relative;
     top: 50%;
@@ -111,6 +166,27 @@ const couponBuy = () => {
     border-radius: 10px;
     padding: 20px;
     box-sizing: border-box;
+}
+
+.confirm-modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 11;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirm-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 400px;
 }
 
 .imgBox {
@@ -147,38 +223,6 @@ const couponBuy = () => {
     top: 4px;
 }
 
-.button.green {
-    background-color: #9abf7f;
-}
-
-.button.green {
-    box-shadow: 0px 4px 0px #87a86f;
-}
-
-.button.green:active {
-    box-shadow: 0 0 #87a86f;
-    background-color: #87a86f;
-}
-
-.custom-btn {
-    width: 30px;
-    height: 40px;
-    color: #fff;
-    border-radius: 5px;
-    padding: 10px 25px;
-    font-family: 'Lato', sans-serif;
-    font-weight: 500;
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    display: inline-block;
-    box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5),
-        7px 7px 20px 0px rgba(0, 0, 0, .1),
-        4px 4px 5px 0px rgba(0, 0, 0, .1);
-    outline: none;
-}
-
 .cyan {
     background-color: #7fccde;
     box-shadow: 0px 4px 0px #73B9C9;
@@ -189,47 +233,14 @@ const couponBuy = () => {
     background-color: #70B4C4;
 }
 
-/* 1 */
-.btn-1 {
-    background: rgb(6, 14, 131);
-    background: linear-gradient(0deg, rgba(6, 14, 131, 1) 0%, rgba(12, 25, 180, 1) 100%);
-    border: none;
-}
-
-.btn-1:hover {
-    background: rgb(0, 3, 255);
-    background: linear-gradient(0deg, rgba(0, 3, 255, 1) 0%, rgba(2, 126, 251, 1) 100%);
-}
-
-.primary {
-    color: #00A3FF;
-}
-
-.btn:active {
-    top: 4px;
-}
-
-
 .btn-primary {
     background-color: #00A3FF;
     border-color: #00A3FF;
 }
 
-.btn-outline-primary {
-    color: #00A3FF;
-    border-color: #00A3FF;
-    --ar-btn-hover-bg: white;
-
-}
-
-.btn-outline-primary:hover {
-    color: white;
-    background-color: #00A3FF;
-}
-
-
-.btn-outline-primary:after {
-    background-color: #ffffff;
-    color: #00A3FF;
+.btn-secondary {
+    color: #fff;
+    background-color: #EF5858;
+    border-color: #EF5858;
 }
 </style>
