@@ -1,7 +1,11 @@
 <template>
     <div class="card-container">
       <router-link to="/student/profile" class="card">
-        <div class="card-img-overlay"></div>
+        <div class="card-img-overlay">
+          <span class="overlay-text1">{{ firstPlaceStudent }}</span>
+          <span class="overlay-text2">{{ secondPlaceStudent }}</span>
+          <span class="overlay-text3">{{ thirdPlaceStudent }}</span>
+        </div>
       </router-link>
   
       <router-link to="/student/event" class="card">
@@ -13,6 +17,19 @@
       </router-link>
     </div>
   </template>
+
+<script>
+export default {
+  data() {
+    return {
+      firstPlaceStudent: '홍길동',
+      secondPlaceStudent: '이순신',
+      thirdPlaceStudent: '김유신'
+    };
+  }
+};
+</script>
+
   
   <style scoped>
   .card-container {
@@ -48,44 +65,41 @@
   .card:nth-child(3) {
     background-image: url('@/assets/images/finpingtestgogo.png');
   }
-  
-  .overlay-text {
+  .overlay-text1 {
     color: white;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
-    text-align: center;
-    background-color: rgba(0, 0, 0, 0.5);
     padding: 10px;
     border-radius: 5px;
     position: absolute;
+    bottom: 172px;
+    margin-left: 198px;
   }
   
-  .tax-title {
-    padding-top: 20px;
+  .overlay-text2 {
     color: white;
-    font-size: 18px;
-    margin-top: 120px;
-    margin-left: 45px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 120px;
+    margin-left: 68px;
   }
-  
-  .alert {
-    width: 250px;
-    background-color: white;
-    color: #00A3FF;
+
+  .overlay-text3 {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 75px;
+    margin-left: 255px;
   }
-  
-  .taxAlert {
-    color: #00A3FF;
-  }
-  
-  .tax-footer {
-    margin-left: 40px;
-  }
-  
-  .saving-footer {
-    margin-left: 70px;
-  }
-  
+
   .btn {
     width: 115px;
     border-radius: 5px;
