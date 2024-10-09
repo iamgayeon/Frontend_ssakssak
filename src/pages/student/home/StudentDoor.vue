@@ -1,35 +1,49 @@
-<template>
-    <div class="card-container">
-      <router-link to="/student/profile" class="card">
-        <div class="card-img-overlay">
-          <span class="overlay-text1">{{ firstPlaceStudent }}</span>
-          <span class="overlay-text2">{{ secondPlaceStudent }}</span>
-          <span class="overlay-text3">{{ thirdPlaceStudent }}</span>
-        </div>
-      </router-link>
-  
-      <router-link to="/student/event" class="card">
-        <div class="card-img-overlay"></div>
-      </router-link>
-  
-      <router-link to="/student/event/test" class="card">
-        <div class="card-img-overlay"></div>
-      </router-link>
-    </div>
-  </template>
+<script setup>
+import { ref } from 'vue';
+import api from '@/api/studentDoorApi';
 
-<script>
-export default {
-  data() {
-    return {
-      firstPlaceStudent: '홍길동',
-      secondPlaceStudent: '이순신',
-      thirdPlaceStudent: '김유신'
-    };
+const firstPlaceStudent = ref('');
+const secondPlaceStudent = ref('');
+const thirdPlaceStudent = ref('');
+
+const getSeedRankingThree = async () => {
+  try {
+    const studentRanking = await api.getSeedRankingThree();
+    console.log('Student Ranking:', studentRanking);
+
+    if (studentRanking.length >= 3) {
+      firstPlaceStudent.value = studentRanking[0];
+      secondPlaceStudent.value = studentRanking[1];
+      thirdPlaceStudent.value = studentRanking[2];
+    }
+  } catch (error) {
+    console.error('Failed to fetch seed ranking:', error);
   }
 };
+
+getSeedRankingThree();
 </script>
 
+<template>
+  <div class="card-container">
+    <router-link to="/student/profile" class="card">
+      <div class="card-img-overlay">
+
+        <span class="overlay-text1">{{ firstPlaceStudent }}</span>
+        <span class="overlay-text2">{{ secondPlaceStudent }}</span>
+        <span class="overlay-text3">{{ thirdPlaceStudent }}</span>
+      </div>
+    </router-link>
+
+    <router-link to="/student/event" class="card">
+      <div class="card-img-overlay"></div>
+    </router-link>
+
+    <router-link to="/student/event/test" class="card">
+      <div class="card-img-overlay"></div>
+    </router-link>
+  </div>
+</template>
   
   <style scoped>
   .card-container {
