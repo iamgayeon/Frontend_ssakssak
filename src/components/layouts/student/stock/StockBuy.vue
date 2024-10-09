@@ -1,13 +1,18 @@
 <script setup>
 import { ref, computed, defineEmits } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import axios from 'axios';
+
+const authStore = useAuthStore();
 const quantity = ref('')
+
 
 const buyTotal = computed(() => {
     return quantity.value * props.stock
 })
 
 const plusQuantity = (num) => {
-    quantity.value = Number(quantity.value) + Number(num)
+    quantity.value = Number(quantity.value) + Number(num);
 }
 
 const maxQuantity = () => {
@@ -24,6 +29,29 @@ const props = defineProps({
         type: Number
     }
 })
+
+const errorMsg = ref('');
+const stockRequest = ref({
+    username: authStore.username,
+    name: authStore.name,
+    quantity: '',
+    stock_price: ''
+})
+
+const buyStock = async () => {
+    try {
+        stockRequest.value.quantity = quantity.value;
+        stockRequest.value.stock_price = props.stock;
+        console.log(stockRequest);
+        await axios.post('/api/student/stock/buy', stockRequest.value);
+    } catch (error) {
+        if (error.response && error.response.data) {
+            errorMsg.value = error.response.data;
+        } else {
+            errorMsg.value = "알 수 없는 오류가 발생했습니다!";
+        }
+    }
+}
 
 const closePop = () => {
     emit('close');
@@ -48,7 +76,10 @@ const closePop = () => {
 
                 <div class="mb-3">
                     <span class="d-block fs-5 mb-2">구매할 수량</span>
-                    <input type="number" class="form-control w-50" v-model="quantity" placeholder="0">
+                    <div class="d-flex align-items-center">
+                        <input type="number" class="form-control w-50" v-model="quantity" placeholder="0">
+                        <span v-if="errorMsg" class="text-danger fs-6 ms-3">{{ errorMsg }}</span>
+                    </div>
                     <div class="mt-2">
                         <button class="btn btn-outline btn-outline-danger me-2 pt-0 pb-1"
                             @click="plusQuantity(5)">+5</button>
@@ -70,7 +101,7 @@ const closePop = () => {
             <!-- 버튼 -->
             <div class="modal-footer d-flex justify-content-end">
                 <button class="btn btn-secondary me-2" @click="closePop">닫기</button>
-                <button class="btn btn-danger">매수하기</button>
+                <button class="btn btn-danger" @click="buyStock">매수하기</button>
             </div>
         </div>
     </div>
