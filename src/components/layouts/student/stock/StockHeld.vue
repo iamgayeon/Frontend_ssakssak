@@ -1,4 +1,35 @@
 <script setup>
+import { ref, computed, defineEmits, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import axios from 'axios';
+import api from '@/api/studentStockApi';
+
+// const authStore = useAuthStore();
+
+const myStock = ref({
+    stdId: '',
+    totalQuantity: '',
+    totalInvestment: '',
+    averagePrice: '',
+    currentValue: '',
+    profitLoss: '',
+    profitRate: '',
+});
+
+const auth = useAuthStore();
+const getMyStock = async () => {
+
+    const response = await api.getMyStock();
+    myStock.value.stdId = response.stdId;
+    myStock.value.totalQuantity = response.totalInvestment;
+    myStock.value.totalInvestment = response.totalInvestment;
+    myStock.value.averagePrice = response.averagePrice;
+    myStock.value.currentValue = response.currentValue;
+    myStock.value.profitLoss = response.profitLoss;
+    myStock.value.profitRate = response.profitRate;
+}
+
+getMyStock();
 </script>
 <template>
     <div class="container">
@@ -10,19 +41,19 @@
                         <tbody>
                             <tr>
                                 <td>원금</td>
-                                <td class="fw-bold">1,200 씨드</td>
+                                <td class="fw-bold">{{ myStock.totalInvestment }} 씨드</td>
                             </tr>
                             <tr>
                                 <td>현재 평가액</td>
-                                <td class="fw-bold">1,320 씨드</td>
+                                <td class="fw-bold">{{ myStock.currentValue }} 씨드</td>
                             </tr>
                             <tr>
                                 <td>보유 수량</td>
-                                <td class="fw-bold">12 싹싹</td>
+                                <td class="fw-bold">{{ myStock.totalQuantity }} 싹싹</td>
                             </tr>
                             <tr>
                                 <td>1주 평균 금액</td>
-                                <td class="fw-bold">100 씨드</td>
+                                <td class="fw-bold">{{ myStock.averagePrice }} 씨드</td>
                             </tr>
                         </tbody>
                     </table>
@@ -37,11 +68,12 @@
                         <div class="pt-3">
                             <div>
                                 <span class="fs-5">현재 수익률 :</span>
-                                <span class="fs-6 badge bg-danger-subtle text-danger rounded-pill ms-1">+ 10%</span>
+                                <span class="fs-6 badge bg-danger-subtle text-danger rounded-pill ms-1">{{
+                                    myStock.profitRate }}%</span>
                             </div>
                             <div>
                                 <span class="fs-5">현재 수익금 :</span>
-                                <span class="fs-6 ms-2 text-danger fw-bold">120 씨드</span>
+                                <span class="fs-6 ms-2 text-danger fw-bold">{{ myStock.profitLoss }} 씨드</span>
                             </div>
                         </div>
                     </div>
