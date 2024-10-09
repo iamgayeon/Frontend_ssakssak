@@ -20,19 +20,21 @@
       <div class="modal-content">
         <div class="modal-body">
           <div class="notifications-container">
-            <ul>
+            <ul class="px-4">
               <li v-for="(alarm, idx) in alarms" :key="idx" class="notification-item"
                 @click="checkAlarm(alarm.id, idx)">
                 <i class="bi bi-info-circle-fill"></i>
-                <div>
+                <div class="m-auto">
                   <p>{{ alarm.message }}</p>
                   <!-- <small>{{ notification.time }}</small> 시간 부분을 검정색으로 수정 -->
                 </div>
               </li>
             </ul>
           </div>
+          <div>
+            <button @click="toggleNotificationModal" class="close-btn mt-3">닫기</button>
+          </div>
         </div>
-        <button @click="toggleNotificationModal" class="close-btn">닫기</button>
       </div>
     </div>
   </div>
@@ -58,11 +60,6 @@ const isNotificationModalOpen = ref(false);
 // 알림 모달 열기/닫기
 const toggleNotificationModal = () => {
   isNotificationModalOpen.value = !isNotificationModalOpen.value;
-};
-
-// 알림 삭제 함수
-const deleteNotification = (id) => {
-  notifications.value = notifications.value.filter(notification => notification.id !== id);
 };
 
 // 로그아웃 함수
@@ -114,10 +111,11 @@ const getTeacherProfile = async () => {
 
 const checkAlarm = async (id, idx) => {
   try {
+    console.log(id);
     const response = await axios.post(`/api/alarm/checked/` + id);
     alarms.value.splice(idx, 1);
     console.log(alarms.value.length);
-    if(alarms.value.length === 0) {
+    if (alarms.value.length === 0) {
       alarmColor.value = false;
     }
   } catch (error) {
@@ -204,6 +202,7 @@ onUnmounted(() => {
   border-radius: 15px;
   padding: 20px;
   width: 600px;
+  height: 500px;
   /* 모달 창 너비 수정 */
   text-align: center;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -213,10 +212,13 @@ onUnmounted(() => {
 /* 알림 목록 가로 채우기 */
 .modal-body {
   padding: 20px 0;
+  height: 100%;
 }
 
 .notifications-container {
   width: 100%;
+  height: 380px;
+  overflow-x: auto;
   /* 알림 목록이 가로로 꽉 차도록 설정 */
 }
 
@@ -224,6 +226,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
   padding: 10px;
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -259,11 +262,11 @@ onUnmounted(() => {
 
 .close-btn {
   background-color: #473221;
+  width: 100%;
   color: white;
   padding: 10px;
   border: none;
   cursor: pointer;
-  margin-top: 20px;
 }
 
 .close-btn:hover {
