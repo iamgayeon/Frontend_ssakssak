@@ -2,10 +2,20 @@
 import StockChartLayout from '@/components/layouts/student/stock/StockChartLayout.vue';
 import StockRate from '@/components/layouts/student/stock/StockRate.vue'
 import StockNewsCreate from '@/components/layouts/student/stock/StockNewsCreate.vue';
+import { ref, onMounted, computed } from 'vue';
+import { useStockStore } from '@/stores/stockStore';
+import { useAuthStore } from '@/stores/auth';
+
+const stockStore = useStockStore();
+
+onMounted(async () => {
+    await stockStore.fetchChartData();
+});
+
 </script>
 
 <template>
-    <div class="container mt-3" style="width: 70vw;">
+    <div class="container mt-3" style="width: 90vw;">
         <div class="row">
             <div class="col-12">
                 <StockChartLayout />

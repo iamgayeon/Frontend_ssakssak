@@ -1,9 +1,9 @@
 <template>
   <div class="header">
     <!-- 알림 버튼 -->
-    <div v-if="store.roles === 'ROLE_TEAHER'" class="notification" @click="toggleNotificationModal">
+    <!-- <div v-if="store.roles[0] === 'ROLE_TEAHER'" class="notification" @click="toggleNotificationModal">
       <i class="bi bi-bell-fill" :style="alarmColor ? 'color:green;' : 'color:white;'"></i>
-    </div>
+    </div> -->
 
     <!-- 환영 메시지 -->
     <div class="welcome" v-if="isLogin">
@@ -67,85 +67,84 @@ const logout = () => {
   router.push('/');
 };
 
-const alarms = ref([]);
-const alarmColor = ref(false);
-let eventSource;
+// const alarms = ref([]);
+// const alarmColor = ref(false);
+// let eventSource;
 
-const TeacherProfile = ref({
-  usernmae: '',
-});
+// const TeacherProfile = ref({
+//   usernmae: '',
+// });
 
-const fetchAlarmHistory = async () => {
-  try {
-    const teacher = await getTeacherProfile();
+// const fetchAlarmHistory = async () => {
+//   try {
+//     const teacher = await getTeacherProfile();
 
-    const response = await axios.get(`/api/alarm/history`, {
-      params: {
-        username: teacher.username,
-      }
-    });
+//     const response = await axios.get(`/api/alarm/history`, {
+//       params: {
+//         username: teacher.username,
+//       }
+//     });
 
-    console.log(response.status);
-    if (response.status === 204) {
-      console.log("no Alarm List");
-      alarmColor.value = false;
-      alarms.value = [];
-    } else {
-      alarmColor.value = true;
-      alarms.value = response.data;
-    }
+//     console.log(response.status);
+//     if (response.status === 204) {
+//       console.log("no Alarm List");
+//       alarmColor.value = false;
+//       alarms.value = [];
+//     } else {
+//       alarmColor.value = true;
+//       alarms.value = response.data;
+//     }
 
-  } catch (error) {
-    console.error('Failed : ', error);
-  }
+//   } catch (error) {
+//     console.error('Failed : ', error);
+//   }
 
-}
+// }
 
-const getTeacherProfile = async () => {
-  const store = useAuthStore();
-  TeacherProfile.username = store.username;
-  return TeacherProfile;
-};
+// const getTeacherProfile = async () => {
+//   const store = useAuthStore();
+//   TeacherProfile.username = store.username;
+//   return TeacherProfile;
+// };
 
-const checkAlarm = async (id, idx) => {
-  try {
-    console.log(id);
-    const response = await axios.post(`/api/alarm/checked/` + id);
-    alarms.value.splice(idx, 1);
-    console.log(alarms.value.length);
-    if (alarms.value.length === 0) {
-      alarmColor.value = false;
-    }
-  } catch (error) {
-    console.error("Failed checked alarm", error);
-  }
-};
+// const checkAlarm = async (id, idx) => {
+//   try {
+//     console.log(id);
+//     const response = await axios.post(`/api/alarm/checked/` + id);
+//     alarms.value.splice(idx, 1);
+//     console.log(alarms.value.length);
+//     if (alarms.value.length === 0) {
+//       alarmColor.value = false;
+//     }
+//   } catch (error) {
+//     console.error("Failed checked alarm", error);
+//   }
+// };
 
-onMounted(() => {
+// onMounted(() => {
+//   if (store.roles[0] === 'ROLE_TEACHER') {
+//     fetchAlarmHistory();
 
-  if (store.roles[0] === 'ROLE_TEACHER') {
-    fetchAlarmHistory();
+//     const usertId = 1;
+//     eventSource = new EventSource(`/api/alarm/subscribe/${usertId}`);
 
-    const usertId = 1;
-    eventSource = new EventSource(`/api/alarm/subscribe/${usertId}`);
+//     eventSource.addEventListener('alarm', (event) => {
+//       const alarm = JSON.parse(event.data);
+//       alarms.value = [...alarms.value, { id: alarm.id, message: alarm.message }];
+//       alarmColor.value = true;
+//     });
 
-    eventSource.addEventListener('alarm', (event) => {
-      const alarm = JSON.parse(event.data);
-      alarms.value = [...alarms.value, { id: alarm.id, message: alarm.message }];
-      alarmColor.value = true;
-    });
+//     eventSource.onerror = (error) => {
+//       console.error("Error with SSE connection", error);
+//     };
+//   }
+// });
 
-    eventSource.onerror = (error) => {
-      console.error("Error with SSE connection", error);
-    };
-  }
-});
-
-onUnmounted(() => {
-  if (eventSource) {
-    eventSource.close();
-  }
-})
+// onUnmounted(() => {
+//   if (eventSource) {
+//     eventSource.close();
+//   }
+// })
 </script>
 
 <style scoped>
