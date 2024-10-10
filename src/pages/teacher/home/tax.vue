@@ -147,7 +147,6 @@
       </div>
   </div>
 
-  <!-- 세금 확인 모달 창 -->
   <div v-if="isTaxModalOpen" class="tax-modal">
     <div class="tax-modal-content">
       <div class="modal-header">
@@ -155,8 +154,9 @@
         <button class="close-button" @click="closeTaxModal">&times;</button>
       </div>
       <div class="modal-body">
-        <label for="seedValue">이번주 우리반 적립된 세금은?</label>
-        <input type="text" id="seedValue" v-model="currentWeekTax" class="input-field"/>
+        <label for="seedValue">이번 주 우리반 적립된 세금은?</label>
+        <!-- 여기에 currentWeekTax 값을 바인딩하여 출력 -->
+        <input type="text" id="seedValue" v-model="currentWeekTax" class="input-field" readonly />
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" @click="closeTaxModal">닫기</button>
@@ -165,6 +165,7 @@
   </div>
 
 
+  <!-- 세율 변경 모달 창 -->
    <!-- 세율 변경 모달 창 -->
    <div v-if="isTaxRateModalOpen" class="tax-modal">
     <div class="tax-modal-content">
@@ -173,6 +174,15 @@
         <button class="close-button" @click="closeTaxRateModal">&times;</button>
       </div>
       <div class="modal-body">
+        <label for="taxCategory">세금 카테고리:</label>
+        <!-- 드롭다운 메뉴 -->
+        <select id="taxCategory" v-model="selectedTaxCategory" class="input-field">
+          <option value="Income Tax">주급 씨드</option>
+          <option value="Deposit Tax">예금</option>
+          <option value="Saving Tax">적금</option>
+          <option value="Stock Trade Tax">주식 거래</option>
+        </select>
+
         <label for="newTaxRate">새로운 세율 값:</label>
         <input type="number" id="newTaxRate" v-model="newTaxRate" class="input-field" placeholder="세율 값을 입력하세요" />
       </div>
@@ -184,7 +194,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import api from '@/api/teacherTaxApi.js';  // API 호출 관련 파일 임포트
 
 // 모달 및 폼 상태 관리
 const isModalOpen = ref(false);
@@ -271,51 +282,91 @@ const handleJobSelection = (job) => {
 const isTaxModalOpen = ref(false);
 
 // 이번 주 세금 데이터
-const currentWeekTax = ref(0);
+const currentWeekTax = ref('');
 
-// 세금 데이터 예시 (주별 데이터)
-const taxDetails = ref([
-  { id: 1, week: '1주차', amount: 5000 },
-  { id: 2, week: '2주차', amount: 7000 },
-  { id: 3, week: '이번 주', amount: 8000 } // 이번 주 데이터
-]);
-
-// 세금 확인 모달 열기
-const openTaxModal = () => {
-  const currentWeek = taxDetails.value.find(tax => tax.week === '이번 주');
-  if (currentWeek) {
-    currentWeekTax.value = currentWeek.amount;
+// 모달을 열 때 세금 데이터를 가져오는 함수
+const openTaxModal = async () => {
+  isTaxModalOpen.value = true;  // 모달 열림 상태로 설정
+  try {
+    const data = await api.getWeeklyTaxTotal();  // API 호출
+    console.log('세금 데이터:', data);  // 콘솔에서 응답 확인
+    currentWeekTax.value = data || '0'; // 세금 데이터를 currentWeekTax에 저장
+  } catch (error) {
+    console.error('세금 데이터를 가져오는 데 실패했습니다.', error);
+    currentWeekTax.value = '데이터를 불러오지 못했습니다.';
   }
-  isTaxModalOpen.value = true;
 };
+
+// 서버에서 세금 데이터 가져오기
+const fetchTaxData = async () => {
+  try {
+    const response = await api.getSeedTax();  // API 호출로 세금 데이터 가져옴
+    currentWeekTax.value = response.amount;  // 데이터에서 세금 금액 설정
+  } catch (error) {
+    console.error('세금 데이터를 불러오는 중 오류 발생', error);
+  } finally {
+    isLoadingTax.value = false;
+  }
+};
+
+// 페이지 로딩 시 세금 데이터 가져오기
+onMounted(() => {
+  fetchTaxData();
+});
 
 // 세금 확인 모달 닫기
 const closeTaxModal = () => {
   isTaxModalOpen.value = false;
 };
 
-
-
-// 세율 변경 모달 상태 관리
-const isTaxRateModalOpen = ref(false);
-const newTaxRate = ref(0); // 세율 초기값
-
 // 세율 변경 모달 열기
 const openTaxRateModal = () => {
   isTaxRateModalOpen.value = true;
 };
 
-// 세율 변경 모달 닫기
+// 세율 변경 모달 열기
 const closeTaxRateModal = () => {
   isTaxRateModalOpen.value = false;
 };
 
-// 세율 업데이트 로직
-const updateTaxRate = () => {
-  console.log("새로운 세율: ", newTaxRate.value);
-  // 서버에 세율 업데이트 요청 로직 추가
-  closeTaxRateModal();
+// 상태 정의
+const isTaxRateModalOpen = ref(false);
+const selectedTaxCategory = ref('');
+const newTaxRate = ref(0);
+
+// 세율 업데이트 메서드
+const updateTaxRate = async () => {
+  // 정책 ID를 순차적으로 할당 (예시로 1부터 시작)
+  const policyIdMapping = {
+    "Income Tax": 1,
+    "Deposit Tax": 2,
+    "Saving Tax": 3,
+    "Stock Trade Tax": 4,
+  };
+
+  const policyId = policyIdMapping[selectedTaxCategory.value];
+  const policyType = selectedTaxCategory.value;
+  const rate = newTaxRate.value;
+
+  // 서버로 전송할 데이터 구조
+  const updatedTaxData = {
+    policyId: policyId,
+    policyType: policyType,
+    rate: rate,
+  };
+
+  try {
+    // 서버에 PUT 요청을 보내서 세율 업데이트
+    const response = await api.updateTax(updatedTaxData);
+    console.log('세율 업데이트 성공:', response.data);
+    
+    // 모달 창 닫기
+    closeTaxRateModal(); 
+  } catch (error) {
+    console.error('세율 업데이트 실패:', error);
+  }
 };
+
 </script>
 
 
