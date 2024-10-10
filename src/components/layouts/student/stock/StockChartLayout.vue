@@ -11,7 +11,7 @@ const chartData = computed(() => stockStore.chartData);
 
 const highest = computed(() => {
     if (chartData.value.length === 0) {
-        return null; // 또는 다른 기본값
+        return 0; // 또는 다른 기본값
     }
 
     return chartData.value.reduce((prev, value) => {
@@ -21,7 +21,7 @@ const highest = computed(() => {
 
 const lowest = computed(() => {
     if (chartData.value.length === 0) {
-        return null; // 또는 다른 기본값
+        return 0; // 또는 다른 기본값
     }
 
     return chartData.value.reduce((prev, value) => {
@@ -63,17 +63,19 @@ const lastDayDiffPrice = computed(() => {
                                 <p class="fs-4 mb-0">싹싹주식</p>
                             </div>
                             <div class="ms-1">
-                                <p class="fs-5 mb-0 text-danger fw-semibold"><span class="text-gray">오늘의 가격</span> {{ lastChartData.stockPrice }} 씨드</p>
+                                <p class="fs-5 mb-0 text-danger fw-semibold"><span class="text-gray">오늘의 가격</span> {{
+                                    lastChartData.stockPrice }} 씨드</p>
                             </div>
                         </div>
                     </div>
                     <p class="fs-5 txt-primary fw-semibold"><span class="fs-6 text-muted pe-2">어제보다</span>
                         {{ lastDayDiffPrice }} 씨드 ({{ lastChartData.change >= 0 ? `+${lastChartData.change}` :
-                        lastChartData.change}}%)
+                            lastChartData.change }}%)
                     </p>
                     <hr>
                     <p class="fs-5 mb-1 mt-3">전일 종가: <span class="fw-bold">85 씨드</span></p>
-                    <p class="fs-5 mb-1">최고 가격 (30일): <span class="fw-bold text-danger">{{ highest.stockPrice }} 씨드</span>
+                    <p class="fs-5 mb-1">최고 가격 (30일): <span class="fw-bold text-danger">{{ highest.stockPrice }}
+                            씨드</span>
                     </p>
                     <p class="fs-5 mb-1 mb-3">최저 가격 (30일): <span class="fw-bold txt-primary">{{ lowest.stockPrice }}
                             씨드</span></p>
