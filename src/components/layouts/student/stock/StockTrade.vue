@@ -1,18 +1,21 @@
 <script setup>
 import StockBuy from './StockBuy.vue';
 import StockSell from './StockSell.vue';
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue';
+import { useStockStore } from '@/stores/stockStore';
 
-const myStock = ref({
-    quantity: 50,
-    buyPrice: 100
-});
 
-const props = defineProps({
-    stock: {
-        type: Number
+const stockStore = useStockStore();
+const myStock = computed(() => stockStore.myStock);
+const chartData = computed(() => stockStore.chartData);
+
+const avaliableStock = computed(() => {
+    const lastChartData = chartData.value[chartData.value.length - 1];
+    if (!lastChartData || !lastChartData.stockPrice) {
+        return 0; // 또는 다른 기본값
     }
-})
+    return parseInt(myStock.value.seed / lastChartData.stockPrice);
+});
 
 const isStockBuy = ref(false);
 const isStockSell = ref(false);
@@ -22,23 +25,25 @@ const changeStockBuy = () => {
 const changeStockSell = () => {
     isStockSell.value = !isStockSell.value;
 }
+
+
 </script>
 
 <template>
     <div class="container p-0 mt-2">
         <div class="mt-2">
-            <span class="fs-4">현재 주문 가능 주식 : </span><span class="fs-4 fw-semibold">35싹싹</span>
+            <span class="fs-4">현재 주문 가능 주식 : </span><span class="fs-4 fw-semibold">{{ avaliableStock }} 싹싹</span>
         </div>
         <div>
-            <span class="fs-4">현재 판매 가능 주식 : </span><span class="fs-4 fw-semibold">12씨드</span>
+            <span class="fs-4">현재 판매 가능 주식 : </span><span class="fs-4 fw-semibold">{{ myStock.totalQuantity}} 싹싹</span>
         </div>
         <div class="mt-4 d-flex">
             <button class="btn btn-danger me-1 w-50" @click="changeStockBuy">주식 구매하기</button>
             <button class="btn btn-primary w-50" @click="changeStockSell">주식 판매하기</button>
         </div>
     </div>
-    <StockBuy v-if="isStockBuy" @close="changeStockBuy" :myStock="myStock" :stock="stock" />
-    <StockSell v-if="isStockSell" @close="changeStockSell" :myStock="myStock" :stock="stock" />
+    <StockBuy v-if="isStockBuy" @close="changeStockBuy" />
+    <StockSell v-if="isStockSell" @close="changeStockSell" />
 
 </template>
 

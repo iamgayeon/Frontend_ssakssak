@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <!-- 알림 버튼 -->
-    <div class="notification" @click="toggleNotificationModal">
+    <div v-if="store.roles === 'ROLE_TEAHER'" class="notification" @click="toggleNotificationModal">
       <i class="bi bi-bell-fill" :style="alarmColor ? 'color:green;' : 'color:white;'"></i>
     </div>
 
@@ -26,7 +26,6 @@
                 <i class="bi bi-info-circle-fill"></i>
                 <div class="m-auto">
                   <p>{{ alarm.message }}</p>
-                  <!-- <small>{{ notification.time }}</small> 시간 부분을 검정색으로 수정 -->
                 </div>
               </li>
             </ul>
@@ -67,7 +66,6 @@ const logout = () => {
   store.logout();
   router.push('/');
 };
-
 
 const alarms = ref([]);
 const alarmColor = ref(false);
@@ -125,20 +123,22 @@ const checkAlarm = async (id, idx) => {
 
 onMounted(() => {
 
-  fetchAlarmHistory();
+  if (store.roles[0] === 'ROLE_TEACHER') {
+    fetchAlarmHistory();
 
-  const usertId = 1;
-  eventSource = new EventSource(`/api/alarm/subscribe/${usertId}`);
+    const usertId = 1;
+    eventSource = new EventSource(`/api/alarm/subscribe/${usertId}`);
 
-  eventSource.addEventListener('alarm', (event) => {
-    const alarm = JSON.parse(event.data);
-    alarms.value = [...alarms.value, { id: alarm.id, message: alarm.message }];
-    alarmColor.value = true;
-  });
+    eventSource.addEventListener('alarm', (event) => {
+      const alarm = JSON.parse(event.data);
+      alarms.value = [...alarms.value, { id: alarm.id, message: alarm.message }];
+      alarmColor.value = true;
+    });
 
-  eventSource.onerror = (error) => {
-    console.error("Error with SSE connection", error);
-  };
+    eventSource.onerror = (error) => {
+      console.error("Error with SSE connection", error);
+    };
+  }
 });
 
 onUnmounted(() => {
