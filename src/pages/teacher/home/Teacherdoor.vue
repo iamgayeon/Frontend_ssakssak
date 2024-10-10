@@ -1,72 +1,184 @@
-<script setup>
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-</script>
-
 <template>
-  <div class="card-group">
-    <div class="card">
-    <router-link to="/teacher/home">
-      <img src="@/assets/images/student2.png" class="card-img-top mx-auto" alt="check-img">
-    </router-link>
-      <div class="card-body">
-        <div class="card-title mb-1" style="color : #F06335">Student_management</div>
-        <h5 class="card-title">학생관리 바로가기</h5>
-        <p class="card-text">선생님이 학생들을 손쉽게 확인하고 관리할 수 있습니다. 기록을 통해 학생들의 출결 상태를 한눈에 파악하고, 필요한 경우 즉각적인 피드백을 제공하세요. 출석 현황을 주기적으로 점검하여 학생들의 참여도를 높일 수 있습니다!</p>
-      </div>
-      <div class="card-footer">
-        <div class="d-grid gap-2">
-            <router-link to="/"><button class="btn btn-primary w-100" type="button">바로가기</button></router-link>
-            </div>
+  <div class="dashboard-container">
+    <!-- 좌측 바로가기 카드 -->
+    <div class="shortcut-card">
+      <h4>금융 싹싹 서비스 바로가기</h4>
+      <div class="shortcut-list">
+        <div v-for="(service, index) in services" :key="index" class="shortcut-item">
+          <a :href="service.url" target="_blank">
+            <img :src="service.icon" :alt="service.title" />
+            <p>{{ service.title }}</p>
+          </a>
+        </div>
       </div>
     </div>
-    <div class="card">
-        <router-link to="/teacher/home">
-      <img src="@/assets/images/store.png" class="card-img-top mx-auto" alt="reward-img">
-        </router-link>
-      <div class="card-body">
-        <div class="card-title mb-1" style="color : #F06335">Store_Management</div>
-        <h5 class="card-title">매점관리 바로가기</h5>
-        <p class="card-text"> 학생들이 수행 가능한 리워드 목록과 각자의 진행 상황을 한눈에 확인할 수 있습니다. 학생들이 달성한 성과를 쉽게 파악하고, 그에 맞는 피드백을 제공하여 동기부여를 높여보세요. 리워드 관리와 피드백을 통해 학생들의 지속적인 성장을 도와줄 수 있습니다</p>
-      </div>
-      <div class="card-footer">
-        <div class="d-grid gap-2">
-            <router-link to="/"><button class="btn btn-primary w-100" type="button">바로가기</button></router-link>
-            </div>
-      </div>
-    </div>
-    <div class="card">
-    <router-link to="/teacher/home">
-      <img src="@/assets/images/rewardm.png" class="card-img-top mx-auto" alt="check-img">
-    </router-link>
-      <div class="card-body">
-        <div class="card-title mb-1" style="color : #F06335">Reward_Payment</div>
-        <h5 class="card-title">리워드 지급 바로가기</h5>
-        <p class="card-text">학생들이 달성한 리워드를 지급하고 관리할 수 있습니다. 각 학생의 성과를 확인한 후 적절한 보상을 제공하여 동기부여를 높이세요. 리워드를 통해 학생들의 노력을 격려하고, 지속적인 성장을 지원할 수 있습니다!</p>
-      </div>
-      <div class="card-footer">
-        <div class="d-grid gap-2">
-            <router-link to="/teacher/reward"><button class="btn btn-primary w-100" type="button">바로가기</button></router-link>
-            </div>
-      </div>
-    </div>
+
+<!-- 우측 주식 뉴스 섹션 -->
+<div class="news-card">
+  <h3>주식 뉴스</h3>
+  <div class="news-content">
+    <ul class="list-group">
+      <li class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-center"
+          v-for="(news, idx) in newsData" :key="idx"
+          style="border-bottom: 1px solid rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
+        <span class="fw-semibold">{{ news.title }}</span>
+        <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteNews(news.title)">
+          <i class="bi bi-trash"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+    
   </div>
 </template>
 
+<script setup>
+import { ref, onMounted } from 'vue';
+import StockCreateNewsModal from '@/components/layouts/student/stock/StockNewsCreate.vue';
+import classIcon from '@/assets/images/class_ico.gif'
+import stuIcon from '@/assets/images/stu_ico.gif'
+import jobIcon from '@/assets/images/job_ico.gif'
+import storeIcon from '@/assets/images/store_ico.gif'
+import stockIcon from '@/assets/images/stock_ico.gif'
+import reward1 from '@/assets/images/reward1_ico.gif'
+import reward2 from '@/assets/images/reward2_ico.gif'
+
+// 외부 데이터 파일에서 주식 뉴스 데이터 가져오기
+import api from '@/api/studentStockApi.js';
+
+// 서비스 데이터
+const services = ref([
+  { title: '학급추가+', icon: classIcon, url: '/teacher/class' },
+  { title: '학생관리', icon: stuIcon, url: '/teacher/student' },
+  { title: '직업관리', icon: jobIcon, url: '/teacher/student' },
+  { title: '매점관리', icon: storeIcon, url: '/teacher/store' },
+  { title: '주식등락률관리', icon: stockIcon, url: '/teacher/stock' },
+  { title: '리워드 추가', icon: reward1, url: '/teacher/reward' },
+  { title: '리워드 지급', icon: reward2, url: '/teacher/reward' },
+]);
+
+// 주식 뉴스 데이터
+const newsData = ref([]); // 빈 배열로 초기화
+
+// API에서 뉴스 데이터를 불러오기
+const fetchNewsData = async () => {
+  try {
+    const data = await api.getNewsList();
+    newsData.value = data;
+  } catch (error) {
+    console.error("뉴스 데이터를 가져오는 중 오류 발생: ", error);
+  }
+};
+
+// 컴포넌트가 마운트될 때 뉴스 데이터를 가져옴
+onMounted(() => {
+  fetchNewsData();
+});
+
+// 새 뉴스 삭제
+const deleteNews = (title) => {
+  newsData.value = newsData.value.filter(news => news.title !== title);
+};
+
+
+// 새 뉴스 생성 모달 관련 상태
+const isCreateModal = ref(false);
+
+const openCreateModal = () => {
+  isCreateModal.value = !isCreateModal.value;
+}
+
+// 새 뉴스 제출 처리
+const handleFormSubmit = (formData) => {
+  newsData.value.push(formData);
+  openCreateModal(); // 모달 닫기
+}
+</script>
+
 <style scoped>
-.card-img-top {
-  width: 250px;
-  height: 250px;
-  display: block;
-  margin: auto; /* 이미지를 가운데로 정렬 */
+.dashboard-container {
+  display: flex;
+  gap: 20px;
+  height: 100%;
+  align-items: stretch;
 }
-.btn-primary{
-    background-color: #00A3FF;
-    box-shadow:none;
-    border: none;
+
+.shortcut-card {
+  background-color: #f8f9fa;
+  border-radius: 25px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-basis: 70%; /* 7:3 비율 */
+  display: flex;
+  flex-direction: column;
 }
-.btn-primary:hover{
-    box-shadow:none;
+
+.news-card {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-basis: 30%; /* 7:3 비율 */
+  display: flex;
+  flex-direction: column;
+  min-height: 300px; /* 최소 높이 설정 */
 }
+
+.news-content {
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.shortcut-list {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.shortcut-item {
+  text-align: center;
+  margin-bottom: 10px;
+  margin-top: 20px; /* 아이템 상단 여백 추가 */
+}
+
+.shortcut-item a {
+  text-decoration: none;
+  color: inherit;
+  font-size: 1.2em; /* 텍스트 크기 증가 */
+}
+
+.shortcut-item img {
+  width: 70px; /* 아이콘 크기 증가 */
+  height: 70px; /* 아이콘 크기 증가 */
+  margin-bottom: 10px;
+}
+
+.news-card ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.news-card ul li {
+  margin-bottom: 10px;
+}
+
+.news-card ul li a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.news-card ul li a:hover {
+  text-decoration: underline;
+}
+
+.shortcut-card {
+  background-color: #fff;
+}
+
+.shortcut-item {
+  margin-top: 40px;
+}
+
 </style>

@@ -9,6 +9,7 @@ import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import VueAwesomePaginate from "vue-awesome-paginate";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -21,9 +22,10 @@ import VueApexCharts from "vue3-apexcharts";
 import { faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 const app = createApp(App);
-
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 app.use(VueAwesomePaginate);
-app.use(createPinia());
+app.use(pinia);
 app.component("apexchart", VueApexCharts);
 app.use(router);
 

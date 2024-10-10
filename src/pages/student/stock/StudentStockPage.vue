@@ -1,20 +1,18 @@
 <script setup>
-import {ref} from 'vue';
-import api from '@/api/studentStockApi';
+import { ref, onMounted,computed } from 'vue';
+import { useStockStore } from '@/stores/stockStore';
 
 import StockChartLayout from '@/components/layouts/student/stock/StockChartLayout.vue';
 import StockNews from '@/components/layouts/student/stock/StockNews.vue';
 import StockHeld from '@/components/layouts/student/stock/StockHeld.vue'
 
+const stockStore = useStockStore();
 
-const newsList = ref({});
+onMounted(async () => {
+    await stockStore.fetchMyStock();
+    await stockStore.fetchChartData();
+});
 
-const getNewsList = async () => {
-    newsList.value = await api.getNewsList();
-    console.log('NEWSLIST!!!!>>>>>>' , newsList.value);
-};
-
-getNewsList();
 </script>
 
 <template>

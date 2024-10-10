@@ -27,8 +27,7 @@ import Treasury from './treasury.vue';
 
 <style scoped>
 #Treasury{
-    margin : 0px;
-    padding: 0px;
+    padding-right:5px;
 }
 
 .chart{
@@ -39,7 +38,4 @@ import Treasury from './treasury.vue';
     padding-right: 5px;
 }
 
-.btn{
-    
-}
 </style>

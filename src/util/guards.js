@@ -1,14 +1,12 @@
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from "@/stores/auth";
 
-  //////////////////////////////////////////////////////////
-export const isAuthenticated = (to, from) => {
+//////////////////////////////////////////////////////////
+export const isAuthenticated = () => {
   const auth = useAuthStore();
-
   if (!auth.isLogin) {
-    console.log('로그인 필요.....');
-
-    return { name: 'login', query: { next: to.name } };
+    console.log("로그인 필요.....");
+    return false;
   }
-  console.log('로그인 인증');
+  return auth; // 로그인 정보 반환 (role 포함)
 };
-  //////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////

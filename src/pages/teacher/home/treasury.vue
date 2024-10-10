@@ -1,3 +1,83 @@
+<template>
+  <div class="card-container">
+    <div class="card">
+        <div class="card-img-overlay">
+          <section class="col" id="sec1">
+            <div class="card-body text-start"> <!-- text-start 클래스를 추가하여 전체 왼쪽 정렬 -->
+              <div class="d-flex justify-content-between">
+                <div class="text-primary  text-title mb-2">현재 국고에는 50,000씨드가 들어있어요!</div>
+              </div>
+              <div class="progress mb-3" style="height: 10px;">
+                <div 
+                  class="progress-bar" 
+                  role="progressbar" 
+                  :style="{ width: progressValue + '%', backgroundColor: '#448C74' }" 
+                  :aria-valuenow="progressValue" 
+                  aria-valuemin="0" 
+                  aria-valuemax="100"
+                >
+                  {{ progressValue }}%
+                </div>
+            </div>
+            </div>
+
+          </section>
+        </div>
+        </div>
+
+    <div class="card" id="scard">
+      <div class="card-img-overlay">
+        <div class="card-body">
+          <div class="d-flex align-items-center pb-1 mb-4" id="week"> 
+            <span class="text-mute ms-1">현재 주급씨드  :   </span>
+            <span class="text-dark fw-bold">{{seedValue}}<img src="@/assets/images/tree1.png" class="chart-img" style="width: 20px; height: auto;"> <!-- 이미지 크기 고정 --></span>
+          </div>
+          <button class="btn btn-primary" style="height: 30px; margin-top: 0;" @click="openModal" id="changebutton">변경하기</button>          <div class="d-flex align-items-center pb-2 mb-3">
+          </div>
+          <div class="alert alert-success d-flex mb-0" style="margin-top: 20px; width:300px; background-color: rgba(255, 255, 255, 0.9);">
+            <i class="ai-octagon-alert fs-xl me-2"></i>
+            <!-- 인상 비율 표시 -->
+              <p class="mb-0" v-if="increaseRate > 0">전 주 대비 {{ increaseRate }}% 가량 인상되었습니다.</p>
+              <p class="mb-0" v-else-if="increaseRate < 0">전 주 대비 {{ Math.abs(increaseRate) }}% 가량 감소되었습니다.</p>
+              <p class="mb-0" v-else>변경사항이 없습니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="card" id="reward_card">
+      <router-link to="/teacher/reward">
+      <div class="card-img-overlay">
+        <div class="text-blue fw-semi-bold">
+        </div>
+      </div>
+      </router-link>
+    </div>
+  </div>
+
+
+  <!-- 모달창 -->
+  <div v-if="showModal" class="modal d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">주간 씨드 수정</h5>
+          <button type="button" class="btn-close" @click="showModal = false"></button>
+        </div>
+        <div class="modal-body">
+          <label for="seedInput">새로운 주간 씨드 값:</label>
+          <input type="number" id="seedInput" v-model="tempSeedValue" class="form-control" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="showModal = false">닫기</button>
+          <button type="button" class="btn btn-primary" @click="saveSeedValue">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { ref, computed } from 'vue';
 
@@ -34,132 +114,120 @@ const progressValue = ref(80); // 초기값을 80%로 설정
 
 </script>
 
-<template>
-    <link rel="stylesheet" href="assets/css/theme.min.css">
-    <link rel="stylesheet" href="assets/css/theme.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <div class="container">
-        <div class="row">
-  <div class="row">
-      <!-- 보유 적금 -->
-      <section class="col" id="sec1">
-        <div class="card p-3">
-          <div class="card-body">
-              <router-link class="router1" to="/teacher/bank">
-            <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
-              <i class="bi bi-currency-exchange text-primary lead pe-1 me-2"></i>
-              <h2 class="h4 mb-0">국고 확인</h2>
-            </div>
-          </router-link>
-            <div class="d-flex align-items-center pb-1 mb-4">
-              <h3 class="h6 mb-0 me-3">현재까지 쌓인 국고 상황을 확인해보세요!</h3>
-              <span class="badge bg-faded-primary text-primary">진행중</span>
-            </div>
-            <div class="d-flex justify-content-between">
-              <div class="mb-2">현재 국고에는 50,000씨드가 들어있어요!</div>
-            </div>
-              <div class="progress mb-3" style="height: 10px;">
-                  <div 
-                    class="progress-bar" 
-                    role="progressbar" 
-                    :style="{ width: progressValue + '%', backgroundColor: '#448C74' }" 
-                    :aria-valuenow="progressValue" 
-                    aria-valuemin="0" 
-                    aria-valuemax="100"
-                  >
-                    {{ progressValue }}%
-                  </div>
-                </div>
-          
-            <div class="alert alert-success d-flex mb-0" style="margin-top: 30px;">
-              <i class="ai-octagon-alert fs-xl me-2"></i>
-              <p class="mb-0">월 평균 20,000씨드가 국고로 적립중입니다.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 주간 씨드 -->
-      <section class="col" id="sec2">
-        <div class="card p-3">
-          <div class="card-body">
-            <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
-              <i class="bi bi-calendar-day text-primary lead pe-1 me-2"></i>
-              <h2 class="h4 mb-2">금주의 주급 씨드</h2>
-            </div>
-            <div class="d-flex align-items-center pb-1 mb-4">
-              <h3 class="h6 mb-0 me-3">주급을 확인하고 변경해보세요!</h3>
-              <button class="btn btn-primary" style="height:30px" @click="openModal" id="changebutton">변경하기</button>
-            </div>
-            <div class="d-flex align-items-center pb-2 mb-3">
-              <span class="text-mute">현재 주급씨드  :   </span>
-              <span class="text-dark fw-bold">{{seedValue}}<img src="@/assets/images/tree1.png" class="chart-img" style="width: 20px; height: auto;"> <!-- 이미지 크기 고정 --></span>
-            </div>
-            <div class="alert alert-success d-flex mb-0" style="margin-top: 30px;">
-              <i class="ai-octagon-alert fs-xl me-2"></i>
-              <!-- 인상 비율 표시 -->
-                <p class="mb-0" v-if="increaseRate > 0">전 주 대비 {{ increaseRate }}% 가량 인상되었습니다.</p>
-                <p class="mb-0" v-else-if="increaseRate < 0">전 주 대비 {{ Math.abs(increaseRate) }}% 가량 감소되었습니다.</p>
-                <p class="mb-0" v-else>변경사항이 없습니다.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      </div>
-      </div>
-      </div>
-      
-
-      <!-- 모달창 -->
-      <div v-if="showModal" class="modal d-block" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">주간 씨드 수정</h5>
-              <button type="button" class="btn-close" @click="showModal = false"></button>
-            </div>
-            <div class="modal-body">
-              <label for="seedInput">새로운 주간 씨드 값:</label>
-              <input type="number" id="seedInput" v-model="tempSeedValue" class="form-control" />
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="showModal = false">닫기</button>
-              <button type="button" class="btn btn-primary" @click="saveSeedValue">저장</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-</template>
-
 <style scoped>
-.text-dark {
-    margin-left:5px;
-}
-#sec1{
-  margin-left:10px;
-}
-#sec2{
-  margin-right:0px;
-}
-.btn{
-    border: none;
-    border-radius: 5px;
+.card-container {
+  display: flex; /* Flexbox 사용 */
+  justify-content: space-between; /* 카드 사이에 간격 추가 */
+  gap: 20px; /* 카드 사이의 여백 설정 */
+  width: 100%; /* 컨테이너 전체 너비 */
 }
 
-.modal {
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
+.card {
+  width: 33%; /* 각 카드의 너비를 48%로 설정하여 두 개가 한 줄에 맞게 함 */
+  height: 400px; /* 카드 높이 */
+  background-size: contain; /* 이미지가 짤리지 않게 설정 */
+  background-position: center; /* 이미지 중앙에 위치 */
+  background-repeat: no-repeat; /* 여백 없이 표시 */
+  border-radius: 25px; /* 카드 모서리 둥글게 */
+  position: relative;
+  display: flex;  
   justify-content: center;
   align-items: center;
-}
-.modal-dialog {
-  max-width: 500px;
-  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  margin: 0px;
+  background-color: #14AAFF;
 }
 
-.router1{
-  text-decoration: none;
+/* 첫 번째 카드 배경 이미지 */
+.card:nth-child(1) {
+  background-image: url('@/assets/images/treasury.png'); /* 첫 번째 카드 배경 */
+}
+
+/* 두 번째 카드 배경 이미지 */
+.card:nth-child(2) {
+  background-image: url('@/assets/images/week_seed.png'); /* 두 번째 카드 배경 */
+}
+
+/* 두 번째 카드 배경 이미지 */
+.card:nth-child(3) {
+  background-image: url('@/assets/images/welcome.png'); /* 두 번째 카드 배경 */
+}
+
+.overlay-text {
+  color: white; /* 텍스트 색상 */
+  font-size: 24px; /* 텍스트 크기 */
+  font-weight: bold;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5); /* 텍스트 배경 반투명 처리 */
+  padding: 10px;
+  border-radius: 5px; /* 텍스트 배경 모서리 둥글게 */
+  position: absolute;
+}
+
+.tax-title {
+  padding-top: 20px; /* 상단 여백을 적당히 설정 (필요 시 값 조정) */
+  color: white;
+  font-size: 18px;
+  margin-top: 120px;
+  margin-left: 45px;
+
+}
+
+.alert {
+ width:250px;
+ background-color: white;
+ color:#00A3FF;
+}
+
+.taxAlert{
+  color:#00A3FF;
+}
+
+.tax-footer{
+  margin-left: 40px;
+}
+.saving-footer{
+  margin-left: 70px;
+}
+
+.btn{
+  width:115px;
+  border-radius: 5px;
+}
+
+#scard{
+  background-color: #14AAFF;
+  
+}
+
+#savingbtn{
+  background-color: #00A3FF;
+  border:none;
+  width:180px;
+}
+
+#saving2btn{
+  background-color: #EF5858;
+  width:180px;
+}
+
+.alert{
+  width:330px;
+}
+
+.text-title{
+  margin-top: 120px;
+}
+
+
+#week{
+  margin-top: 120px;
+}
+
+
+#reward_card{
+  background-color: #58CCFF;
+  padding-right: 0px;
+  margin-right: 0px;
 }
 </style>
