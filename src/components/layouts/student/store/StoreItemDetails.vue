@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import api from '@/api/studentStoreApi';
 
 const quantity = ref(1);
@@ -7,26 +8,33 @@ const price = ref(0);
 const isShow = ref(false);
 const confirmModal = ref(false);
 const purchaseCompleteModal = ref(false);
+const purchaseFailedModal = ref(false);
 const couponDetails = ref({});
+const router = useRouter();
 
 const props = defineProps({
     couponId: {
         type: Number,
         required: true
+    }, coupon: {
+        type: Object,
+        required: true
     }
 });
+
+const selectCpId = ref('');
 
 const getCouponDetails = async () => {
     if (!props.couponId) {
         console.error('Invalid coupon ID:', props.couponId);
-        return; 
+        return;
     }
-    
+
     try {
         const response = await api.getCouponById(props.couponId);
         couponDetails.value = response;
         price.value = couponDetails.value.cpPrice;
-        console.log('Coupon Details:', couponDetails.value);
+        // console.log('Coupon Details:', couponDetails.value);
     } catch (error) {
         console.error('Failed to fetch coupon details:', error);
     }
@@ -45,8 +53,15 @@ const closeConfirmModal = () => {
 };
 
 const closePurchaseCompleteModal = () => {
+    emit('close');
+    router.go(0);
     purchaseCompleteModal.value = false;
 };
+
+const closePurchaseFailedModal = () => {
+    emit('close');
+    purchaseFailedModal.value = false;
+}
 
 const minusQuantity = () => {
     if (quantity.value > 1) {
@@ -68,11 +83,36 @@ const close = () => {
     emit('close');
 };
 
-const confirmBuy = () => {
-    emit('couponBuy', { couponId: props.couponId, quantity: quantity.value });
-    closeConfirmModal();
-    purchaseCompleteModal.value = true;
+const buyRequest = ref({
+    cpId: props.couponId,
+    quantity: '',
+    price: props.coupon.cpPrice,
+});
+
+const errorMsg = ref('');
+
+const confirmBuy = async () => {
+    try {
+        buyRequest.value.quantity = quantity.value;
+        const response = await api.buyCoupon(buyRequest);
+        console.log(response);
+        if (response && response.status === 200) {
+            props.coupon.cpQuantity -= quantity.value;
+            emit('couponBuy', { couponId: props.couponId, coupon: props.coupon });
+            closeConfirmModal();
+            purchaseCompleteModal.value = true;
+
+        }
+    } catch (error) {
+        errorMsg.value = error.response.data;
+        console.error('쿠폰 사기 실패', error);
+        closeConfirmModal();
+        purchaseFailedModal.value = true;
+    }
+
 };
+
+
 
 onMounted(() => {
     getCouponDetails();
@@ -92,13 +132,15 @@ onMounted(() => {
                 <div class="col-8">
                     <div class="d-flex justify-content-between">
                         <span class="d-block mt-2 text-muted fs-6">쿠폰</span>
-                        <button class="btn btn-outline-secondary text-center" @click="close"><i class="bi bi-x-lg"></i></button>
+                        <button class="btn btn-outline-secondary text-center" @click="close"><i
+                                class="bi bi-x-lg"></i></button>
                     </div>
                     <div>
                         <span class="d-block fs-5 fw-bold">{{ couponDetails.cpName }}</span>
                     </div>
                     <div class="text-end mb-2">
-                        <span class="fs-5 fw-semibold primary">{{ couponDetails.cpPrice }} 씨드</span>
+                        <span class="fs-5 fw-semibold primary">{{ couponDetails.cpQuantity }}개 / {{
+                            couponDetails.cpPrice }} 씨드</span>
                     </div>
                     <div>
                         {{ couponDetails.cpContent }}
@@ -109,7 +151,8 @@ onMounted(() => {
                         <div class="d-flex">
                             <button class="button cyan small fs-5" @click="minusQuantity">-</button>
                             <input type="text" class="form-control text-center fs-6 fw-semibold" v-model="quantity">
-                            <button class="button cyan small fs-5" @click="plusQuantity">+</button>
+                            <button class="button cyan small fs-5" :disabled="quantity >= couponDetails.cpQuantity"
+                                @click="plusQuantity">+</button>
                         </div>
                         <div class="fs-4 fw-semibold text-danger">
                             <span>{{ totalPrice }} 씨드</span>
@@ -118,7 +161,7 @@ onMounted(() => {
                     <div class="text-end">
                         <button class="btn btn-primary" @click="openConfirmModal">구매하기</button>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -139,6 +182,15 @@ onMounted(() => {
             <p class="fs-5 fw-semibold">구매가 완료되었습니다!</p>
             <div class="d-flex justify-content-center mt-3">
                 <button class="btn btn-primary" @click="closePurchaseCompleteModal">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="purchaseFailedModal" class="confirm-modal">
+        <div class="confirm-container shadow-lg p-4">
+            <p class="fs-5 fw-semibold">{{ errorMsg }}</p>
+            <div class="d-flex justify-content-center mt-3">
+                <button class="btn btn-primary" @click="closePurchaseFailedModal">확인</button>
             </div>
         </div>
     </div>

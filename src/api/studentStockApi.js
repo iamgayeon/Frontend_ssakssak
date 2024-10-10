@@ -1,5 +1,5 @@
 import api from "@/api";
-import {ref} from 'vue';
+import { ref } from "vue";
 
 const BASE_URL = "/api/student/stock";
 
@@ -38,7 +38,6 @@ export default {
   },
 
   async buyStock(stockRequest) {
-    const errorMsg = '';
     try {
       const response = await api.post(`${BASE_URL}/buy`, stockRequest);
       return response;
@@ -50,12 +49,11 @@ export default {
       }
     }
   },
-  
+
   async sellStock(stockRequest) {
-    const errorMsg = '';
     console.log(stockRequest);
     try {
-      const response = await api.post(`${BASE_URL}/sell`,  stockRequest);
+      const response = await api.post(`${BASE_URL}/sell`, stockRequest);
       return response;
     } catch (error) {
       if (error.response && error.response.data) {
@@ -77,5 +75,5 @@ export default {
         errorMsg.value = "알 수 없는 오류가 발생했습니다!";
       }
     }
-  }
+  },
 };
