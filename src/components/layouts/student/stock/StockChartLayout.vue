@@ -73,8 +73,7 @@ const lastDayDiffPrice = computed(() => {
                             lastChartData.change }}%)
                     </p>
                     <hr>
-                    <p class="fs-5 mb-1 mt-3">전일 종가: <span class="fw-bold">85 씨드</span></p>
-                    <p class="fs-5 mb-1">최고 가격 (30일): <span class="fw-bold text-danger">{{ highest.stockPrice }}
+                    <p class="fs-5 mt-3 mb-1">최고 가격 (30일): <span class="fw-bold text-danger">{{ highest.stockPrice }}
                             씨드</span>
                     </p>
                     <p class="fs-5 mb-1 mb-3">최저 가격 (30일): <span class="fw-bold txt-primary">{{ lowest.stockPrice }}

@@ -24,10 +24,10 @@ const generateCandleData = (stockPrice) => {
         return [0, 0, 0, 0];  // 잘못된 값이 들어오면 기본값을 반환
     }
 
-    const open = parseInt(stockPrice + (Math.random() * 10 - 5));  // +- 5 범위에서 오픈 가격 생성
-    const high = parseInt(stockPrice + (Math.random() * 10));      // stockPrice + 0 ~ 10 범위에서 고가 생성
-    const low = parseInt(stockPrice - (Math.random() * 10));       // stockPrice - 0 ~ 10 범위에서 저가 생성
-    const close = parseInt(stockPrice + (Math.random() * 10 - 5)); // +- 5 범위에서 종가 생성
+    const open = parseInt(stockPrice + (Math.random() * 10 - 4));  // +- 5 범위에서 오픈 가격 생성
+    const high = parseInt(stockPrice + (Math.random() * 8 + 2));      // stockPrice + 0 ~ 10 범위에서 고가 생성
+    const low = parseInt(stockPrice - (Math.random() * 6 + 2));       // stockPrice - 0 ~ 10 범위에서 저가 생성
+    const close = parseInt(stockPrice); // +- 5 범위에서 종가 생성
 
     const orderedHigh = Math.max(open, high, close);
     const orderedLow = Math.min(open, low, close);
