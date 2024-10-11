@@ -2,28 +2,22 @@
 import StockCreateNewsModal from './StockCreateNewsModal.vue';
 import api from '@/api/teacherStockApi';
 
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { useStockStore } from '@/stores/stockStore';
 
-const days = ref([
-    { short: 'Su', date: 22 },
-    { short: 'Mo', date: 23 },
-    { short: 'Tu', date: 24 },
-    { short: 'We', date: 25 },
-    { short: 'Th', date: 26 },
-    { short: 'Fr', date: 27 }
-])
+const stockStore = useStockStore();
+const newsList = computed(() => stockStore.newsList);
 
-const newsList = ref({});
+onMounted(() => {
+    stockStore.fetchNewsList();
+})
 
-const getNewsList = async () => {
-    const response = await api.getStockNewsList();
-    newsList.value = response;
-}
-
-getNewsList();
-
-const deleteNews = (title) => {
-    newsData.value = newsData.value.filter(news => news.title !== title);
+const deleteNews = async (id) => {
+    const response = await api.delete(id);
+    if(response.status === 200) {
+        stockStore.fetchNewsList();
+    }
+    // newsData.value = newsData.value.filter(news => news.title !== title);
 }
 
 const isCreateModal = ref(false);
@@ -46,13 +40,14 @@ const handleFormSubmit = (formData) => {
             <div class="mb-3">
                 <span class="fs-2 fw-bold">주식 뉴스 관리</span>
             </div>
-            <div class="card-body p-0">
-                <ul class="list-group">
+            <div class="cardBody p-0">
+                <ul class="list-group px-2">
                     <li class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-center"
                         v-for="(news, idx) in newsList" :key="idx"
                         style="border-bottom: 1px solid rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
+                        <span>{{ news.newsDate }}</span>
                         <span class="fw-semibold">{{ news.title }}</span>
-                        <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteNews(news.title)">
+                        <button type="button" class="btn btn-sm btn-outline-danger me-3" @click="deleteNews(news.newsId)">
                             <i class="bi bi-trash"></i>
                         </button>
                     </li>
@@ -69,3 +64,36 @@ const handleFormSubmit = (formData) => {
     <StockCreateNewsModal v-if="isCreateModal" @submitForm="handleFormSubmit" @close="openCreateModal" />
 
 </template>
+
+<style scoped>
+.card {
+    height: 500px;
+}
+
+.cardBody {
+    height: 100%;
+}
+
+.list-group {
+    height: 70%;
+    overflow-y: auto;
+}
+
+
+.btn-primary {
+    background-color: #00A3FF;
+    border-color: #00A3FF;
+}
+
+.btn-active-primary {
+    color: #00A3FF;
+    border-color: #00A3FF;
+    --ar-btn-hover-bg: white;
+
+}
+
+.btn-active-primary.active {
+    color: white;
+    background-color: #00A3FF;
+}
+</style>

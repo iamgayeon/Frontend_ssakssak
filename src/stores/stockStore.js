@@ -14,6 +14,7 @@ export const useStockStore = defineStore("stock", {
       seed: "",
     },
     chartData: [],
+    newsList: [],
   }),
   actions: {
     async fetchMyStock() {
@@ -36,6 +37,14 @@ export const useStockStore = defineStore("stock", {
         console.error("Failed to fetch chart data:", error);
       }
     },
+    async fetchNewsList() {
+      try {
+        const response = await api.getNewsList();
+        this.newsList = response;
+      } catch (error) {
+        console.error('Failed to fetch newsList', error);
+      }
+    }
   },
   persist: true,
 });
