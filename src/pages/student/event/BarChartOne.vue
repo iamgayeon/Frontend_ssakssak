@@ -1,68 +1,54 @@
 <template>
   <div class="container">
     <div class="card">
-      <div class="card-header"><h4>우리반 씨드 랭킹</h4></div>
-      <span class="card-body">성공은 작은 습관에서 시작됩니다! 꾸준한 자산 관리를 통해 랭킹에 도전해보세요!</span>
-  <div class="chart-container">
-    <Bar :data="chartData" :options="chartOptions" />
-</div>
-</div>
-</div>
+      <div class="card-header">
+        <h4>우리반 씨드 랭킹</h4>
+      </div>
+      <span class="card-body">
+        성공은 작은 습관에서 시작됩니다! 꾸준한 자산 관리를 통해 랭킹에 도전해보세요!
+      </span>
+      <div class="chart-container">
+        <Bar v-if="chartDataReady" :data="chartData" :options="chartOptions" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { Bar } from 'vue-chartjs';
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-} from 'chart.js';
-
-// Chart.js 플러그인 및 Datalabels 등록
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { getSeedRanking } from '@/api/BarChart';
 
-// 플러그인 등록
-ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  ChartDataLabels // Datalabels 등록
-);
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels);
 
-const emojis = ['🔥', '✨', '🚀', '⚡️', '🌟', '💡']; // 이모티콘 배열
+const emojis = ['🔥', '✨', '🚀', '⚡️', '🌟', '💡'];
 
-// 차트 데이터
-const chartData = {
-  labels: ['조성혁', '한가연', '박민주', '박선우', '이상엽'],
+const chartData = ref({
+  labels: [],
   datasets: [
     {
-      label: 'Sample Data',
-      data: [15000, 12000, 10000, 8000, 7000],
+      label: '씨드 랭킹',
+      data: [],
       backgroundColor: ['#4fa3f7', '#f37fae', '#79dca9', '#f3c051', '#9a6df1'],
       borderRadius: 20,
       barThickness: 40,
     },
   ],
-};
+});
+const chartDataReady = ref(false);
 
-// 차트 옵션
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
-  indexAxis: 'y', // 수평 막대 차트로 전환
+  indexAxis: 'y',
   scales: {
     x: {
       beginAtZero: true,
       ticks: {
         callback: function (value) {
-          return value.toLocaleString() + '씨드'; // 단위 '원' 추가
+          return value.toLocaleString() + ' 씨드';
         },
       },
       grid: {
@@ -78,12 +64,12 @@ const chartOptions = {
   },
   plugins: {
     legend: {
-      display: false, // 범례 숨기기
+      display: false,
     },
     tooltip: {
       callbacks: {
         label: function (tooltipItem) {
-          return tooltipItem.raw.toLocaleString() + '씨드'; // 천 단위 콤마 및 '원' 추가
+          return tooltipItem.raw.toLocaleString() + ' 씨드';
         },
       },
     },
@@ -95,16 +81,31 @@ const chartOptions = {
         weight: 'bold',
       },
       formatter: function (value, context) {
-        console.log('object');
-        // 이모티콘과 데이터 값을 함께 표시
         const index = context.dataIndex;
-
-        // return '';
         return `${emojis[index]}`;
       },
     },
   },
 };
+
+const fetchSeedRanking = async () => {
+  try {
+    const seedData = await getSeedRanking();
+
+    if (seedData && seedData.length) {
+      chartData.value.labels = seedData.map(item => item.stdName);
+      chartData.value.datasets[0].data = seedData.map(item => item.seed);
+
+      chartDataReady.value = true;
+    }
+  } catch (error) {
+    console.error('Error fetching seed ranking:', error);
+  }
+};
+
+onMounted(() => {
+  fetchSeedRanking();
+});
 </script>
 
 <style scoped>
@@ -115,19 +116,16 @@ const chartOptions = {
   padding-left: 25px;
   padding-right: 25px;
   padding-bottom: 25px;
-  
 }
-.card{
-  width:80vw;
-  height:500px;
+.card {
+  width: 80vw;
+  height: 500px;
 }
 
 .card-header {
-  padding-top:20px;
+  padding-top: 20px;
   background-color: #fff;
   border-bottom: 1px solid #ccc;
   padding-bottom: 0px;
 }
-
-
 </style>
