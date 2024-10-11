@@ -10,7 +10,6 @@ const stockStore = useStockStore();
 const authStore = useAuthStore();
 const chartData = computed(() => stockStore.chartData);
 const auth = authStore.roles;
-console.log(auth);
 
 const highest = computed(() => {
     if (chartData.value.length === 0) {

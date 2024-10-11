@@ -6,11 +6,11 @@ import { ref, onMounted, computed } from 'vue';
 import { useStockStore } from '@/stores/stockStore';
 import { useAuthStore } from '@/stores/auth';
 
-const stockStore = useStockStore();
+// const stockStore = useStockStore();
 
-onMounted(async () => {
-    await stockStore.fetchChartData();
-});
+// onMounted(async () => {
+//     await stockStore.fetchChartData();
+// });
 
 </script>
 

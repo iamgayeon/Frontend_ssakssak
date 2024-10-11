@@ -6,22 +6,21 @@ import { computed, ref, watch } from 'vue';
 const stockStore = useStockStore();
 const chartData = computed(() => stockStore.chartData);
 
-console.log(chartData.value);
 
 const highest = computed(() => {
     if (chartData.value.length === 0) {
         return 0;
     }
-
     return chartData.value.reduce((prev, value) => {
         return prev.stockPrice >= value.stockPrice ? prev : value
-    });
+    }).stockPrice;
 });
+
 
 const generateCandleData = (stockPrice) => {
 
     if (!stockPrice || isNaN(stockPrice)) {
-        return [0, 0, 0, 0];  // 잘못된 값이 들어오면 기본값을 반환
+        return [0, 0, 0, 0];  
     }
 
     const open = parseInt(stockPrice + (Math.random() * 10 - 4));  // +- 5 범위에서 오픈 가격 생성
@@ -35,6 +34,7 @@ const generateCandleData = (stockPrice) => {
     return [open, orderedHigh, orderedLow, close];
 };
 
+
 const transformData = (data) => {
     return data.map(item => ({
         x: new Date(item.stockDate),
@@ -44,8 +44,13 @@ const transformData = (data) => {
 
 const series = ref([{
     name: 'Stock Prices',
-    data: transformData(chartData.value)  // chartData를 가공해서 candlestick에 맞는 데이터로 변환
+    data: transformData(chartData.value) 
 }]);
+
+
+watch(chartData, (newData) => {
+    series.value[0].data = transformData(newData);
+});
 
 const chartOptions = ref({
     chart: {
@@ -66,7 +71,7 @@ const chartOptions = ref({
         tooltip: {
             enabled: true
         },
-        range: highest.value,
+        range: highest.value + 10,
     }
 })
 </script>
