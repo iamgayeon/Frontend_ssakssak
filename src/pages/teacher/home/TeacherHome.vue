@@ -3,6 +3,7 @@ import StockChart from './StockChartLayout.vue';
 import TeacherDoor from './Teacherdoor.vue';
 import TeacherTax from './tax.vue';
 import Treasury from './treasury.vue';
+
 </script>
 
 <template>

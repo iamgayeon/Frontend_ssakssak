@@ -1,30 +1,65 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, toRaw, reactive, watch } from 'vue';
+import { useRewardStore } from '@/stores/rewardStore';
+import api from '@/api/teacherRewardApi';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+
+const rewardStore = useRewardStore();
+onMounted(() => {
+    rewardStore.fetchRewardList();
+    rewardStore.fetchStudentList();
+    rewardStore.fetchRewardGiveList();
+})
+
+const page = ref({});
+
+const pageRequest = reactive({
+    page: parseInt(route.query.page) || 1,
+    amount: parseInt(route.query.amount) || 12,
+});
+
+console.log(page.value);
+const rewardList = computed(() => rewardStore.rewardList);
+// const rewardGiveList = computed(() => rewardStore.rewardGiveList);
+const rewardGiveList = computed(() => page.value.rewardList);
+const students = computed(() => rewardStore.studentList);
+
 
 const rewardName = ref('');
-const rewardAmount = ref('');
+const rewardSeed = ref('');
 
-const addReward = () => {
-    const reward = {
-        name: rewardName.value,
-        amount: rewardAmount.value
-    };
-    rewardList.value.push(reward);
 
-    rewardName.value = '';
-    rewardAmount.value = '';
+const addReward = async () => {
+    try {
+        const reward = {
+            reward_name: rewardName.value,
+            reward_seed: rewardSeed.value
+        };
+
+        const response = await api.addReward(reward);
+        console.log(response);
+        rewardName.value = '';
+        rewardSeed.value = '';
+        await rewardStore.fetchRewardList();
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-const deleteReward = (idx) => {
-    rewardList.value = rewardList.value.filter((reward) => rewardList.value[idx] !== reward)
+const deleteReward = async (id) => {
+    const response = await api.deleteReward(id);
+    rewardStore.fetchRewardList();
+
 }
 
-// 선택된 학생들을 저장할 배열
 const selectedStudents = ref([]);
-const selectedReward = ref('');
+const selectedReward = ref(null);
 
-const toggleRewardSelect = (idx) => {
-    selectedReward.value = rewardList.value[idx];
+const toggleRewardSelect = (id) => {
+    selectedReward.value = rewardList.value.find(reward => reward.rewardId === id);
 }
 
 const toggleRewardDeselect = () => {
@@ -32,8 +67,9 @@ const toggleRewardDeselect = () => {
 }
 
 const toggleStudentSelection = (student) => {
+    console.log(student);
     const index = selectedStudents.value.findIndex(
-        (selected) => selected.sno === student.sno
+        (selected) => selected.std_id === student.std_id
     );
 
     if (index > -1) {
@@ -51,117 +87,53 @@ const toggleAllDeselect = () => {
     selectedStudents.value = []
 }
 
-const rewardList = ref([
-    {
-        name: '선생님을 매우 잘 도와줌',
-        amount: '300',
-    },
-    {
-        name: '친구에게 모르는 문제를 알려줌',
-        amount: '300',
-    },
-    {
-        name: '친구를 매우 잘 도와줌',
-        amount: '300',
-    },
-    {
-        name: '쓰레기를 매우 잘 도와줌',
-        amount: '300',
-    },
-]);
 
-const students = ref([
-    {
-        sno: '1',
-        name: '박민주',
-        seed: '3000',
-    },
-    {
-        sno: '2',
-        name: '한가연',
-        seed: '1000',
-    },
-    {
-        sno: '3',
-        name: '정인겸',
-        seed: '5000',
-    },
-    {
-        sno: '4',
-        name: '고대호',
-        seed: '2400',
-    },
-    {
-        sno: '5',
-        name: '유진',
-        seed: '1200',
-    },
-    {
-        sno: '6',
-        name: '김유진',
-        seed: '1200',
-    },
-    {
-        sno: '7',
-        name: '최유진',
-        seed: '1200',
-    },
-    {
-        sno: '8',
-        name: '박유진',
-        seed: '1200',
-    },
-    {
-        sno: '9',
-        name: '이유진',
-        seed: '1200',
-    },
-    {
-        sno: '10',
-        name: '소유진',
-        seed: '1200',
-    },
-]);
+const sendReward = async () => {
+    try {
+        const students = selectedStudents.value.map(student => toRaw(student));
+        const request = {
+            students: students,
+            reward_id: selectedReward.value.rewardId,
+        }
+        const response = await api.sendRewardToStudent(request);
+        if (response.status === 200) {
+            alert(response.data);
+        }
+        selectedStudents.value = [];
+        selectedReward.value = null;
+        await rewardStore.fetchStudentList();
+        await rewardStore.fetchRewardGiveList();
+    } catch (error) {
+        alert('잘못된 요청입니다.');
+    }
 
-const rewardGiveRecords = ref([
-    { date: '2024-09-26', student_name: '김철수', reward_name: '교실 청소 도우미', reward_seed: 150 },
-    { date: '2024-09-25', student_name: '이영희', reward_name: '쓰레기 줍기', reward_seed: 100 },
-    { date: '2024-09-24', student_name: '박민수', reward_name: '친구 도와주기', reward_seed: 200 },
-    { date: '2024-09-23', student_name: '최정훈', reward_name: '질서 잘 지키기', reward_seed: 120 },
-    { date: '2024-09-22', student_name: '정예진', reward_name: '책 읽기 시간 참여', reward_seed: 180 },
-    { date: '2024-09-21', student_name: '강현우', reward_name: '학습 도구 정리', reward_seed: 130 },
-    { date: '2024-09-20', student_name: '송하나', reward_name: '조용한 자습 시간 유지', reward_seed: 170 },
-    { date: '2024-09-19', student_name: '문태수', reward_name: '교실 장식 도움', reward_seed: 140 },
-    { date: '2024-09-18', student_name: '임유리', reward_name: '특별 발표 참여', reward_seed: 190 },
-    { date: '2024-09-17', student_name: '최동혁', reward_name: '학교 행사 자원봉사', reward_seed: 160 },
-    { date: '2024-09-16', student_name: '김철수', reward_name: '교실 청소 도우미', reward_seed: 150 },
-    { date: '2024-09-15', student_name: '이영희', reward_name: '쓰레기 줍기', reward_seed: 100 },
-    { date: '2024-09-14', student_name: '박민수', reward_name: '친구 도와주기', reward_seed: 200 },
-    { date: '2024-09-13', student_name: '최정훈', reward_name: '질서 잘 지키기', reward_seed: 120 },
-    { date: '2024-09-12', student_name: '정예진', reward_name: '책 읽기 시간 참여', reward_seed: 180 },
-    { date: '2024-09-11', student_name: '강현우', reward_name: '학습 도구 정리', reward_seed: 130 },
-    { date: '2024-09-10', student_name: '송하나', reward_name: '조용한 자습 시간 유지', reward_seed: 170 },
-    { date: '2024-09-09', student_name: '문태수', reward_name: '교실 장식 도움', reward_seed: 140 },
-    { date: '2024-09-08', student_name: '임유리', reward_name: '특별 발표 참여', reward_seed: 190 },
-    { date: '2024-09-07', student_name: '최동혁', reward_name: '학교 행사 자원봉사', reward_seed: 160 }
-]);
-
-const visibleRewardsCount = ref(10);
-
-const visibleRewards = computed(() => {
-    return rewardGiveRecords.value.slice(0, visibleRewardsCount.value);
-})
-
-const canLoadMore = computed(() => {
-    return visibleRewardsCount.value < rewardGiveRecords.value.length;
-})
-
-const loadMore = () => {
-    visibleRewardsCount.value += 10;
 }
 
 
+const handlePageChange = async (pageNum) => {
+    console.log('CLICK,,,,');
+    router.push({
+        query: {
+            page: pageNum,
+            amount: pageRequest.amount,
+        },
+    });
+};
 
+watch(route, async (newValue) => {
+    console.log('WATCH', route.query.page);
+    await load(route.query);
+});
+
+const load = async (query) => {
+    try {
+        page.value = await api.getRewardGiveList(query);
+        console.log('asdf', page.value);
+
+    } catch { }
+};
+
+load(pageRequest);
 </script>
 <template>
     <div class="container mt-5">
@@ -190,17 +162,17 @@ const loadMore = () => {
                             </div>
                         </div>
                         <div class="reward-list-wrap" v-if="rewardList">
-                            <div v-for="(reward, idx) in rewardList" :key="idx"
+                            <div v-for="(reward, idx) in rewardList" :key="reward.rewardId"
                                 class="d-flex text-center py-2 list-item" style="width: 100%;">
-                                <div class="col-6 text-center reward-name" @click="toggleRewardSelect(idx)">
-                                    <span class="fs-5 text-dark">{{ reward.name }}</span>
+                                <div class="col-6 text-center reward-name" @click="toggleRewardSelect(reward.rewardId)">
+                                    <span class="fs-5 text-dark">{{ reward.rewardName }}</span>
                                 </div>
                                 <div class="col-4 text-center">
-                                    <span class="fs-5 text-dark">{{ reward.amount }} 씨드</span>
+                                    <span class="fs-5 text-dark">{{ reward.rewardSeed }} 씨드</span>
                                 </div>
                                 <div class="col-2 text-center pe-2">
                                     <button type="button" class="btn btn-sm btn-outline-danger"
-                                        @click="deleteReward(idx)">
+                                        @click="deleteReward(reward.rewardId)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
@@ -216,7 +188,7 @@ const loadMore = () => {
                                 </div>
                                 <div class="d-flex align-items-center reward-add-box">
                                     <label class="form-label fs-5 fw-bold reward-amount">금액</label>
-                                    <input type="text" class="form-control me-2 w-50 text-end" v-model="rewardAmount"
+                                    <input type="text" class="form-control me-2 w-50 text-end" v-model="rewardSeed"
                                         placeholder="ex) 300"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                     <span class="me-4"> 씨드 </span>
@@ -254,17 +226,18 @@ const loadMore = () => {
                             </div>
                         </div>
                         <div class="std-list-wrap" style="overflow-y: scroll;">
-                            <div v-for="student in students" :key="student.sno" class="d-flex text-center py-2"
-                                style="width: 100%;">
-                                <div class="col-2">
+                            <div v-for="student in students" :key="student.std_id"
+                                class="d-flex text-center py-2 name-box" style="width: 100%;"
+                                @click="toggleStudentSelection(student)">
+                                <div class="col-2 text-center pt-1">
                                     <input type="checkbox" :value="student" @change="toggleStudentSelection(student)"
                                         :checked="selectedStudents.includes(student)" />
                                 </div>
                                 <div class="col-2 text-center" style="overflow-x: auto;">
-                                    <span class="fs-5 text-dark">{{ student.sno }}</span>
+                                    <span class="fs-5 text-dark">{{ student.std_id }}</span>
                                 </div>
                                 <div class="col-4 text-center">
-                                    <span class="fs-5 text-dark">{{ student.name }}</span>
+                                    <span class="fs-5 text-dark">{{ student.std_name }}</span>
                                 </div>
                                 <div class="col-4 text-center">
                                     <span class="fs-5 text-dark">{{ student.seed }}</span>
@@ -282,22 +255,22 @@ const loadMore = () => {
                 <div class="mt-3 ms-2">
                     <span class="fs-3 fw-bold">리워드 적용 학생</span>
                 </div>
-                <div class="d-flex mt-2 ms-3">
-                    <div v-for="(student, idx) in selectedStudents" :key="idx" class="custom-btn cyan me-2"
+                <div class="d-flex mt-2 ms-3 flex-wrap">
+                    <div v-for="(student, idx) in selectedStudents" :key="idx" class="custom-btn cyan me-2 mb-3"
                         @click="toggleStudentSelection(student)">
-                        {{ student.name }}
+                        {{ student.std_name }}
                     </div>
                 </div>
             </div>
             <div class="mx-4">
-                <div class="mt-3 ms-2">
+                <div class="ms-2">
                     <span class="fs-3 fw-bold">적용 리워드</span>
                 </div>
                 <div class="custom-btn blue mt-2 ms-3 d-inline-block " v-if="selectedReward"
-                    @click="toggleRewardDeselect">{{ selectedReward.name }}</div>
+                    @click="toggleRewardDeselect">{{ selectedReward.rewardName }}</div>
             </div>
             <div class="text-end p-3">
-                <button class="btn btn-primary">리워드 지급</button>
+                <button class="btn btn-primary" @click="sendReward">리워드 지급</button>
             </div>
         </div>
 
@@ -322,25 +295,35 @@ const loadMore = () => {
                         </div>
                     </div>
                     <div>
-                        <div v-for="(record, idx) in visibleRewards" :key="idx" class="d-flex py-2 mx-auto"
+                        <div v-for="(record, idx) in rewardGiveList" :key="record.giveId" class="d-flex py-2 mx-auto"
                             style="width: 90%;">
                             <div class="col-3 text-center">
-                                <span class="fs-5 text-dark">{{ record.date }}</span>
+                                <span class="fs-5 text-dark">{{ record.giveDate }}</span>
                             </div>
                             <div class="col-2 text-center" style="overflow-x: auto;">
-                                <span class="fs-5 text-dark">{{ record.student_name, e }}</span>
+                                <span class="fs-5 text-dark">{{ record.stdName }}</span>
                             </div>
                             <div class="col-5 text-center">
-                                <span class="fs-5 text-dark">{{ record.reward_name }}</span>
+                                <span class="fs-5 text-dark">{{ record.rewardName }}</span>
                             </div>
                             <div class="col-2 text-center">
-                                <span class="fs-5 text-dark">{{ record.reward_seed }} 씨드</span>
+                                <span class="fs-5 text-dark">{{ record.giveSeed }} 씨드</span>
                             </div>
                         </div>
 
-                        <button class="btn btn-primary d-block mx-auto fs-5 mt-3" v-if="canLoadMore"
-                            @click="loadMore">더보기</button>
-
+                        <div class="my-5 d-flex">
+                            <div class="flex-grow-1 text-center">
+                                <!-- 페이지 네이션 -->
+                                <vue-awesome-paginate :total-items="page.totalCount"
+                                    :items-per-page="pageRequest.amount" :max-pages-shown="5"
+                                    :show-ending-buttons="true" v-model="pageRequest.page" @click="handlePageChange">
+                                    <template #first-page-button><i class="fa-solid fa-backward-fast"></i></template>
+                                    <template #prev-button><i class="fa-solid fa-caret-left"></i></template>
+                                    <template #next-button><i class="fa-solid fa-caret-right"></i></template>
+                                    <template #last-page-button><i class="fa-solid fa-forward-fast"></i></template>
+                                </vue-awesome-paginate>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -379,6 +362,11 @@ const loadMore = () => {
 .reward-list-wrap::-webkit-scrollbar-button,
 .std-list-wrap::-webkit-scrollbar-button {
     display: none;
+}
+
+.name-box:hover {
+    cursor: pointer;
+    background-color: antiquewhite;
 }
 
 .std-list-wrap {
@@ -444,6 +432,11 @@ const loadMore = () => {
 .custom-btn.blue:active {
     box-shadow: 0 0 #74a3b0;
     background-color: #709CA8;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
 }
 
 
