@@ -1,30 +1,46 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRewardStore } from '@/stores/rewardStore';
+import api from '@/api/teacherRewardApi';
+
+const rewardStore = useRewardStore();
+onMounted(() => {
+    rewardStore.fetchRewardList();
+})
+const rewardList = computed(() => rewardStore.rewardList);
 
 const rewardName = ref('');
-const rewardAmount = ref('');
+const rewardSeed = ref('');
 
-const addReward = () => {
-    const reward = {
-        name: rewardName.value,
-        amount: rewardAmount.value
-    };
-    rewardList.value.push(reward);
-
-    rewardName.value = '';
-    rewardAmount.value = '';
+const addReward = async () => {
+    try {
+        const reward = {
+            reward_name: rewardName.value,
+            reward_seed: rewardSeed.value
+        };
+    
+        const response = await api.addReward(reward);
+        console.log(response);
+        rewardName.value = '';
+        rewardSeed.value = '';
+        rewardStore.fetchRewardList();
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-const deleteReward = (idx) => {
-    rewardList.value = rewardList.value.filter((reward) => rewardList.value[idx] !== reward)
+const deleteReward = async (id) => {
+    const response = await api.deleteReward(id);
+    rewardStore.fetchRewardList();
+
 }
 
 // 선택된 학생들을 저장할 배열
 const selectedStudents = ref([]);
-const selectedReward = ref('');
+const selectedReward = ref(null);
 
-const toggleRewardSelect = (idx) => {
-    selectedReward.value = rewardList.value[idx];
+const toggleRewardSelect = (id) => {
+    selectedReward.value = rewardList.value.find(reward => reward.rewardId === id);
 }
 
 const toggleRewardDeselect = () => {
@@ -50,25 +66,6 @@ const toggleAllSelected = () => {
 const toggleAllDeselect = () => {
     selectedStudents.value = []
 }
-
-const rewardList = ref([
-    {
-        name: '선생님을 매우 잘 도와줌',
-        amount: '300',
-    },
-    {
-        name: '친구에게 모르는 문제를 알려줌',
-        amount: '300',
-    },
-    {
-        name: '친구를 매우 잘 도와줌',
-        amount: '300',
-    },
-    {
-        name: '쓰레기를 매우 잘 도와줌',
-        amount: '300',
-    },
-]);
 
 const students = ref([
     {
@@ -190,17 +187,17 @@ const loadMore = () => {
                             </div>
                         </div>
                         <div class="reward-list-wrap" v-if="rewardList">
-                            <div v-for="(reward, idx) in rewardList" :key="idx"
+                            <div v-for="(reward, idx) in rewardList" :key="reward.rewardId"
                                 class="d-flex text-center py-2 list-item" style="width: 100%;">
-                                <div class="col-6 text-center reward-name" @click="toggleRewardSelect(idx)">
-                                    <span class="fs-5 text-dark">{{ reward.name }}</span>
+                                <div class="col-6 text-center reward-name" @click="toggleRewardSelect(reward.rewardId)">
+                                    <span class="fs-5 text-dark">{{ reward.rewardName }}</span>
                                 </div>
                                 <div class="col-4 text-center">
-                                    <span class="fs-5 text-dark">{{ reward.amount }} 씨드</span>
+                                    <span class="fs-5 text-dark">{{ reward.rewardSeed }} 씨드</span>
                                 </div>
                                 <div class="col-2 text-center pe-2">
                                     <button type="button" class="btn btn-sm btn-outline-danger"
-                                        @click="deleteReward(idx)">
+                                        @click="deleteReward(reward.rewardId)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
@@ -216,7 +213,7 @@ const loadMore = () => {
                                 </div>
                                 <div class="d-flex align-items-center reward-add-box">
                                     <label class="form-label fs-5 fw-bold reward-amount">금액</label>
-                                    <input type="text" class="form-control me-2 w-50 text-end" v-model="rewardAmount"
+                                    <input type="text" class="form-control me-2 w-50 text-end" v-model="rewardSeed"
                                         placeholder="ex) 300"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                     <span class="me-4"> 씨드 </span>
@@ -294,7 +291,7 @@ const loadMore = () => {
                     <span class="fs-3 fw-bold">적용 리워드</span>
                 </div>
                 <div class="custom-btn blue mt-2 ms-3 d-inline-block " v-if="selectedReward"
-                    @click="toggleRewardDeselect">{{ selectedReward.name }}</div>
+                    @click="toggleRewardDeselect">{{ selectedReward.rewardName }}</div>
             </div>
             <div class="text-end p-3">
                 <button class="btn btn-primary">리워드 지급</button>
@@ -328,7 +325,7 @@ const loadMore = () => {
                                 <span class="fs-5 text-dark">{{ record.date }}</span>
                             </div>
                             <div class="col-2 text-center" style="overflow-x: auto;">
-                                <span class="fs-5 text-dark">{{ record.student_name, e }}</span>
+                                <span class="fs-5 text-dark">{{ record.student_name }}</span>
                             </div>
                             <div class="col-5 text-center">
                                 <span class="fs-5 text-dark">{{ record.reward_name }}</span>
@@ -340,7 +337,6 @@ const loadMore = () => {
 
                         <button class="btn btn-primary d-block mx-auto fs-5 mt-3" v-if="canLoadMore"
                             @click="loadMore">더보기</button>
-
                     </div>
                 </div>
             </div>
