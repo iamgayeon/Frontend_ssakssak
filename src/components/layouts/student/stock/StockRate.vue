@@ -20,10 +20,9 @@ const dateFormat = (date) => {
 
 const fiveDayRates = computed(() => {
     const rates = [];
-    console.log('22', chartData.value.length);
-    if(chartData.value && chartData.value.length > 0){
+    if (chartData.value && chartData.value.length > 0) {
         for (let i = chartData.value.length - 1; i >= chartData.value.length - 5; i--) {
-            if(i >= 0) {
+            if (i >= 0) {
                 console.log(chartData.value[i]);
                 const price = chartData.value[i].stockPrice;
                 const date = new Date(chartData.value[i].stockDate);
@@ -38,7 +37,6 @@ const fiveDayRates = computed(() => {
             }
         }
     }
-    console.log('33', rates);
     return rates;
 })
 
@@ -49,10 +47,10 @@ const setCurrentRate = async () => {
         return;
     } else if (currentRate.value === '') {
         return;
-    } else if(isNaN(currentRate.value)) {
+    } else if (isNaN(currentRate.value)) {
         alert('숫자만 입력해주세요');
         currentRate.value = '';
-        return; 
+        return;
     }
     try {
         const latestPrice = chartData.value[chartData.value.length - 1].stockPrice;
@@ -61,11 +59,11 @@ const setCurrentRate = async () => {
             change: currentRate.value,
             stock_price: parseInt(newPrice),
         }
-    
+
         await api.addRate(request);
         currentRate.value = '';
 
-        await stockStore.fetchChartData();  // 추가된 부분
+        await stockStore.fetchChartData();
     } catch (error) {
         console.error(error);
     }
