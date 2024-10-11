@@ -44,7 +44,8 @@
   <div class="container">
     <div class="card-header"><h5 class="title">가입 가능한 예금 상품 전체보기</h5></div>
   </div>
-  <div class="savings-plans">
+  <div  id="specificSavingsPlan" class="savings-plans">
+    
     <div class="savingCard" @click="openModal('싹싹예금')" :disabled="isSubscribed('싹싹예금')">
       <img src="@/assets/images/tree1.png" alt="싹싹예금" class="card-img" id="card-img" />
       <div class="card-header">
@@ -60,16 +61,63 @@
           </div>
           <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
             <span class="text-muted fw-bold">예치기간</span>
-            <span class="text-muted">2주</span>
+            <span class="text-muted">8주</span>
           </div>
           <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
             <span class="text-muted fw-bold">저축금액</span>
-            <span class="text-muted">최대 30씨드</span>
+            <span class="text-muted">최대 300씨드</span>
           </div>
       </div>
       <button class="btn2" :disabled="isSubscribed('싹싹예금')">상품 가입하기</button>
     </div>
-   
+    <div class="savingCard" @click="openModal('나무예금')" :disabled="isSubscribed('나무예금')">
+      <img src="@/assets/images/tree2.png" alt="나무예금" class="card-img" id="card-img" />
+      <div class="card-header">
+        <h4>나무예금</h4>
+        <div class="alert alert-primary" role="alert">
+          <i class="bi bi-bar-chart-line me-2" style=" padding-bottom:5px;"></i>금리 : 8%<i class="bi bi-calendar4-week me-2" style="padding-left: 10px; padding-bottom:5px;"></i>예치 기간 : 16주
+        </div>
+      </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+            <span class="text-muted fw-bold">상품특징</span>
+            <span class="text-muted" style="text-align:right">2학년 7반생이면 누구나 <br>가입 가능한 금융싹싹의 대표 적금</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+            <span class="text-muted fw-bold">예치기간</span>
+            <span class="text-muted">16주</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+            <span class="text-muted fw-bold">저축금액</span>
+            <span class="text-muted">최대 600씨드</span>
+          </div>
+      </div>
+      <button class="btn2" :disabled="isSubscribed('나무예금')">상품 가입하기</button>
+    </div>
+    <div class="savingCard" @click="openModal('숲속예금')" :disabled="isSubscribed('숲속예금')">
+      <img src="@/assets/images/tree3.png" alt="숲속예금" class="card-img" id="card-img" />
+      <div class="card-header">
+        <h4>숲속예금</h4>
+        <div class="alert alert-primary" role="alert">
+          <i class="bi bi-bar-chart-line me-2" style=" padding-bottom:5px;"></i>금리 : 15%<i class="bi bi-calendar4-week me-2" style="padding-left: 10px; padding-bottom:5px;"></i>예치 기간 : 24주
+        </div>
+      </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+            <span class="text-muted fw-bold">상품특징</span>
+            <span class="text-muted" style="text-align:right">높은 이율을 제공하여 <br>자산을 키워주는 똑똑한 적금</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+            <span class="text-muted fw-bold">예치기간</span>
+            <span class="text-muted">24주</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+            <span class="text-muted fw-bold">저축금액</span>
+            <span class="text-muted">최대 1000씨드</span>
+          </div>
+      </div>
+      <button class="btn2" :disabled="isSubscribed('숲속예금')">상품 가입하기</button>
+    </div>
   </div>
 
   <div class="container">
@@ -285,7 +333,13 @@ const subscribeToSaving = () => {
   } else if (selectedProductName.value === '숲속적금') {
     expiryDate = addWeeks(currentDate, 8);
   } else if (selectedProductName.value === '싹싹예금') {
-    expiryDate = addWeeks(currentDate, 3);
+    expiryDate = addWeeks(currentDate, 8);
+  }
+  else if (selectedProductName.value === '나무예금') {
+    expiryDate = addWeeks(currentDate, 16);
+  }
+  else if (selectedProductName.value === '숲속예금') {
+    expiryDate = addWeeks(currentDate, 24);
   }
 
   // 상품별 최대 금액 확인
@@ -391,6 +445,7 @@ if (selectedProduct.value === '숲속적금') {
   display: flex; /* Flexbox 사용 */
   justify-content: center; /* 가운데 정렬 */
 }
+
 .alert{
   background-color: #CFE2FF !important;
   color: #485598;
@@ -486,17 +541,13 @@ th{
 
 
 .savings-plans {
-  display: flex; /* 가로로 카드들을 배치 */
-  justify-content: flex-start; /* 카드 사이 간격 */
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
   background-color: #f8f6e9; /* 배경색 */
+  padding: 40px 20px; /* 상하 좌우 패딩 추가 */
   width: 100%;
-  color : #50495B;
-  padding-right: var(--bs-gutter-x, 0.75rem);
-  padding-left: var(--bs-gutter-x, 0.75rem);
-  margin-right: auto;
-  margin-left: 60px;
-  padding-top:40px;
-
+  flex-wrap: wrap; /* 카드들이 줄을 넘어갈 경우 다음 줄로 이동하도록 설정 */
+  box-sizing: border-box; /* 패딩과 마진을 포함하여 너비 계산 */
 }
 
 .savingCard {
@@ -504,13 +555,12 @@ th{
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  margin : 14px;
+  margin: 20px; /* 각 카드의 마진을 동일하게 설정하여 균일하게 배치 */
   width: 404px;
   text-align: center;
   cursor: pointer;
   transition: transform 0.2s; /* 카드에 호버 효과 */
-  color : #50495B;
-
+  color: #50495B;
 }
 #th1{
   color:#fff !important;
