@@ -37,7 +37,7 @@ watch(
     <div :style="{ backgroundColor: '#f8f6e9' }" class="content">
       <slot></slot>
     </div>
-    <Footer />
+    <Footer class="mt-5" />
   </div>
 </template>
 
