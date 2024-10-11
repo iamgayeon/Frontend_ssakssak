@@ -1,13 +1,15 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useStockStore } from '@/stores/stockStore';
+import { useAuthStore } from '@/stores/auth';
 import api from '@/api/studentStockApi';
 import StockChart from './StockChart.vue';
 import StockTrade from './StockTrade.vue';
 
 const stockStore = useStockStore();
+const authStore = useAuthStore();
 const chartData = computed(() => stockStore.chartData);
-
+const auth = authStore.roles;
 
 const highest = computed(() => {
     if (chartData.value.length === 0) {
@@ -80,7 +82,7 @@ const lastDayDiffPrice = computed(() => {
                             씨드</span></p>
                     <hr>
                     <div>
-                        <StockTrade />
+                        <StockTrade v-if="auth[0] === 'ROLE_STUDENT'" />
                     </div>
                 </div>
                 <div class="col-7">
