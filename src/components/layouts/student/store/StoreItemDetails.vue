@@ -94,7 +94,8 @@ const errorMsg = ref('');
 const confirmBuy = async () => {
     try {
         buyRequest.value.quantity = quantity.value;
-        const response = await api.buyCoupon(buyRequest);
+        console.log(buyRequest.value);
+        const response = await api.buyCoupon(buyRequest.value);
         console.log(response);
         if (response && response.status === 200) {
             props.coupon.cpQuantity -= quantity.value;

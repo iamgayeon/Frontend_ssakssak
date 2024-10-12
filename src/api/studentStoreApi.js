@@ -27,7 +27,8 @@ export default {
 
   async buyCoupon(request) {
     try {
-      const response = await api.post(`${BASE_URL}/buy`, request.value);
+      console.log('re' , request);
+      const response = await api.post(`${BASE_URL}/buy`, request);
       return response;
     } catch (error) {
       console.error("Failed to buy coupon", error);
