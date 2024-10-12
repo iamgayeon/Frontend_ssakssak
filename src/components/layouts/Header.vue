@@ -1,9 +1,9 @@
 <template>
   <div class="header">
     <!-- 알림 버튼 -->
-    <!-- <div v-if="store.roles[0] === 'ROLE_TEAHER'" class="notification" @click="toggleNotificationModal">
+    <div class="notification" @click="toggleNotificationModal">
       <i class="bi bi-bell-fill" :style="alarmColor ? 'color:green;' : 'color:white;'"></i>
-    </div> -->
+    </div>
 
     <!-- 환영 메시지 -->
     <div class="welcome" v-if="isLogin">
@@ -25,6 +25,7 @@
                 @click="checkAlarm(alarm.id, idx)">
                 <i class="bi bi-info-circle-fill"></i>
                 <div class="m-auto">
+                  {{ alarm }}
                   <p>{{ alarm.message }}</p>
                 </div>
               </li>
@@ -43,7 +44,8 @@
 import { useAuthStore } from '@/stores/auth';
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+
+import api from '@/api/teacherAlarmApi';
 
 // 스토어와 라우터 설정
 const router = useRouter();
@@ -61,90 +63,80 @@ const toggleNotificationModal = () => {
   isNotificationModalOpen.value = !isNotificationModalOpen.value;
 };
 
+
 // 로그아웃 함수
 const logout = () => {
   store.logout();
   router.push('/');
 };
 
-// const alarms = ref([]);
-// const alarmColor = ref(false);
-// let eventSource;
+const alarms = ref([]);
+const alarmColor = ref(false);
+let eventSource;
 
-// const TeacherProfile = ref({
-//   usernmae: '',
-// });
+const fetchAlarmHistory = async () => {
+  try {
+    const response = await api.getAlarmHistory(store.username);
+    console.log(response);
+    if (response.length === 0) {
+      console.log("no Alarm List");
+      alarmColor.value = false;
+      alarms.value = [];
+    } else {
+      alarmColor.value = true;
+      alarms.value = response;
+    }
+    console.log('value', alarms.value);
+  } catch (error) {
+    console.error('Failed : ', error);
+  }
 
-// const fetchAlarmHistory = async () => {
-//   try {
-//     const teacher = await getTeacherProfile();
+}
 
-//     const response = await axios.get(`/api/alarm/history`, {
-//       params: {
-//         username: teacher.username,
-//       }
-//     });
+const checkAlarm = async (id, idx) => {
+  try {
+    const response = await api.postCheckAlarm(id)
+    alarms.value.splice(idx, 1);
+    console.log(alarms.value.length);
+    if (alarms.value.length === 0) {
+      alarmColor.value = false;
+    }
+  } catch (error) {
+    console.error("Failed checked alarm", error);
+  }
+};
 
-//     console.log(response.status);
-//     if (response.status === 204) {
-//       console.log("no Alarm List");
-//       alarmColor.value = false;
-//       alarms.value = [];
-//     } else {
-//       alarmColor.value = true;
-//       alarms.value = response.data;
-//     }
+onMounted(async () => {
 
-//   } catch (error) {
-//     console.error('Failed : ', error);
-//   }
+  try {
+    const teacher = store.roles[0] === 'ROLE_TEACHER';
+    // if (store.roles[0] === 'ROLE_TEACHER') {
+    await fetchAlarmHistory();
+    const username = store.username;
+    const token = store.getToken();
 
-// }
+    eventSource = new EventSource(`/api/alarm/subscribe/${username}`);
 
-// const getTeacherProfile = async () => {
-//   const store = useAuthStore();
-//   TeacherProfile.username = store.username;
-//   return TeacherProfile;
-// };
+    eventSource.addEventListener('alarm', (event) => {
+      const alarm = JSON.parse(event.data);
+      alarms.value = [...alarms.value, { id: alarm.id, message: alarm.message }];
+      alarmColor.value = true;
+    });
 
-// const checkAlarm = async (id, idx) => {
-//   try {
-//     console.log(id);
-//     const response = await axios.post(`/api/alarm/checked/` + id);
-//     alarms.value.splice(idx, 1);
-//     console.log(alarms.value.length);
-//     if (alarms.value.length === 0) {
-//       alarmColor.value = false;
-//     }
-//   } catch (error) {
-//     console.error("Failed checked alarm", error);
-//   }
-// };
+    eventSource.onerror = (error) => {
+      console.error("Error with SSE connection", error);
+    };
+  } catch (error) {
+    console.error('mounte중 오류 발생: ', error);
+  }
+  // }
+});
 
-// onMounted(() => {
-//   if (store.roles[0] === 'ROLE_TEACHER') {
-//     fetchAlarmHistory();
-
-//     const usertId = 1;
-//     eventSource = new EventSource(`/api/alarm/subscribe/${usertId}`);
-
-//     eventSource.addEventListener('alarm', (event) => {
-//       const alarm = JSON.parse(event.data);
-//       alarms.value = [...alarms.value, { id: alarm.id, message: alarm.message }];
-//       alarmColor.value = true;
-//     });
-
-//     eventSource.onerror = (error) => {
-//       console.error("Error with SSE connection", error);
-//     };
-//   }
-// });
-
-// onUnmounted(() => {
-//   if (eventSource) {
-//     eventSource.close();
-//   }
-// })
+onUnmounted(() => {
+  if (eventSource) {
+    eventSource.close();
+  }
+})
 </script>
 
 <style scoped>

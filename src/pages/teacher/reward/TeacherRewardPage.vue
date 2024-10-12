@@ -102,7 +102,8 @@ const sendReward = async () => {
         selectedStudents.value = [];
         selectedReward.value = null;
         await rewardStore.fetchStudentList();
-        await rewardStore.fetchRewardGiveList();
+        // await rewardStore.fetchRewardGiveList();
+        load();
     } catch (error) {
         alert('잘못된 요청입니다.');
     }
