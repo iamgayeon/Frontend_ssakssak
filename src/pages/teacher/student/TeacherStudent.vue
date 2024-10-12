@@ -136,18 +136,20 @@
                 <div class="p-4">
                     <h4 class="mb-4">새 직업 등록</h4>
                     <form @submit.prevent="addJob"
-                        :class="addJobFormStatus ? 'needs-validation' : 'needs-validation was-validated'"
-                        style="height:100%" novalidate>
+                          :class="addJobFormStatus ? 'needs-validation' : 'needs-validation was-validated'"
+                          style="height:100%" novalidate>
                         <div class="mb-3">
                             <label for="job-name" class="form-label">직업명</label>
                             <input type="text" id="job-name" class="form-control" v-model="newJob.name" required>
                         </div>
                         <div class="mb-3">
                             <label for="job-description" class="form-label">상세설명</label>
-                            <input type="text" id="job-description" class="form-control" v-model="newJob.description"
-                                required>
+                            <input type="text" id="job-description" class="form-control" v-model="newJob.description" required>
                         </div>
-
+                        <div class="mb-3">
+                            <label for="job-isPrime" class="form-label">우대금리</label>
+                            <input type="text" id="job-isPrime" class="form-control" v-model="newJob.isPrime" required>
+                        </div>
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary w-100">등록</button>
                         </div>
@@ -284,28 +286,42 @@ const addStudent = async () => {
   }
 };
 
-// 새 직업 등록을 위한 폼 상태와 데이터 관리
-const newJob = ref({
-    jno: '',
-    name: '',
-    description: ''
-});
-
+// 직업 등록 상태 관리 변수
 const addJobFormStatus = ref(true);
 
-const addJob = async () => {
-    if (newJob.value.name === '' || newJob.value.description === '') {
-        addJobFormStatus.value = false;
-        return;
-    }
-    addJobFormStatus.value = true;
-    if (addJobFormStatus.value) {
-        newJob.value.jno = parseInt(store.getJobsLastJno) + 1;
-        await store.jobs.push({ ...newJob.value });
+// 새 직업 등록 데이터
+const newJob = ref({
+    name: '',
+    description: '',
+    isPrime: ''
+});
 
-        // 폼 초기화
+
+// 새 직업 등록 함수
+const addJob = async () => {
+    try {
+        // newJob 데이터를 서버에 POST 요청으로 전송
+        const response = await apiService.registJob(newJob.value);
+        console.log('직업 추가 성공:', response.data);
+
+        // 서버 응답이 성공적으로 돌아오면 jobs 배열에 새 직업을 추가
+        const addedJob = {
+            jobId: response.data.jobId,  // 서버 응답에서 jobId 받아오기
+            jobName: newJob.value.name,  // 입력한 직업명
+            jobContent: newJob.value.description,  // 입력한 직업 설명
+            isPrime: newJob.value.isPrime  // 입력한 우대금리 여부
+        };
+        jobs.value.push(addedJob); // jobs 배열에 새 직업 추가
+
+        // 성공 시 상태 초기화
         newJob.value.name = '';
         newJob.value.description = '';
+        newJob.value.isPrime = '';
+        
+        addJobFormStatus.value = true; // 폼 제출 상태 변경
+    } catch (error) {
+        console.error('직업 추가 실패:', error);
+        addJobFormStatus.value = false; // 에러 시 상태 유지
     }
 };
 

@@ -43,6 +43,10 @@ const close = () => {
                             <label for="title" class="form-label">상세설명</label>
                             <input type="text" id="title" class="form-control" v-model="modifyData.description">
                         </div>
+                        <div class="mb-3">
+                            <label for="title" class="form-label">우대금리</label>
+                            <input type="text" id="title" class="form-control" v-model="modifyData.description">
+                        </div>
                         <div class="d-flex justify-content-end">
                             <button type="button" class="btn btn-danger w-50 me-2" @click="close">취소</button>
                             <button type="submit" class="btn btn-primary w-50">등록</button>
