@@ -12,9 +12,9 @@ const getSeedRankingThree = async () => {
     console.log('Student Ranking:', studentRanking);
 
     if (studentRanking.length >= 3) {
-      firstPlaceStudent.value = studentRanking[0];
-      secondPlaceStudent.value = studentRanking[1];
-      thirdPlaceStudent.value = studentRanking[2];
+      firstPlaceStudent.value = studentRanking[0].stdName;
+      secondPlaceStudent.value = studentRanking[1].stdName;
+      thirdPlaceStudent.value = studentRanking[2].stdName;
     }
   } catch (error) {
     console.error('Failed to fetch seed ranking:', error);
@@ -26,7 +26,7 @@ getSeedRankingThree();
 
 <template>
   <div class="card-container">
-    <router-link to="/student/profile" class="card">
+    <router-link to="/student/event" class="card">
       <div class="card-img-overlay">
 
         <span class="overlay-text1">{{ firstPlaceStudent }}</span>
@@ -35,7 +35,7 @@ getSeedRankingThree();
       </div>
     </router-link>
 
-    <router-link to="/student/event" class="card">
+    <router-link to="/student/profile" class="card">
       <div class="card-img-overlay"></div>
     </router-link>
 
