@@ -17,6 +17,7 @@ const props = defineProps({
 // 데이터 초기화
 const modifyData = ref({
     id: props.student.stdId, // stdId 자동 설정
+    number: props.student.stdNum,
     name: props.student.stdName,
     birthday: props.student.stdBirth,
     job: props.student.jobId,
@@ -39,6 +40,7 @@ const studentModify = async () => {
 
         const updatedData = {
             stdId: modifyData.value.id,    // 이미 자동으로 설정된 stdId
+            stdNum: modifyData.value.number,    // 이미 자동으로 설정된 stdId
             stdName: modifyData.value.name,
             stdBirth: formattedBirthDate,  // 포맷된 생일 값
             jobId: modifyData.value.job,
@@ -73,6 +75,10 @@ watch(() => props.student, (newValue) => {
                         <div class="mb-3">
                             <label for="date" class="form-label">고유번호</label>
                             <input type="text" id="date" class="form-control" v-model="modifyData.id" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="stdNum" class="form-label">학생번호</label>
+                            <input type="text" id="stdNum" class="form-control" v-model="modifyData.number" required>
                         </div>
                         <div class="mb-3">
                             <label for="title" class="form-label">이름</label>
