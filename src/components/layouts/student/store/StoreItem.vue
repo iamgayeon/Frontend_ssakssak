@@ -20,6 +20,18 @@ const emit = defineEmits(['couponBuy']);
 const couponBuy = () => {
     emit('couponBuy', props.coupon);
 };
+
+
+// 이미지 경로 설정 함수
+const getCouponImage = (cpImage) => {
+  if (cpImage) {
+    // 이미지 경로를 인코딩하여 이미지가 출력되는지 확인
+    return `/images/${encodeURIComponent(cpImage.split('/').pop())}`;
+  } else {
+    // 이미지가 없을 경우 기본 이미지 사용
+    return '/src/assets/images/coupon.png';
+  }
+};
 </script>
 
 <template>
@@ -28,8 +40,8 @@ const couponBuy = () => {
             <div class="card-body align-items-center">
                 <div class="row">
                     <div class="imgBox">
-                        <img src="@/assets/images/coupon.png" alt="쿠폰 이미지">
-                    </div>
+                        <img :src="getCouponImage(coupon.cpImage)" alt="쿠폰 이미지" />
+                      </div>
                 </div>
 
                 <div class="row">
