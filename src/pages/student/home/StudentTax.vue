@@ -30,13 +30,13 @@ getSeedTax();  // 컴포넌트 마운트 시 API 호출
           </div>
         </div>
 
-        <!-- 흰색 칸에 텍스트 -->
+        <!-- 흰색 칸에 텍스트 --> 
         <div class="text-on-white-box">
           <p class="taxAlert mb-0">
             <i class="fa fa-check"></i>
             주급에 대한 세율은
             <!-- 세율 값을 동적으로 표시 -->
-            {{ seedTax !== null ? seedTax + '%' : '세율 정보를 불러오는 중입니다...' }}
+            {{ seedTax !== null ? seedTax.rate + '%' : '세율 정보를 불러오는 중입니다...' }}
             입니다.
           </p>
         </div>
