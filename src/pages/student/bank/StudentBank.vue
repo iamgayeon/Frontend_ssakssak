@@ -397,7 +397,7 @@ const calculateInterest = () => {
 // 주당 이자 계산
 const weeklyInterest = (depositAmount.value * interestRate.value) / 100;
 // 총 이자 = 주당 이자 * 기간(주 수)
-const totalInterest = weeklyInterest * depositPeriod.value;
+const totalInterest = interestRate.value;
 
 // 예상 이자 및 만기 금액 계산
 expectedInterest.value = Math.round(totalInterest);

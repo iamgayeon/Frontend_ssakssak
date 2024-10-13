@@ -69,5 +69,16 @@ async updateStudent(StudentDTO) {
   }
 },
 
+async updateJob(JobDTO) {
+  try {
+      const response = await api.put(`${BASE_URL}/student/job-update`, JobDTO);
+      console.log('job update successfully', response.data);
+      return response.data;
+  } catch (error) {
+      console.error('Failed to update job', error);
+      throw error;
+  }
+},
+
 
 };

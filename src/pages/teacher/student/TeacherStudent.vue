@@ -120,8 +120,7 @@
                                     <span class="fs-6 text-dark">{{ job.jobContent }}</span>
                                 </div>
                                 <div class="col-3 text-center">
-                                    <button class="btn btn-primary px-3 py-2 me-2"
-                                        @click="studentJobModifyModal(job.jno)">수정</button>
+                                    <button class="btn btn-primary px-3 py-2 me-2" @click="studentJobModifyModal(job.jobId)">수정</button>
                                     <button class="btn btn-danger px-3 py-2 me-3" type="button"
                                         @click="deleteStudentJob(job.jobId)">삭제</button>
                                 </div>
@@ -136,31 +135,35 @@
                 <div class="p-4">
                     <h4 class="mb-4">새 직업 등록</h4>
                     <form @submit.prevent="addJob"
-                          :class="addJobFormStatus ? 'needs-validation' : 'needs-validation was-validated'"
-                          style="height:100%" novalidate>
-                        <div class="mb-3">
-                            <label for="job-name" class="form-label">직업명</label>
-                            <input type="text" id="job-name" class="form-control" v-model="newJob.name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="job-description" class="form-label">상세설명</label>
-                            <input type="text" id="job-description" class="form-control" v-model="newJob.description" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="job-isPrime" class="form-label">우대금리</label>
-                            <input type="text" id="job-isPrime" class="form-control" v-model="newJob.isPrime" required>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary w-100">등록</button>
-                        </div>
-                    </form>
+                    :class="addJobFormStatus ? 'needs-validation' : 'needs-validation was-validated'"
+                    style="height:100%" novalidate>
+                  <div class="mb-3">
+                      <label for="job-name" class="form-label">직업명</label>
+                      <input type="text" id="job-name" class="form-control" v-model="newJob.jobName" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="job-description" class="form-label">상세설명</label>
+                      <input type="text" id="job-description" class="form-control" v-model="newJob.jobContent" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="job-isPrime" class="form-label">추가씨드 여부</label>
+                      <select id="job-isPrime" class="form-select" v-model="newJob.isPrime" required>
+                        <option value="">선택하세요</option> <!-- 기본 선택 옵션 -->
+                        <option value="Y">Yes (Y)</option>
+                        <option value="N">No (N)</option>
+                    </select>
+                  </div>
+                  <div class="d-flex justify-content-end">
+                      <button type="submit" class="btn btn-primary w-100">등록</button>
+                  </div>
+              </form>
                 </div>
             </div>
         </div>
     </div>
 
     <StudentModify v-if="studentModifyModalShow" @close="studentModifyModal" :student="selectedStudent" :jobs="jobs" />
-    <StudentJobModify v-if="studentJobModifyModalShow" @close="studentJobModifyModal" :job="studentJobData" />
+    <StudentJobModify v-if="studentJobModifyModalShow" @close="closeStudentJobModifyModal" :job="studentJobData" />
 </template>
 
 <script setup>
@@ -244,12 +247,19 @@ const studentModifyModal  = (student) => {
 };
 
 
-// 학생 직업 수정 모달
-const studentJobModifyModal = (jno) => {
-    if (jno) {
-        studentJobData.value = store.jobs.find((job) => job.jno === jno);
+// 모달 열기
+const studentJobModifyModal = (jobId) => {
+    const job = jobs.value.find((job) => job.jobId === jobId);
+    if (job) {
+        studentJobData.value = job; // 찾은 직업 데이터를 할당
+        studentJobModifyModalShow.value = true; // 모달창 열기
+    } else {
+        console.error(`직업 ID ${jobId}를 찾을 수 없습니다.`);
     }
-    studentJobModifyModalShow.value = !studentJobModifyModalShow.value;
+};
+// 모달 닫기
+const closeStudentJobModifyModal = () => {
+    studentJobModifyModalShow.value = false; // 모달 닫기
 };
 
 // 새 친구 등록을 위한 폼 상태와 데이터 관리
@@ -289,41 +299,34 @@ const addStudent = async () => {
 // 직업 등록 상태 관리 변수
 const addJobFormStatus = ref(true);
 
-// 새 직업 등록 데이터
 const newJob = ref({
-    name: '',
-    description: '',
-    isPrime: ''
+    jobName: '',        // 직업명 필드
+    jobContent: '',     // 직업 설명 필드
+    isPrime: ''         // 우대금리 필드
 });
 
-
-// 새 직업 등록 함수
 const addJob = async () => {
     try {
-        // newJob 데이터를 서버에 POST 요청으로 전송
+        // 서버에 POST 요청을 통해 직업 데이터 전송
         const response = await apiService.registJob(newJob.value);
         console.log('직업 추가 성공:', response.data);
 
-        // 서버 응답이 성공적으로 돌아오면 jobs 배열에 새 직업을 추가
-        const addedJob = {
-            jobId: response.data.jobId,  // 서버 응답에서 jobId 받아오기
-            jobName: newJob.value.name,  // 입력한 직업명
-            jobContent: newJob.value.description,  // 입력한 직업 설명
-            isPrime: newJob.value.isPrime  // 입력한 우대금리 여부
-        };
-        jobs.value.push(addedJob); // jobs 배열에 새 직업 추가
+        // 직업 목록을 다시 불러와 갱신
+        await fetchjobs();
 
-        // 성공 시 상태 초기화
-        newJob.value.name = '';
-        newJob.value.description = '';
+        // 성공 시 폼을 초기화
+        newJob.value.jobName = '';
+        newJob.value.jobContent = '';
         newJob.value.isPrime = '';
         
-        addJobFormStatus.value = true; // 폼 제출 상태 변경
+        addJobFormStatus.value = true;
     } catch (error) {
         console.error('직업 추가 실패:', error);
-        addJobFormStatus.value = false; // 에러 시 상태 유지
+        addJobFormStatus.value = false;
     }
 };
+
+
 
 // 페이지가 로드될 때 학생 데이터를 불러옴
 onMounted(() => {
