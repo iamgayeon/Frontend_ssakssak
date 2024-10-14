@@ -28,6 +28,129 @@
       </div>
     </div>
 
+    <div class="section national-status p-3 mb-1 d-flex justify-content-between align-items-center flex-wrap"
+      style="margin-left: 50px; margin-right: 50px;">
+      <h3 class="section-title" style="margin: 0; margin-left: 20px;">예금 상품 목록</h3>
+
+      <div>
+        <!-- 새 예금 등록하기 버튼 -->
+        <button @click="openDepositModal" class="btn btn-primary" style="background-color: #00A3FF; color: white;">새 예금
+          등록하기</button>
+
+        <div>
+          <!-- 모달 창 -->
+          <div v-if="isDepositModalOpen" class="modal">
+            <div class="modal-content">
+
+              <!-- 모달 내용 -->
+              <h4 class="no-bold">새 예금 등록하기</h4>
+              <form @submit.prevent="submitDepositForm" class="form-grid">
+
+                <!-- 적금 이름 -->
+                <div class="form-group">
+                  <label for="deposit-name">예금이름 <span class="required-asterisk">*</span></label>
+                  <input type="text" id="deposit-name" v-model="depositName" placeholder="예금이름을 입력해주세요.">
+                </div>
+
+                <!-- 기본 금리 -->
+                <div class="form-group">
+                  <label for="deposit-rate">기본금리(숫자만 입력)<span class="required-asterisk">*</span></label>
+                  <input type="text" id="deposit-rate" v-model="depositRate" placeholder="기본 금리를 입력해주세요.">
+                </div>
+
+                <!-- 상품 특징 -->
+                <div class="form-group">
+                  <label for="deposit-point">상품특징<span class="required-asterisk">*</span></label>
+                  <input type="text" id="deposit-point" v-model="depositContent" placeholder="상품특징을 입력해주세요.">
+                </div>
+
+                <!-- 예치 기간 -->
+                <div class="form-group">
+                  <label for="deposit{eriod">예치기간 <span class="required-asterisk">*</span></label>
+                  <select id="depositPeriod" v-model="depositPeriod" placeholder="예치 기간을 선택해주세요">
+                    <option value="8">8주</option>
+                    <option value="16">16주</option>
+                    <option value="24">24주</option>
+                  </select>
+                </div>
+
+                <!-- 최대 입금 금액 -->
+                <div class="form-group">
+                  <label for="deposit-max-amount">최대 입금 금액(숫자만 입력)<span class="required-asterisk">*</span></label>
+                  <input type="text" id="deposit-max-amount" v-model="depositMaxDeposit" placeholder="최대 입금 금액을 설정해주세요">
+                </div>
+
+                <!-- 등록 및 취소 버튼 -->
+                <div class="form-group full-width button-group">
+                  <button type="submit" class="submit-button">등록</button>
+                  <button type="button" @click="closeDepositModal" class="cancel-button">취소</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- 완료 모달 -->
+        <div v-if="isDepositCompleted" class="complete-modal">
+          <div class="modal-content">
+            <p>예금 설정이 완료되었어요</p>
+            <button @click="closeDepositCompleteModal" class="confirm-button">확인</button>
+          </div>
+        </div>
+        <!-- 경고 모달 -->
+        <div v-if="showWarningDepositModal" class="complete-modal">
+          <div class="modal-content">
+            <p>필수 정보를 모두 입력해주세요</p>
+            <button @click="closeDepositWarningModal" class="confirm-button">확인</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 예금 카드 섹션 -->
+    <div class="card-container">
+      <!-- 기존 적금들 -->
+      <div v-for="(deposit, index) in depositList" :key="deposit.depositId" class="card-safe">
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- 삭제 버튼 -->
+          <button @click="deleteDeposit(deposit.depositId)" class="delete-btn">X</button>
+        </div>
+        <img src="/public/tree1.png" class="card-icon" />
+        <h4 class="text-center">{{ deposit.depositName }}</h4>
+        <div class="interest">
+          <span class="interest-rate">기본 금리: {{ deposit.rate }}%</span>
+        </div>
+        <div class="details">
+          <span class="details-deposit">
+            <strong> 최대 {{ deposit.maxDeposit }} 씨드 입금 가능</strong>
+          </span>
+        </div>
+
+        <hr />
+        <div class="description">
+          <table>
+            <tr>
+              <th>상품특징</th>
+              <td>{{ deposit.depositContent }}</td>
+            </tr>
+            <tr>
+              <th>가입대상</th>
+              <!-- 선생의 학년,반 가져올예정 -->
+              <td>2학년 7반 학생</td>
+            </tr>
+            <tr>
+              <th>예치기간</th>
+              <td>{{ deposit.depositPeriod }}주</td>
+            </tr>
+            <tr>
+              <th>저축금액</th>
+              <td>최대 {{ deposit.maxDeposit }} 씨드 </td>
+            </tr>
+          </table>
+          <br>
+        </div>
+      </div>
+    </div>
+
     <!-- 적금 상품 목록 섹션 및 새 적금 등록 버튼 -->
     <div class="section national-status p-3 mb-1 d-flex justify-content-between align-items-center flex-wrap"
       style="margin-left: 50px; margin-right: 50px;">
@@ -75,9 +198,9 @@
                 <div class="form-group">
                   <label for="period">예치기간 <span class="required-asterisk">*</span></label>
                   <select id="period" v-model="savingPeriod" placeholder="예치 기간을 선택해주세요">
-                    <option value="2">2주</option>
-                    <option value="4">4주</option>
-                    <option value="8">8주</option>
+                    <option value="14">2주</option>
+                    <option value="28">4주</option>
+                    <option value="56">8주</option>
                   </select>
                 </div>
 
@@ -107,7 +230,7 @@
                   <label for="selected-Jobs">우대 금리 직업 (최대 4개 선택 가능)</label>
                   <div class="job-list">
                     <label v-for="job in jobList" :key="job.jobId">
-                      <input type="checkbox" :value="job.jobName" v-model="selectedJobs"
+                      <input type="checkbox" :value="job.jobId" v-model="selectedJobs"
                         :disabled="selectedJobs.length >= 4 && !selectedJobs.includes(job.jobId)" />
                       {{ job.jobName }}
                     </label>
@@ -118,7 +241,7 @@
                 <div class="form-group">
                   <label for="selected-Jobslist">선택된 우대 금리 직업</label>
                   <ul>
-                    <li v-for="job in selectedJobs" :key="job">{{ job }}</li>
+                    <li v-for="job in selectedJobs" :key="job">{{ getJobName(job) }}</li>
                   </ul>
                 </div>
 
@@ -154,13 +277,13 @@
       <div v-for="(saving, index) in savingList" :key="saving.savingName" class="card-safe">
         <div class="d-flex justify-content-between align-items-center">
           <!-- 삭제 버튼 -->
-          <button @click="deleteSaving(saving.savingName)" class="delete-btn">X</button>
+          <button @click="deleteSaving(saving.savingId)" class="delete-btn">X</button>
         </div>
         <img :src="saving.img" class="card-icon" />
         <h4 class="text-center">{{ saving.savingName }}</h4>
         <div class="interest">
           <span class="interest-rate">기본 금리: {{ saving.rate }}%</span>
-          <span v-if="saving.extraRate" class="interest-rate">우대 금리: {{ saving.primeRate }}%</span>
+          <span v-if="saving.primeRate" class="interest-rate">우대 금리: {{ saving.primeRate }}%</span>
         </div>
         <div class="details">
           <span class="details-deposit">
@@ -198,44 +321,66 @@
       </div>
     </div>
   </div>
+  
+    
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useBankStore } from '@/stores/bankStore';
-import jobApi from '@/api/teacherClassApi';
+import api from '@/api/teacherBankApi';
 
 const bankStore = useBankStore();
 
 
 const savingList = computed(() => bankStore.savingList);
 const jobList = computed(() => bankStore.jobList);
+const depositList = computed(() => bankStore.depositList);
 
 
 onMounted(async () => {
   await bankStore.fetchSavingList();
   await bankStore.fetchJobList();
+  await bankStore.fetchDepositList();
 })
 
-console.log(jobList);
 
-// 모달 상태 관리
+// 적금 모달 상태 관리
 const isModalOpen = ref(false);
 const isCompleted = ref(false);
 const showWarningModal = ref(false);
 
+// 예금 모달 상태 관리
+const isDepositModalOpen = ref(false);
+const isDepositCompleted = ref(false);
+const showWarningDepositModal = ref(false);
+
+
 // 선택된 직업 리스트
 const selectedJobs = ref([]);
+
+const getJobName = (jobId) => {
+  const job = jobList.value.find(job => job.jobId === jobId);
+  return job ? job.jobName : '';
+}
 
 // 모달 열기/닫기
 const openModal = () => {
   isModalOpen.value = true;
 };
 
+const openDepositModal = () => {
+  isDepositModalOpen.value = true;
+}
+
 const closeModal = () => {
   selectedJobs.value = [];
   isModalOpen.value = false;
 };
+
+const closeDepositModal = () => {
+  isDepositModalOpen.value = false;
+}
 
 const savingName = ref('');
 const savingContent = ref('');
@@ -244,29 +389,49 @@ const primeRate = ref('');
 const maxDeposit = ref('');
 const savingPeriod = ref('');
 const savingCycle = ref('');
-
-
+const request = ref({});
+const savingPerson = ref('');
 // 적금 등록 제출
-const submitForm = () => {
-  if (!savingName.value || !period.value || !frequency.value || !basicRate.value || !maxAmount.value || !savingPoint.value || !savingPerson.value) {
+const submitForm = async () => {
+  if (!savingName.value || !savingContent.value || !basicRate.value || !maxDeposit.value || !savingPeriod.value || !savingCycle.value) {
     // 필수 정보가 입력되지 않았을 때 경고 모달 표시
     showWarningModal.value = true;
   } else {
     // 새로운 적금 등록
-    savings.push({
-      name: savingName.value,
-      basicRate: basicRate.value,
-      extraRate: extraRate.value,
-      point: savingPoint.value,
-      person: savingPerson.value,
-      period: period.value,
-      maxAmount: maxAmount.value,
-      image: "/public/safeimage.png"  // 기본 이미지 추가
-    });
+    request.value = {
+      savingName: savingName.value,
+      savingContent: savingContent.value,
+      maxDeposit: maxDeposit.value,
+      savingPeriod: savingPeriod.value,
+      savingCycle: savingCycle.value,
+      rate: basicRate.value,
+      isPrime: primeRate.value === null ? 'N' : 'Y',
+      primeRate: primeRate.value === null ? 0 : primeRate.value,
+      img: "/public/safeimage.png",  // 기본 이미지 추가
+      jobList: selectedJobs.value
+    };
+    console.log(request.value);
+    await api.addSaving(request.value);
     isModalOpen.value = false;  // 모달 닫기
     isCompleted.value = true;  // 완료 메시지 모달 열기
+    bankStore.fetchSavingList();
   }
 };
+
+const depositName = ref('');
+const depositRate = ref('');
+const depositContent = ref('');
+const depositPeriod = ref('');
+const depositMaxDeposit = ref('');
+
+const submitDeposit = async () => {
+  if(!depositName.value || !depositRate.value || !depositContent.value || !depositPeriod.value || !depositMaxDeposit.value) {
+    showWarningDepositModal.value = true;
+  } else {
+    
+  }
+}
+
 
 // 완료 모달 닫기
 const closeCompleteModal = () => {
@@ -278,9 +443,27 @@ const closeWarningModal = () => {
   showWarningModal.value = false;
 };
 
+const closeDepositCompleteModal = () => {
+  isDepositCompleted.value = false;
+}
+
+const closeDepositWarningModal = () => {
+  showWarningDepositModal.value = false;
+}
+
 // 적금 삭제
-const deleteSaving = (name) => {
-  savings.value = savings.value.filter(saving => saving.name !== name);
+const deleteSaving = async (id) => {
+  await api.deleteSaving(id);
+  await bankStore.fetchSavingList();
+
+  console.log('Fetched Saving List:', savingList.value); 
+};
+
+const deleteDeposit = async (id) => {
+  await api.deleteDeposit(id);
+  await bankStore.fetchDepositList();
+
+  console.log('Fetched Saving List:', savingList.value); 
 };
 
 // 직업 선택 처리

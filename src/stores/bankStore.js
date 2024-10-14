@@ -6,12 +6,12 @@ export const useBankStore = defineStore("bank", {
   state: () => ({
     savingList: [],
     jobList: [],
+    depositList: [],
   }),
   actions: {
     async fetchSavingList() {
       try {
         const response = await api.getSavingList();
-        console.log(response);
         this.savingList = response;
       } catch (error) {
         console.log("Failed fetch savingList", error);
@@ -28,6 +28,14 @@ export const useBankStore = defineStore("bank", {
         throw error;
       }
     },
-  },
+    async fetchDepositList() {
+      try {
+        const response = await api.getDepositList();
+        this.depositList = response;
+      } catch (error) {
+        throw error;
+      }
+    },
+  }, 
   persist: true,
 });
