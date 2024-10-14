@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <!-- 알림 버튼 -->
-    <div v-if="alarmcheck" class="notification" @click="toggleNotificationModal">
+    <div v-if="loginCheck" class="notification" @click="toggleNotificationModal">
       <i class="bi bi-bell-fill" :style="alarmColor ? 'color:green;' : 'color:white;'"></i>
     </div>
 
@@ -105,36 +105,34 @@ const checkAlarm = async (id, idx) => {
     console.error("Failed checked alarm", error);
   }
 };
-
-const alarmcheck = ref(false);
+const loginCheck = ref(false);
 
 onMounted(async () => {
 
-  try {
-    if(store.roles[0] === 'ROLE_TEACHER') {
-      alarmcheck.value = true;
+  if (store.roles[0] === 'ROLE_TEACHER') {
+    try {
+      loginCheck.value = true;
       await fetchAlarmHistory();
       const username = store.username;
-      console.log('usern' , username);
       const token = store.getToken();
-  
+
       eventSource = new EventSource(`/api/alarm/subscribe/${username}`);
-      console.log('w?');
+
       eventSource.addEventListener('alarm', (event) => {
         const alarm = JSON.parse(event.data);
         alarms.value = [...alarms.value, { id: alarm.id, message: alarm.message }];
         alarmColor.value = true;
       });
-  
       eventSource.onerror = (error) => {
         console.error("Error with SSE connection", error);
-      };
+      }
     }
-    
-  } catch (error) {
-    console.error('mounte중 오류 발생: ', error);
-  }
-  // }
+
+    catch (error) {
+      console.error('mounte중 오류 발생: ', error);
+    }
+  };
+
 });
 
 onUnmounted(() => {
