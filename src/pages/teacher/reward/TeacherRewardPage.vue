@@ -3,6 +3,7 @@ import { ref, computed, onMounted, toRaw, reactive, watch } from 'vue';
 import { useRewardStore } from '@/stores/rewardStore';
 import api from '@/api/teacherRewardApi';
 import { useRoute, useRouter } from 'vue-router';
+const activeTab = ref('reward'); // 현재 탭 상태
 
 const route = useRoute();
 const router = useRouter();
@@ -138,191 +139,197 @@ load(pageRequest);
 </script>
 <template>
     <div class="container mt-5">
-        <div class="row">
-            <div class="col-12 col-md-6 reward-list">
-                <div class="card shadow-sm" style="height:100%">
-                    <div class="mt-4 ms-4">
-                        <span class="fs-2 fw-bold ms-3">현재 리워드 목록</span>
-                    </div>
-                    <div class="card-body pt-0 mt-3">
-                        <div class="d-flex row m-0 mb-2 pe-3" style="width: 100%">
-                            <div class="col-6 text-center">
-                                <span class="h4">리워드 명</span>
-                            </div>
-                            <div class="col-4 text-center">
-                                <span class="h4 ">금액</span>
-                            </div>
-                            <div class="col-2 text-center">
-                                <span class="h4">삭제</span>
-                            </div>
+        <!-- 상단 버튼 -->
+        <div class="text-center mb-4">
+            <button class="btn" :class="activeTab === 'reward' ? 'btn-primary' : 'btn-outline-primary'" @click="activeTab = 'reward'">리워드</button>
+            <button class="btn" :class="activeTab === 'history' ? 'btn-primary' : 'btn-outline-primary'" @click="activeTab = 'history'">리워드 지급 내역</button>
+        </div>
+
+        <div v-if="activeTab === 'reward'">
+            <!-- 좌측 리워드 목록 카드 -->
+            <div class="row">
+                <div class="col-12 col-md-6 reward-list">
+                    <div class="card shadow-sm mb-3" style="height: 50%;"> <!-- 높이를 100vh로 설정하여 우측 두 카드의 높이와 맞춤 -->
+                        <div class="reward-title mt-4 ms-4">
+                            <span class="fs-2 fw-bold ms-3">현재 리워드 목록</span>
                         </div>
-                        <hr>
-                        <div class="reward-list-wrap d-flex align-items-center" v-if="!rewardList">
-                            <div class="m-auto">
-                                <h2>생성된 리워드가 없습니다.. !</h2>
-                            </div>
-                        </div>
-                        <div class="reward-list-wrap" v-if="rewardList">
-                            <div v-for="(reward, idx) in rewardList" :key="reward.rewardId"
-                                class="d-flex text-center py-2 list-item" style="width: 100%;">
-                                <div class="col-6 text-center reward-name" @click="toggleRewardSelect(reward.rewardId)">
-                                    <span class="fs-5 text-dark">{{ reward.rewardName }}</span>
+                        <div class="card-body pt-0 mt-3">
+                            <!-- 리워드 목록 -->
+                            <div class="d-flex row m-0 mb-2 pe-3" style="width: 100%">
+                                <div class="col-6 text-center">
+                                    <span class="h4">리워드 명</span>
                                 </div>
                                 <div class="col-4 text-center">
-                                    <span class="fs-5 text-dark">{{ reward.rewardSeed }} 씨드</span>
+                                    <span class="h4 ">금액</span>
                                 </div>
-                                <div class="col-2 text-center pe-2">
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                        @click="deleteReward(reward.rewardId)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                <div class="col-2 text-center">
+                                    <span class="h4">삭제</span>
                                 </div>
                             </div>
+                            <hr>
+                            <div class="reward-list-wrap" v-if="rewardList" style="overflow-y: auto; max-height: 80vh;">
+                                <div v-for="(reward, idx) in rewardList" :key="reward.rewardId" class="d-flex text-center py-2 list-item" style="width: 100%;">
+                                    <div class="col-6 text-center reward-name" @click="toggleRewardSelect(reward.rewardId)">
+                                        <span class="fs-5 text-dark">{{ reward.rewardName }}</span>
+                                    </div>
+                                    <div class="col-4 text-center">
+                                        <span class="fs-5 text-dark">{{ reward.rewardSeed }} 씨드</span>
+                                    </div>
+                                    <div class="col-2 text-center pe-2">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteReward(reward.rewardId)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 리워드 추가 -->
+                            <div class="mt-2">
+                                <form @submit.prevent="addReward">
+                                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                                        <label class="form-label fs-5 fw-bold reward-label">리워드 명</label>
+                                        <input type="text" class="form-control reward-input" v-model="rewardName" placeholder="ex) 밥을 남기지 않고 잘 먹어요">
+                                    </div>
+                                    <div class="d-flex align-items-center reward-add-box">
+                                        <label class="form-label fs-5 fw-bold reward-amount">금액</label>
+                                        <input type="text" class="form-control me-2 w-50 text-end" v-model="rewardSeed" placeholder="ex) 300">
+                                        <span class="me-4"> 씨드 </span>
+                                        <button class="btn btn-primary px-3" type="submit">리워드 추가</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-
-                        <div class="mt-2">
-                            <form @submit.prevent="addReward">
-                                <div class="mb-3 d-flex justify-content-between align-items-center">
-                                    <label class="form-label fs-5 fw-bold reward-label ">리워드 명</label>
-                                    <input type="text" class="form-control reward-input" v-model="rewardName"
-                                        placeholder="ex) 밥을 남기지 않고 잘 먹어요">
+                    </div>
+                    <div class="card shadow-sm" style="height: 50%;">
+                        <div class="d-flex justify-content-between mt-4 ms-4">
+                            <span class="fs-2 fw-bold ms-1">학생 목록</span>
+                            <div class="p-0 me-4">
+                                <button class="btn btn-primary me-2 py-2" @click="toggleAllSelected">전체선택</button>
+                                <button class="btn btn-outline-primary me-2 px-3 py-2" @click="toggleAllDeselect">전체선택해제</button>
+                            </div>
+                        </div>
+                        <!-- 학생 목록 -->
+                        <div class="p-0 mt-3 text-center d-flex flex-column" style="height: 100%">
+                            <div class="d-flex row m-0 mb-2 pe-2" style="width: 100%">
+                                <div class="col-2 text-center">
+                                    <span class="h4">선택</span>
                                 </div>
-                                <div class="d-flex align-items-center reward-add-box">
-                                    <label class="form-label fs-5 fw-bold reward-amount">금액</label>
-                                    <input type="text" class="form-control me-2 w-50 text-end" v-model="rewardSeed"
-                                        placeholder="ex) 300"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                    <span class="me-4"> 씨드 </span>
-                                    <button class="btn btn-primary px-3" type="submit">리워드 추가</button>
+                                <div class="col-2 text-center">
+                                    <span class="h4 ">번호</span>
                                 </div>
-                            </form>
+                                <div class="col-4 text-center">
+                                    <span class="h4">이름</span>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <span class="h4">보유 씨드</span>
+                                </div>
+                            </div>
+                            <div class="std-list-wrap" style="overflow-y: scroll;">
+                                <div v-for="student in students" :key="student.std_id" class="d-flex text-center py-2 name-box" style="width: 100%;" @click="toggleStudentSelection(student)">
+                                    <div class="col-2 text-center pt-1">
+                                        <input type="checkbox" :value="student" @change="toggleStudentSelection(student)" :checked="selectedStudents.includes(student)" />
+                                    </div>
+                                    <div class="col-2 text-center" style="overflow-x: auto;">
+                                        <span class="fs-5 text-dark">{{ student.std_id }}</span>
+                                    </div>
+                                    <div class="col-4 text-center">
+                                        <span class="fs-5 text-dark">{{ student.std_name }}</span>
+                                    </div>
+                                    <div class="col-4 text-center">
+                                        <span class="fs-5 text-dark">{{ student.seed }}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-12 col-md-6 std-list card" style="overflow-y: hidden;">
-                <div style="max-height: 100%;">
-                    <div class="d-flex justify-content-between mt-4 ms-4">
-                        <span class="fs-2 fw-bold ms-1">학생 목록</span>
-                        <div class="p-0 me-4">
-                            <button class="btn btn-primary me-2 py-2" @click="toggleAllSelected">전체선택</button>
-                            <button class="btn btn-outline-primary me-2 px-3 py-2"
-                                @click="toggleAllDeselect">전체선택해제</button>
-                        </div>
-                    </div>
-                    <div class="p-0 mt-3 text-center d-flex flex-column" style="height: 100%">
-                        <div class="d-flex row m-0 mb-2 pe-2" style="width: 100%">
-                            <div class="col-2 text-center">
-                                <span class="h4">선택</span>
+        
+                <!-- 우측 학생 목록 및 리워드 지급 카드 -->
+                <div class="col-12 col-md-6">
+                    <!-- 리워드 지급 카드 -->
+                    <div class="card shadow-sm reward-card d-flex flex-column mt-3" style="height: 100%;">
+                        <div class="m-4" style="flex: 0.7; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 200px;"> <!-- padding-top으로 상단에 200px 추가 -->
+                            <!-- 타이틀을 항상 위에 고정 -->
+                            <div class="ms-2 mt-6">
+                                <span class="reward-title fs-3 fw-bold">리워드 적용 학생</span>
                             </div>
-                            <div class="col-2 text-center">
-                                <span class="h4 ">번호</span>
-                            </div>
-                            <div class="col-4 text-center">
-                                <span class="h4">이름</span>
-                            </div>
-                            <div class="col-4 text-center">
-                                <span class="h4">보유 씨드</span>
-                            </div>
-                        </div>
-                        <div class="std-list-wrap" style="overflow-y: scroll;">
-                            <div v-for="student in students" :key="student.std_id"
-                                class="d-flex text-center py-2 name-box" style="width: 100%;"
-                                @click="toggleStudentSelection(student)">
-                                <div class="col-2 text-center pt-1">
-                                    <input type="checkbox" :value="student" @change="toggleStudentSelection(student)"
-                                        :checked="selectedStudents.includes(student)" />
-                                </div>
-                                <div class="col-2 text-center" style="overflow-x: auto;">
-                                    <span class="fs-5 text-dark">{{ student.std_id }}</span>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <span class="fs-5 text-dark">{{ student.std_name }}</span>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <span class="fs-5 text-dark">{{ student.seed }}</span>
+                            
+                            <!-- 학생 목록 -->
+                            <div class="d-flex mt-2 ms-3 flex-wrap">
+                                <div v-for="(student, idx) in selectedStudents" :key="idx" class="btn btn-warning cyan me-2 mb-3" @click="toggleStudentSelection(student)">
+                                    {{ student.std_name }}
                                 </div>
                             </div>
                         </div>
-
+                        
+                        <!-- 적용 리워드 -->
+                        <div class="mx-4" style="flex: 1; display: flex; flex-direction: column; justify-content: flex-start;">
+                            <!-- span이 고정되도록 설정 -->
+                            <div class="ms-2">
+                                <span class="fs-3 fw-bold">적용 리워드</span>
+                            </div>
+                        
+                            <!-- 리워드가 추가되어도 span이 올라가지 않음 -->
+                            <div class="d-flex mt-2 ms-3 flex-wrap">
+                                <div class="btn btn-warning d-inline-block" v-if="selectedReward" @click="toggleRewardDeselect">{{ selectedReward.rewardName }}</div>
+                            </div>
+                        </div>
+                    
+                        <!-- 리워드 지급 버튼 -->
+                        <div class="text-center p-3 mt-auto mb-4">
+                            <button class="btn btn-warning" style="width: 80%;" @click="sendReward">리워드 지급</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card mt-3">
-            <div class="m-4">
-                <div class="mt-3 ms-2">
-                    <span class="fs-3 fw-bold">리워드 적용 학생</span>
+        <!-- 리워드 지급 내역 (우측 버튼 클릭 시 표시) -->
+        <div v-if="activeTab === 'history'">
+            <div class="card mt-3">
+                <div class="mt-4 ms-4">
+                    <span class="fs-2 fw-bold ms-3">리워드 지급 목록</span>
                 </div>
-                <div class="d-flex mt-2 ms-3 flex-wrap">
-                    <div v-for="(student, idx) in selectedStudents" :key="idx" class="custom-btn cyan me-2 mb-3"
-                        @click="toggleStudentSelection(student)">
-                        {{ student.std_name }}
-                    </div>
-                </div>
-            </div>
-            <div class="mx-4">
-                <div class="ms-2">
-                    <span class="fs-3 fw-bold">적용 리워드</span>
-                </div>
-                <div class="custom-btn blue mt-2 ms-3 d-inline-block " v-if="selectedReward"
-                    @click="toggleRewardDeselect">{{ selectedReward.rewardName }}</div>
-            </div>
-            <div class="text-end p-3">
-                <button class="btn btn-primary" @click="sendReward">리워드 지급</button>
-            </div>
-        </div>
-
-        <div class="card mt-3">
-            <div class="mt-4 ms-4">
-                <span class="fs-2 fw-bold ms-3">리워드 지급 목록</span>
-            </div>
-            <div>
-                <div class="p-0 mt-3 d-flex flex-column" style="height: 100%">
-                    <div class="d-flex row m-0 mb-2 mx-auto" style="width: 90%">
-                        <div class="col-3 text-center">
-                            <span class="h4">날짜</span>
-                        </div>
-                        <div class="col-2 text-center">
-                            <span class="h4 ">이름</span>
-                        </div>
-                        <div class="col-5 text-center">
-                            <span class="h4">리워드명</span>
-                        </div>
-                        <div class="col-2 text-center">
-                            <span class="h4">금액</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div v-for="(record, idx) in rewardGiveList" :key="record.giveId" class="d-flex py-2 mx-auto"
-                            style="width: 90%;">
+                <div>
+                    <div class="p-0 mt-3 d-flex flex-column" style="height: 100%">
+                        <div class="d-flex row m-0 mb-2 mx-auto" style="width: 90%">
                             <div class="col-3 text-center">
-                                <span class="fs-5 text-dark">{{ record.giveDate }}</span>
+                                <span class="h4">날짜</span>
                             </div>
-                            <div class="col-2 text-center" style="overflow-x: auto;">
-                                <span class="fs-5 text-dark">{{ record.stdName }}</span>
+                            <div class="col-2 text-center">
+                                <span class="h4 ">이름</span>
                             </div>
                             <div class="col-5 text-center">
-                                <span class="fs-5 text-dark">{{ record.rewardName }}</span>
+                                <span class="h4">리워드명</span>
                             </div>
                             <div class="col-2 text-center">
-                                <span class="fs-5 text-dark">{{ record.giveSeed }} 씨드</span>
+                                <span class="h4">금액</span>
                             </div>
                         </div>
+                        <div>
+                            <div v-for="(record, idx) in rewardGiveList" :key="record.giveId" class="d-flex py-2 mx-auto" style="width: 90%;">
+                                <div class="col-3 text-center">
+                                    <span class="fs-5 text-dark">{{ record.giveDate }}</span>
+                                </div>
+                                <div class="col-2 text-center" style="overflow-x: auto;">
+                                    <span class="fs-5 text-dark">{{ record.stdName }}</span>
+                                </div>
+                                <div class="col-5 text-center">
+                                    <span class="fs-5 text-dark">{{ record.rewardName }}</span>
+                                </div>
+                                <div class="col-2 text-center">
+                                    <span class="fs-5 text-dark">{{ record.giveSeed }} 씨드</span>
+                                </div>
+                            </div>
 
-                        <div class="my-5 d-flex">
-                            <div class="flex-grow-1 text-center">
-                                <!-- 페이지 네이션 -->
-                                <vue-awesome-paginate :total-items="page.totalCount"
-                                    :items-per-page="pageRequest.amount" :max-pages-shown="5"
-                                    :show-ending-buttons="true" v-model="pageRequest.page" @click="handlePageChange">
-                                    <template #first-page-button><i class="fa-solid fa-backward-fast"></i></template>
-                                    <template #prev-button><i class="fa-solid fa-caret-left"></i></template>
-                                    <template #next-button><i class="fa-solid fa-caret-right"></i></template>
-                                    <template #last-page-button><i class="fa-solid fa-forward-fast"></i></template>
-                                </vue-awesome-paginate>
+                            <div class="my-5 d-flex">
+                                <div class="flex-grow-1 text-center">
+                                    <vue-awesome-paginate :total-items="page.totalCount" :items-per-page="pageRequest.amount" :max-pages-shown="5" :show-ending-buttons="true" v-model="pageRequest.page" @click="handlePageChange">
+                                        <template #first-page-button><i class="fa-solid fa-backward-fast"></i></template>
+                                        <template #prev-button><i class="fa-solid fa-caret-left"></i></template>
+                                        <template #next-button><i class="fa-solid fa-caret-right"></i></template>
+                                        <template #last-page-button><i class="fa-solid fa-forward-fast"></i></template>
+                                    </vue-awesome-paginate>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -332,6 +339,7 @@ load(pageRequest);
     </div>
 </template>
 
+
 <style scoped>
 .container {
     max-width: 80vw;
@@ -339,8 +347,7 @@ load(pageRequest);
 
 .reward-list,
 .std-list {
-    height: 500px;
-    max-height: 500px;
+    height: 100%;
 }
 
 .reward-list-wrap {
@@ -392,6 +399,10 @@ load(pageRequest);
     width: 20%;
 }
 
+.reward-title{
+    margin-top: 200px;
+}
+
 .reward-add-box {
     position: relative;
 }
@@ -440,7 +451,6 @@ input[type="checkbox"] {
     height: 20px;
 }
 
-
 .btn-primary {
     background-color: #00A3FF;
     border-color: #00A3FF;
@@ -449,8 +459,6 @@ input[type="checkbox"] {
 .btn-outline-primary {
     color: #00A3FF;
     border-color: #00A3FF;
-    --ar-btn-hover-bg: white;
-
 }
 
 .btn-outline-primary:hover {
@@ -458,9 +466,11 @@ input[type="checkbox"] {
     background-color: #00A3FF;
 }
 
-
-.btn-outline-primary:after {
-    background-color: #ffffff;
-    color: #00A3FF;
+.reward-card {
+    background-image: url('@/assets/images/reward_give.png'); /* 이미지 경로를 여기에 넣으세요 */
+    background-size: cover; /* 이미지를 카드 크기에 맞게 조정 */
+    background-position: center; /* 이미지를 중앙에 배치 */
+    background-repeat: no-repeat; /* 이미지가 반복되지 않도록 설정 */
 }
 </style>
+

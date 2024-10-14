@@ -13,13 +13,13 @@ import Treasury from './treasury.vue';
                 <StockChart />
             </div>
             <div class="col-12 mb-6">
-                <!-- <TeacherDoor /> -->
+                <TeacherDoor />
             </div>
             <div class="Tax col-12 mb-6">
-                <!-- <TeacherTax /> -->
+                <TeacherTax />
             </div>
             <div class="col-12 mb-6" id="Treasury">
-                <!-- <Treasury /> -->
+                <Treasury />
             </div>
         </div>
 
