@@ -1,13 +1,13 @@
 <template>
   <div class="header">
     <!-- 알림 버튼 -->
-    <div v-if="loginCheck" class="notification" @click="toggleNotificationModal">
+    <!-- <div v-if="loginCheck" class="notification" @click="toggleNotificationModal">
       <i class="bi bi-bell-fill" :style="alarmColor ? 'color:green;' : 'color:white;'"></i>
-    </div>
+    </div> -->
 
     <!-- 환영 메시지 -->
     <div class="welcome" v-if="isLogin">
-      {{ name }} 선생님 환영합니다!
+      {{ name }} 학생 환영합니다!
     </div>
 
     <!-- 로그아웃 버튼 -->
@@ -16,7 +16,7 @@
     </div>
 
     <!-- 알림 모달 -->
-    <div v-if="isNotificationModalOpen" class="modal-overlay" @click.self="toggleNotificationModal">
+    <!-- <div v-if="isNotificationModalOpen" class="modal-overlay" @click.self="toggleNotificationModal">
       <div class="modal-content">
         <div class="modal-body">
           <div class="notifications-container">
@@ -36,7 +36,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
