@@ -1,22 +1,5 @@
 <template>
   <div class="login-page">
-    <div class="header-back">
-        <!-- 아이콘을 둥근 네모 바깥으로 이동 -->
-        <div class="navigation-buttons">
-            <i class="fa fa-arrow-left"></i>
-            <i class="fa fa-arrow-right"></i>
-            <i class="fa fa-refresh"></i>
-        </div>
-        
-        <div class="header-bar">
-            <div class="address-bar">
-                <div class="address-icon"></div>
-                <div class="address-text"><i class="fab fa-chrome"></i> 금융싹싹에 오신 걸 환영합니다</div>
-            </div>
-        </div>
-    </div>
-
-      <!-- login-container 추가 -->
       <div class="login-container"> 
         <div class="login-card teacher-login" @mouseover="hoverCard('teacher')" @mouseleave="leaveCard('teacher')">
           <h3>선생님 로그인</h3>
@@ -71,13 +54,7 @@
   <style scoped>
   /* 전체 페이지 설정 */
 
-  .login-page{
-      background-color: #f2fbfb; /* 원하는 배경색 */
-      min-height: 100vh; /* 최소 높이를 화면 전체로 설정 */
-      margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
-  }
+
 
   .header-back {
     padding-top: 15px;
@@ -142,7 +119,6 @@
   .login-container {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
     margin-top: 40px;
     width: 90%;
     max-width: 1200px;
