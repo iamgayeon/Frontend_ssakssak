@@ -63,14 +63,16 @@ const handleFileUpload = (event) => {
 
     if (file && file.type === 'text/csv') {
       const reader = new FileReader();
+
       reader.onload = (e) => {
-        const uint8Array = new Uint8Array(e.target.result);
-        const decodedText = new TextDecoder('euc-kr').decode(uint8Array);
-        csvDataArray.value = csvToArray(decodedText);
+        const contents = e.target.result;
+
+        csvDataArray.value = csvToArray(contents);
+
         console.log('CSV Data Array:', csvDataArray.value);
       };
 
-      reader.readAsArrayBuffer(file);
+      reader.readAsText(file);
     } else {
       console.error('Invalid file type. Please upload a CSV file.');
     }
