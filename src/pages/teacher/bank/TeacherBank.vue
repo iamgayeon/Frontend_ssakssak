@@ -321,8 +321,8 @@
       </div>
     </div>
   </div>
-  
-    
+
+
 </template>
 
 <script setup>
@@ -423,12 +423,25 @@ const depositRate = ref('');
 const depositContent = ref('');
 const depositPeriod = ref('');
 const depositMaxDeposit = ref('');
+const depositRequest = ref({});
 
-const submitDeposit = async () => {
-  if(!depositName.value || !depositRate.value || !depositContent.value || !depositPeriod.value || !depositMaxDeposit.value) {
+const submitDepositForm = async () => {
+  if (!depositName.value || !depositRate.value || !depositContent.value || !depositPeriod.value || !depositMaxDeposit.value) {
     showWarningDepositModal.value = true;
   } else {
-    
+    depositRequest.value = {
+      depositName: depositName.value,
+      depositContent: depositContent.value,
+      maxDeposit: depositMaxDeposit.value,
+      depositPeriod: depositPeriod.value,
+      rate: depositRate.value
+    };
+    console.log(depositRequest);
+    await api.addDeposit(depositRequest.value);
+    isDepositModalOpen.value = false;
+    isDepositCompleted.value = true;
+    bankStore.fetchDepositList();
+
   }
 }
 
@@ -456,14 +469,14 @@ const deleteSaving = async (id) => {
   await api.deleteSaving(id);
   await bankStore.fetchSavingList();
 
-  console.log('Fetched Saving List:', savingList.value); 
+  console.log('Fetched Saving List:', savingList.value);
 };
 
 const deleteDeposit = async (id) => {
   await api.deleteDeposit(id);
   await bankStore.fetchDepositList();
 
-  console.log('Fetched Saving List:', savingList.value); 
+  console.log('Fetched Saving List:', savingList.value);
 };
 
 // 직업 선택 처리

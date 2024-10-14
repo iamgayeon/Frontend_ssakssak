@@ -8,7 +8,7 @@ export default {
     return data;
   },
   async addSaving(request) {
-    const response = await api.post(`${BASE_URL}/bank/saving`, request) ;
+    const response = await api.post(`${BASE_URL}/bank/saving`, request);
     console.log(response);
   },
   async deleteSaving(id) {
@@ -22,5 +22,8 @@ export default {
   async deleteDeposit(id) {
     const response = await api.post(`${BASE_URL}/bank/deposit/${id}`);
     console.log(response);
-  }
+  },
+  async addDeposit(request) {
+    const response = await api.post(`${BASE_URL}/bank/deposit`, request);
+  },
 };
