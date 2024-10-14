@@ -1,7 +1,6 @@
 <template>
   <footer class="footer">
     <div class="container footer-content">
-      <!-- 왼쪽: 저작권 정보 -->
       <div class="footer-left">
         <div class="left-text text-white-50">상호 : (주)금융싹싹 | 대표자명 : 이상엽</div>
         <div class="left-text text-white-50">사업자등록번호 : 01-561-5533</div>
@@ -10,35 +9,18 @@
         <hr class="text-white-50">
         <div class="left-text2 text-white-50">Copyright® 금융싹싹</div>
       </div>
-
-      <!-- 가운데: 로고 및 네비게이션 -->
-      <div class="footer-center">
-        <nav>
-          <ul class="footer-nav">
-            <li><a class="text-white-50" href="/student/home">Home</a></li>
-            <li><a class="text-white-50" href="/student/store">Store</a></li>
-            <li><a class="text-white-50" href="/student/bank">Bank</a></li>
-            <li><a class="text-white-50" href="/student/stock">Stock</a></li>
-            <li><a class="text-white-50" href="/student/event">Event</a></li>
-            <li><a class="text-white-50" href="/student/profile">Profile</a></li>
-          </ul>
-        </nav>
-      </div>
       
-      <!-- 오른쪽: 빈 공간 -->
       <div class="footer-right">
         <a href="/student/home"><i class="icon bi bi-house-fill"></i></a>
         <a href="https://x.com/?lang=ko"><i class="icon bi bi-twitter"></i></a>
         <a href="https://www.facebook.com/"><i class="icon bi bi-facebook"></i></a>
         <a href="https://www.instagram.com/sem/campaign/emailsignup/?campaign_id=13530338586&extra_1=s%7Cc%7C547419126947%7Ce%7Cinstagram%20c%7C&placement=&creative=547419126947&keyword=instagram%20c&partner_id=googlesem&extra_2=campaignid%3D13530338586%26adgroupid%3D126262419014%26matchtype%3De%26network%3Dg%26source%3Dnotmobile%26search_or_content%3Ds%26device%3Dc%26devicemodel%3D%26adposition%3D%26target%3D%26targetid%3Dkwd-1321618852491%26loc_physical_ms%3D9197309%26loc_interest_ms%3D%26feeditemid%3D%26param1%3D%26param2%3D&gad_source=1&gclid=Cj0KCQjwr9m3BhDHARIsANut04Zf9hWkJ1BKDMGs75D48eO14tLdyzRrEd-4j_tLByB4acdv8Pz-7LwaAuE7EALw_wcB"><i class="icon bi bi-instagram"></i></a>
       </div>
-
     </div>
   </footer>
 </template>
 
 <script setup>
-// 여기에 필요한 스크립트를 작성하세요 (특별한 스크립트가 없다면 비워둡니다)
 </script>
 
 <style scoped>
