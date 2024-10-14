@@ -140,16 +140,13 @@ load(pageRequest);
 <template>
     <div class="container mt-5">
         <!-- 상단 버튼 -->
-        <div class="text-center mb-4">
-            <button class="btn" :class="activeTab === 'reward' ? 'btn-primary' : 'btn-outline-primary'" @click="activeTab = 'reward'">리워드</button>
-            <button class="btn" :class="activeTab === 'history' ? 'btn-primary' : 'btn-outline-primary'" @click="activeTab = 'history'">리워드 지급 내역</button>
-        </div>
+
 
         <div v-if="activeTab === 'reward'">
             <!-- 좌측 리워드 목록 카드 -->
             <div class="row">
                 <div class="col-12 col-md-6 reward-list">
-                    <div class="card shadow-sm mb-3" style="height: 50%;"> <!-- 높이를 100vh로 설정하여 우측 두 카드의 높이와 맞춤 -->
+                    <div class="card shadow-sm mb-3" style="height: 30%;"> <!-- 높이를 100vh로 설정하여 우측 두 카드의 높이와 맞춤 -->
                         <div class="reward-title mt-4 ms-4">
                             <span class="fs-2 fw-bold ms-3">현재 리워드 목록</span>
                         </div>
@@ -199,7 +196,7 @@ load(pageRequest);
                             </div>
                         </div>
                     </div>
-                    <div class="card shadow-sm" style="height: 50%;">
+                    <div class="card shadow-sm" style="height: 30%;">
                         <div class="d-flex justify-content-between mt-4 ms-4">
                             <span class="fs-2 fw-bold ms-1">학생 목록</span>
                             <div class="p-0 me-4">
@@ -246,7 +243,7 @@ load(pageRequest);
                 <!-- 우측 학생 목록 및 리워드 지급 카드 -->
                 <div class="col-12 col-md-6">
                     <!-- 리워드 지급 카드 -->
-                    <div class="card shadow-sm reward-card d-flex flex-column mt-3" style="height: 100%;">
+                    <div class="card shadow-sm reward-card d-flex flex-column" style="height: 100%;">
                         <div class="m-4" style="flex: 0.7; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 200px;"> <!-- padding-top으로 상단에 200px 추가 -->
                             <!-- 타이틀을 항상 위에 고정 -->
                             <div class="ms-2 mt-6">
@@ -284,8 +281,8 @@ load(pageRequest);
         </div>
 
         <!-- 리워드 지급 내역 (우측 버튼 클릭 시 표시) -->
-        <div v-if="activeTab === 'history'">
-            <div class="card mt-3">
+        <div v-if="activeTab === 'reward'">
+            <div class="card mt-3 reward-card2">
                 <div class="mt-4 ms-4">
                     <span class="fs-2 fw-bold ms-3">리워드 지급 목록</span>
                 </div>
@@ -472,5 +469,6 @@ input[type="checkbox"] {
     background-position: center; /* 이미지를 중앙에 배치 */
     background-repeat: no-repeat; /* 이미지가 반복되지 않도록 설정 */
 }
-</style>
 
+
+</style>
