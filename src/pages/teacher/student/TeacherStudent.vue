@@ -1,48 +1,49 @@
 <template>
     <div class="container">
         <div class="row mt-5">
+            <!-- 학생 목록 카드 -->
             <div class="col-8" style="overflow-y: hidden;">
-                <div class="card std-list px-3" style="max-height: 100%;">
+                <div class="card student-card px-3 shadow-sm" style="height: 100%; border-radius: 12px;">
                     <div class="d-flex mt-4 ms-2">
                         <span class="h4">학생 목록</span>
                     </div>
-                    <div class="mt-3 text-center" style="height: 100%">
-                        <div class="row m-0 mb-2 pe-3" style="width: 100%">
+                    <div class="mt-3" style="height: 100%">
+                        <div class="row table-header m-0 mb-2 pe-3" style="border-radius: 12px;">
                             <div class="col-1 text-center">
-                                <span class="fs-5">번호</span>
+                                <span class="fs-6">번호</span>
                             </div>
                             <div class="col-2 text-center">
-                                <span class="fs-5">이름</span>
+                                <span class="fs-6">이름</span>
                             </div>
                             <div class="col-3 text-center">
-                                <span class="fs-5">직업</span>
+                                <span class="fs-6">직업</span>
                             </div>
                             <div class="col-3 text-center">
-                                <span class="fs-5">보유 씨드</span>
+                                <span class="fs-6">보유 씨드</span>
                             </div>
                             <div class="col-3 text-center">
-                                <span class="fs-5">수정 / 이별</span>
+                                <span class="fs-6">수정 / 이별</span>
                             </div>
                         </div>
-                        <div class="std-list-wrap" style="overflow-y: scroll;">
-                            <div v-for="student in students" :key="student.id" class="row text-center py-2 m-0"
-                                style="width:100%">
+                        <div class="std-list-wrap">
+                            <div v-for="student in students" :key="student.id" class="row text-center table-row py-2 m-0"
+                                style="border-radius: 12px;">
                                 <div class="col-1">
                                     <span class="fs-6 text-dark">{{ student.stdNum }}</span>
                                 </div>
-                                <div class="col-2 text-center">
+                                <div class="col-2">
                                     <span class="fs-6 text-dark">{{ student.stdName }}</span>
                                 </div>
-                                <div class="col-3 text-center">
+                                <div class="col-3">
                                     <span class="fs-6 text-dark">{{ getJobName(student.jobId) }}</span>
                                 </div>
-                                <div class="col-3 text-center">
+                                <div class="col-3">
                                     <span class="fs-6 text-dark">{{ student.seed }}</span>
                                 </div>
-                                <div class="col-3 text-center">
-                                    <button class="btn btn-primary px-3 py-2 me-2"
+                                <div class="col-3">
+                                    <button class="btn btn-sm btn-outline-primary me-2"
                                         @click="studentModifyModal(student)">수정</button>
-                                    <button class="btn btn-danger px-3 py-2 me-3"
+                                    <button class="btn btn-sm btn-outline-danger"
                                         @click="deleteStudent(student.stdId)">이별</button>
                                 </div>
                             </div>
@@ -50,39 +51,38 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 새 친구 등록 카드 -->
             <div class="col-4 shadow-sm">
-                <div class="card std-list" style="max-height: 100%;">
+                <div class="card new-student-card" style="height: 100%; border-radius: 12px;">
                   <div class="p-4">
-                    <h4 class="mb-4">새 친구가 왔어요</h4>
+                    <h4 class="mb-4"></h4>
                     <form @submit.prevent="addStudent"
                           :class="addStudentFormStatus ? 'needs-validation' : 'needs-validation was-validated'"
-                          style="height:100%" novalidate>
-                      <div class="mb-3">
-                        <label for="sno" class="form-label">번호</label>
+                          novalidate>
+                      <div class="mb-3 mt-2">
+                        <label for="sno" class="form-label text-dark">번호</label>
                         <input type="text" id="sno" class="form-control" v-model="newStudent.stdNum"
-                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                required>
                       </div>
                       <div class="mb-3">
-                        <label for="name" class="form-label">이름</label>
+                        <label for="name" class="form-label text-dark">이름</label>
                         <input type="text" id="name" class="form-control" v-model="newStudent.stdName" required>
                       </div>
                       <div class="mb-3">
-                        <label for="birthday" class="form-label">생일</label>
+                        <label for="birthday" class="form-label text-dark">생일</label>
                         <input type="date" id="birthday" class="form-control" v-model="newStudent.stdBirth" required>
                       </div>
                       <div class="mb-3">
-                        <label for="jobs" class="form-label">직업</label><br>
-                        <select class="form-select" name="jobs" id="jobs" v-model="newStudent.jobId" required>
+                        <label for="jobs" class="form-label text-dark">직업</label>
+                        <select class="form-select" id="jobs" v-model="newStudent.jobId" required>
                           <option value="">선택하세요</option>
                           <option v-for="job in jobs" :key="job.jobId" :value="job.jobId">{{ job.jobName }}</option>
                         </select>
                       </div>
                       <div class="mb-3">
-                        <label for="title" class="form-label">씨드</label>
-                        <input type="text" id="title" class="form-control" v-model="newStudent.seed"
-                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                               required>
+                        <label for="seed" class="form-label text-dark">씨드</label>
+                        <input type="text" id="seed" class="form-control" v-model="newStudent.seed" required>
                       </div>
                       <div class="d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary w-100">등록</button>
@@ -92,36 +92,39 @@
                 </div>
               </div>
         </div>
-        <div class="mt-4">
-            <div class="card job-list px-3" style="max-height: 100%;">
-                <div class="d-flex mt-4 ms-2">
-                    <span class="h4">직업 목록</span>
-                </div>
-                <div class="mt-2 text-center" style="height: 100%">
-                    <div class="row m-0 mb-2 pe-4" style="width: 100%">
-                        <div class="col-3 text-center">
-                            <span class="fs-4">직업명</span>
-                        </div>
-                        <div class="col-6 text-center">
-                            <span class="fs-4">상세설명</span>
-                        </div>
-                        <div class="col-3 text-center">
-                            <span class="fs-4">수정 / 삭제</span>
-                        </div>
+
+        <!-- 직업 목록 및 새 직업 등록 -->
+        <div class="row mt-5 align-items-stretch">
+            <!-- 직업 목록 카드 -->
+            <div class="col-8" style="overflow-y: hidden;">
+                <div class="card job-list-card px-3 shadow-sm" style="height: 100%; border-radius: 12px;">
+                    <div class="d-flex mt-4 ms-2">
+                        <span class="h4 text-dark">직업 목록</span>
                     </div>
-                    <div class="job-list-wrap pb-4">
-                        <div class="job-list-items"  style="overflow-y: scroll; height: 100%;">
+                    <div class="mt-2 text-center" style="height: 100%">
+                        <div class="row table-header m-0 mb-2 pe-4">
+                            <div class="col-3 text-center">
+                                <span class="fs-6">직업명</span>
+                            </div>
+                            <div class="col-6 text-center">
+                                <span class="fs-6">상세설명</span>
+                            </div>
+                            <div class="col-3 text-center">
+                                <span class="fs-6">수정 / 삭제</span>
+                            </div>
+                        </div>
+                        <div class="job-list-wrap pb-4" style="overflow-y: scroll; max-height: 300px;">
                             <div v-for="job in jobs" :key="job.jobId" class="row text-center py-2 m-0"
-                                style="width:100%">
+                                style="border-radius: 12px;">
                                 <div class="col-3">
                                     <span class="fs-6 text-dark">{{ job.jobName }}</span>
                                 </div>
-                                <div class="col-6 text-center">
+                                <div class="col-6">
                                     <span class="fs-6 text-dark">{{ job.jobContent }}</span>
                                 </div>
-                                <div class="col-3 text-center">
-                                    <button class="btn btn-primary px-3 py-2 me-2" @click="studentJobModifyModal(job.jobId)">수정</button>
-                                    <button class="btn btn-danger px-3 py-2 me-3" type="button"
+                                <div class="col-3">
+                                    <button class="btn btn-sm btn-outline-primary me-2" @click="studentJobModifyModal(job.jobId)">수정</button>
+                                    <button class="btn btn-sm btn-outline-danger" type="button"
                                         @click="deleteStudentJob(job.jobId)">삭제</button>
                                 </div>
                             </div>
@@ -129,26 +132,27 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="mt-4">
-            <div class="card std-list" style="max-height: 100%;">
-                <div class="p-4">
-                    <h4 class="mb-4">새 직업 등록</h4>
+
+            <!-- 새 직업 등록 카드 -->
+            <div class="col-4 shadow-sm">
+                <div class="card new-job-card" style="height: 100%; border-radius: 12px;">
+                  <div class="p-4">
+                    <h4 class="mb-4 text-dark">새 직업 등록</h4>
                     <form @submit.prevent="addJob"
                     :class="addJobFormStatus ? 'needs-validation' : 'needs-validation was-validated'"
                     style="height:100%" novalidate>
                   <div class="mb-3">
-                      <label for="job-name" class="form-label">직업명</label>
+                      <label for="job-name" class="form-label text-dark">직업명</label>
                       <input type="text" id="job-name" class="form-control" v-model="newJob.jobName" required>
                   </div>
                   <div class="mb-3">
-                      <label for="job-description" class="form-label">상세설명</label>
+                      <label for="job-description" class="form-label text-dark">상세설명</label>
                       <input type="text" id="job-description" class="form-control" v-model="newJob.jobContent" required>
                   </div>
                   <div class="mb-3">
-                      <label for="job-isPrime" class="form-label">추가씨드 여부</label>
+                      <label for="job-isPrime" class="form-label text-dark">추가씨드 여부</label>
                       <select id="job-isPrime" class="form-select" v-model="newJob.isPrime" required>
-                        <option value="">선택하세요</option> <!-- 기본 선택 옵션 -->
+                        <option value="">선택하세요</option>
                         <option value="Y">Yes (Y)</option>
                         <option value="N">No (N)</option>
                     </select>
@@ -158,9 +162,11 @@
                   </div>
               </form>
                 </div>
+              </div>
             </div>
         </div>
     </div>
+
 
     <StudentModify v-if="studentModifyModalShow" @close="studentModifyModal" :student="selectedStudent" :jobs="jobs" />
     <StudentJobModify v-if="studentJobModifyModalShow" @close="closeStudentJobModifyModal" :job="studentJobData" />
@@ -336,53 +342,108 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.std-list {
-    height: 100%;
-    max-height: 550px;
+
+/* 공통 스타일 */
+/* 학생 목록 카드 배경 이미지 */
+.student-card {
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-.std-list-wrap::-webkit-scrollbar,
-.job-list-items::-webkit-scrollbar {
-    width: 10px;
+/* 새 친구 등록 카드 배경 이미지 */
+.new-student-card {
+    background-image: url('@/assets/images/studentlist.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-.job-list-items::-webkit-scrollbar-thumb,
-.std-list-wrap::-webkit-scrollbar-thumb {
-    background: rgb(255, 187, 187);
-    border-radius: 10px;
+/* 직업 목록 카드 배경 이미지 */
+.job-list-card {
+    background-image: url('@/assets/images/joblist.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-.job-list-wrap::-webkit-scrollbar-button,
-.job-list-items::-webkit-scrollbar-button {
-    display: none;
+/* 새 직업 등록 카드 배경 이미지 */
+.new-job-card {
+    background-image: url('@/assets/images/jobadd.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color:#767D8B;
+}
+
+.table-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    padding: 10px 0;
+    border-radius: 12px;
+}
+
+.table-row {
+    border-bottom: 1px solid #e9ecef;
+    background-color: #fdfdfd;
+    transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+    background-color: #f1f3f5;
 }
 
 .std-list-wrap {
-    height: 450px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 5px;
 }
 
-.job-list-wrap {
-    height: 400px;
+.std-list-wrap::-webkit-scrollbar {
+    width: 8px;
 }
 
-.btn-primary {
-    background-color: #00A3FF;
-    border-color: #00A3FF;
+.std-list-wrap::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
 }
 
 .btn-outline-primary {
-    color: #00A3FF;
-    border-color: #00A3FF;
-    --ar-btn-hover-bg: white;
+    border-color: #00a3ff;
+    color: #00a3ff;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #00a3ff;
+    color: white;
 }
 
 .btn-outline-primary:hover {
+    background-color: #00a3ff;
     color: white;
-    background-color: #00A3FF;
 }
 
-.btn-outline-primary:after {
-    background-color: #ffffff;
-    color: #00A3FF;
+.btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+    transition: background-color 0.2s ease;
 }
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+    .col-8, .col-4 {
+        width: 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
 </style>
+

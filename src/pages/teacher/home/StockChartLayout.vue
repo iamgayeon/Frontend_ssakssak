@@ -1,11 +1,48 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useStockStore } from '@/stores/stockStore';
+import { useAuthStore } from '@/stores/auth';
+import api from '@/api/studentStockApi';
 import StockChart from './StockChart.vue';
-import { useRouter } from 'vue-router'; // 라우터 사용을 위한 import
 
-const router = useRouter();
+const stockStore = useStockStore();
+const authStore = useAuthStore();
+const chartData = computed(() => stockStore.chartData);
+const auth = authStore.roles;
 
-const stock = ref(98);
+const highest = computed(() => {
+    if (chartData.value.length === 0) {
+        return 0; // 또는 다른 기본값
+    }
+
+    return chartData.value.reduce((prev, value) => {
+        return prev.stockPrice >= value.stockPrice ? prev : value
+    });
+});
+
+const lowest = computed(() => {
+    if (chartData.value.length === 0) {
+        return 0; // 또는 다른 기본값
+    }
+
+    return chartData.value.reduce((prev, value) => {
+        return prev.stockPrice <= value.stockPrice ? prev : value
+    });
+});
+
+const lastChartData = computed(() => {
+    if (chartData.value.length === 0) {
+        return 0; // 또는 다른 기본값
+    }
+    return chartData.value[chartData.value.length - 1];
+});
+
+const lastDayDiffPrice = computed(() => {
+    if (chartData.value.length === 0) {
+        return 0; // 또는 다른 기본값
+    }
+    return chartData.value[chartData.value.length - 1].stockPrice - chartData.value[chartData.value.length - 2].stockPrice;
+});
 </script>
 
 <template>
@@ -25,15 +62,19 @@ const stock = ref(98);
                 </div>
         
                 <div class="px-0 pt-2">
-                  <p class="seed-title fs-5 fw-bold text-white">현재가격 :   <span class="fw-bold" id="seed1">100 씨드</span></p>
-                  <p class="seed-title fs-5 mb-3 fw-bold">
-                    <span class="seed-title fs-5 text-white pe-2">어제보다</span>-1씨드 (-1.4%)
+                  <p class="fs-5 mb-0 text-danger fw-semibold"><span class="text-gray">오늘의 가격</span> {{
+                    lastChartData.stockPrice }} 씨드</p>
+                    <p class="fs-5 txt-primary fw-semibold"><span class="fs-6 text-muted pe-2">어제보다</span>
+                      {{ lastDayDiffPrice }} 씨드 ({{ lastChartData.change >= 0 ? `+${lastChartData.change}` :
+                          lastChartData.change }}%)
                   </p>
                 </div>
                 <div class="text-bottom">
-                <p class="mb-1">전일 종가: <span class="fw-bold">85 씨드</span></p>
-                <p class="mb-1">최고 가격 (30일): <span class="fw-bold text-danger">120 씨드</span></p>
-                <p class="mb-1">최저 가격 (30일): <span class="fw-bold text-primary">80 씨드</span></p>
+                  <p class="fs-5 mt-3 mb-1">최고 가격 (30일): <span class="fw-bold text-danger">{{ highest.stockPrice }}
+                    씨드</span>
+            </p>
+            <p class="fs-5 mb-1 mb-3">최저 가격 (30일): <span class="fw-bold txt-primary">{{ lowest.stockPrice }}
+                    씨드</span></p>
               </div>
               </div>
               </div>

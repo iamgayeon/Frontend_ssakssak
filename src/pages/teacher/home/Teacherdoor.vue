@@ -116,7 +116,7 @@ const handleFormSubmit = (formData) => {
 }
 
 .news-card {
-  background-color: #f8f9fa;
+  background-color: #fff;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

@@ -17,7 +17,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
   <nav class="navbar navbar-expand-md" style="background-color: #f8f6e9; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);">
     <div class="container-fluid"> <!-- 수정: container를 container-fluid로 변경 -->
       <!-- 로고 및 제목 -->
-      <router-link class="navbar-brand d-flex align-items-center" to="/">
+      <router-link class="navbar-brand d-flex align-items-center" to="/student/home">
         <img src="@/assets/images/logo.png" alt="로고" style="width: 200px; height: 70px;">
         <span class="ms-2" style="font-size: 24px; font-weight: bold;"></span>
       </router-link>
