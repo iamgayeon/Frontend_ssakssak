@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import api from '@/api/teacherStockApi';
+import {useStockStore} from '@/stores/stockStore';
+const store = useStockStore();
+
 const newsData = ref({
     title: '',
     content: ''
@@ -14,6 +17,7 @@ const submitForm = async () => {
         closeModal();
     }
     console.log(response);
+    await store.fetchNewsList();
 }
 
 
