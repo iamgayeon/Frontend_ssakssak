@@ -80,7 +80,7 @@
                     </tr>
                     <tr>
                       <td class="border-0 text-muted py-1 px-0">보유 씨드</td>
-                      <td class="border-0 text-dark fw-medium py-1 ps-3">{{ studentProfile.seed }}</td>
+                      <td class="border-0 text-dark fw-medium py-1 ps-3">{{ studentProfile.seed }} 씨드</td>
                     </tr>
                   </table>
                 </div>
@@ -93,33 +93,43 @@
            </div>
     </section>
     <div class="row row-cols-1 row-cols-md-3 g-3 mb-4" style="margin-top: -10px;">
-      <!-- 보유 적금 -->
-      <section class="col-4">
-        <div class="card h-100 border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
-          <div class="card-body">
-            <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
-              <i class="ai-archive text-primary lead pe-1 me-2"></i>
-              <h2 class="h4 mb-0">보유 적금</h2>
-            </div>
-            <div class="d-flex align-items-center pb-1 mb-4">
-              <h3 class="h6 mb-0 me-3">새싹 적금</h3>
-              <span class="badge bg-faded-primary text-primary">납입중</span>
-            </div>
-            <div class="d-flex justify-content-between">
-              <span>현재 10회중 8회 납부했어요!</span>
-              <span>80%</span>
-            </div>
-            <div class="progress mb-3" style="height: 10px;">
-              <div class="progress-bar" role="progressbar" style="width: 80%; background-color: #f1c40f;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-            <div class="alert alert-danger d-flex mb-0" style="margin-top: 30px;">
-              <i class="ai-octagon-alert fs-xl me-2"></i>
-              <p class="mb-0">하루에 100씨드씩 2주간 납부중입니다.</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
+    <!-- 보유 적금 -->
+  <section v-if="savingList && savingList.length > 0" class="col-4">
+    <div class="card h-100 border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
+          <i class="ai-archive text-primary lead pe-1 me-2"></i>
+          <h2 class="h4 mb-0">보유 적금</h2>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+          <span class="text-muted">가입 상품</span>
+          <span class="text-dark fw-bold">{{ savingList[0].savingName }}</span>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+          <span class="text-muted">가입일</span>
+          <span class='text-success'>
+            {{ savingList[0].startDate[0] }}-{{ savingList[0].startDate[1] < 10 ? '0' + savingList[0].startDate[1] : savingList[0].startDate[1] }}-{{ savingList[0].startDate[2] < 10 ? '0' + savingList[0].startDate[2] : savingList[0].startDate[2] }}
+          </span>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+          <span class="text-muted">만기 예정일</span>
+          <span class="text-danger fw-bold">
+            {{ savingList[0].startDate[0] }}-{{ savingList[0].endDate[1] < 10 ? '0' + savingList[0].endDate[1] : savingList[0].endDate[1] }}-{{ savingList[0].endDate[2] < 10 ? '0' + savingList[0].endDate[2] : savingList[0].endDate[2] }}
+          </span>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+          <span class="text-muted">평균매수가</span>
+          <span class="text-dark fw-bold">{{ savingList[0].totalAmount }} 씨드</span>
+        </div>
+      </div>
+    </div>
+  </section>
+      
       <!-- 보유 주식 -->
       <section class="col-4">
         <div class="card h-100 border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
@@ -206,6 +216,8 @@ import studentProfileApi from '@/api/studentProfileApi.js';
 import { useCounterStore } from '@/stores/couter';
 import api from "@/api/studentStockApi.js";
 import couponApi from '@/api/studentStoreApi.js';
+import { useBankStore } from '@/stores/bankStore';
+import BankApi from '@/api/studentBankApi';// Pinia store import
 import Swal from 'sweetalert2';
 
 const showCustomAlert = (index) => {
@@ -221,8 +233,8 @@ const showCustomAlert = (index) => {
       backdrop: `
         rgba(0,0,123,0.4)
         url("https://i.giphy.com/media/3o6gDWzmAzrpi5DQU8/giphy.webp")
-        left top
-        no-repeat
+        center top
+        repeat
       `,
       showClass: {
         popup: 'animate__animated animate__fadeInDown'  // 애니메이션 효과
@@ -265,6 +277,18 @@ const holdingStock = ref({
   seed: 0
 });
 
+// 보유 적금 데이터를 저장할 ref
+const depositAccount = ref({});
+
+// 적금 데이터를 가져오는 함수
+const fetchDepositAccount = async () => {
+  try {
+    const data = await BankApi.getDepositAccount(); // API 호출
+    depositAccount.value = data; // API에서 받은 데이터를 저장
+  } catch (error) {
+    console.error('Error fetching deposit account:', error);
+  }
+};
 
 const stocks = ref([]); // 주식 데이터를 저장할 상태
 
@@ -298,7 +322,8 @@ const fetchStudentProfile = async (stdId) => {
 onMounted(() => {
   fetchStudentProfile(1);
   fetchMyStock();
-  fetchStudentCoupons(1);});
+  fetchStudentCoupons(1);
+  fetchDepositAccount();});
 
 // 상태 관리
 const totalChecks = ref(5); // 총 체크 아이콘 개수
@@ -310,13 +335,6 @@ const attendanceIcons = ref([
   { checked: false },
   { checked: false }
 ]);
-
-// const coupons = ref([
-//   { count: 2, title: '일기 1회 면제 쿠폰', description: '원하는 날 하루 일기 쓰기를 쉬어도 괜찮아요!' },
-//   { count: 1, title: '10분 노래듣기 쿠폰', description: '점심 시간에 원하는 노래를 들을 수 있어요!' },
-//   { count: 1, title: '점심 먼저 먹기 쿠폰', description: '점심 식사를 기다리지 않고 먼저 먹을 수 있어요!' }
-// ]);
-
 
 // 출석 체크 비율 계산
 const attendancePercentage = computed(() => {
@@ -335,8 +353,6 @@ const checkAttendance = () => {
   }
 };
 
-// API 호출 함수로 쿠폰 정보 가져오기
-// API 호출 함수로 쿠폰 정보 가져오기
 const fetchStudentCoupons = async (stdId) => {
   try {
     const data = await couponApi.getStudentCoupons(stdId);
@@ -373,6 +389,50 @@ const useCoupon = (index) => {
     alert('더 이상 사용 가능한 쿠폰이 없습니다.');
   }
 };
+
+
+
+// Pinia에서 가져온 bankStore 사용
+const bankStore = useBankStore();
+
+// Pinia에서 가입 중인 예금과 적금 데이터를 저장하는 변수
+const depositList = computed(() => bankStore.myDepositList);
+const savingList = computed(() => bankStore.mySavingList);
+
+// 컴포넌트가 마운트될 때 예금과 적금 정보를 불러옴
+onMounted(async () => {
+  await bankStore.fetchDepositAccount(); // 예금 정보 불러오기
+  await bankStore.fetchSavingAccount();  // 적금 정보 불러오기
+});
+
+// 예금과 적금을 합쳐서 저장할 변수
+const products = computed(() => {
+  const arr = []; // 빈 배열
+  const depositCopy = [...depositList.value]; // 기존 가입 중인 예금 복사
+  const savingCopy = [...savingList.value]; // 기존 가입 중인 적금 복사
+
+  // 예금 데이터를 배열에 추가
+  for (const deposit of depositCopy) {
+    arr.push({
+      name: deposit.depositName,
+      maxDeposit: deposit.maxDeposit,
+      depositPeriod: deposit.depositPeriod,
+      rate: deposit.rate,
+    });
+  }
+
+  // 적금 데이터를 배열에 추가
+  for (const saving of savingCopy) {
+    arr.push({
+      name: saving.savingName,
+      maxDeposit: saving.maxDeposit,
+      depositPeriod: saving.savingPeriod,
+      rate: saving.rate,
+    });
+  }
+
+  return arr; // 예금과 적금을 합친 배열 반환
+});
 
 </script>
 

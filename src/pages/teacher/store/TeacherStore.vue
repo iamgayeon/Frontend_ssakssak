@@ -65,7 +65,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in storeItems" :key="index">
+          <tr v-for="(item, index) in sortedStoreItems" :key="index">
             <td class="text-muted" v-text="formatDate(item.cpDate)"></td>
             <td class="text-muted">{{ item.cpName }}</td>
             <td class="text-muted">{{ item.cpPrice }} 씨드</td>
@@ -78,8 +78,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,computed } from 'vue';
 import storeApi from "@/api/teacherStoreApi"; // API 파일 import
+
+const formatDateToLocalDateTime = () => {
+  const now = new Date();
+  return now.toISOString('T').slice(0, 19); // yyyy-MM-ddTHH:mm:ss 형식으로 변환
+};
+
+const sortedStoreItems = computed(() => {
+  return storeItems.value.slice().sort((a, b) => {
+    const dateA = new Date(a.cpDate);
+    const dateB = new Date(b.cpDate);
+    return dateB - dateA; // 내림차순 정렬
+  });
+});
 
 // 상품 등록을 위한 상태 변수
 const productName = ref('');
@@ -106,15 +119,13 @@ onMounted(() => {
 // 상품을 추가하는 함수
 const addProduct = async () => {
   if (productName.value && productDescription.value && productPrice.value && productQuantity.value && selectedFile.value) {
-    const today = new Date(); 
-    const formattedDate = today.toISOString().slice(0, 19);
     const storeDTO = {
       cpImage:imagePreview.value,
       cpName: productName.value,
       cpContent: productDescription.value,
       cpPrice: productPrice.value,
       cpQuantity: productQuantity.value,
-      cpDate: formattedDate
+      cpDate: formatDateToLocalDateTime(),
       };
 
     try {
