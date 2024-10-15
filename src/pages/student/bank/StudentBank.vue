@@ -471,7 +471,7 @@ const calculateInterest = () => {
 
     // 결과 업데이트
     expectedInterest.value = Math.round(afterTaxInterest);
-    finalAmount.value = depositAmount.value * (depositPeriod / 7) + expectedInterest.value; // 총 납입금 + 이자
+    finalAmount.value = depositAmount.value + expectedInterest.value; // 총 납입금 + 이자
   }
 };
 
