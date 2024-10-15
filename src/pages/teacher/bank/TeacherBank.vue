@@ -108,7 +108,7 @@
 
     <!-- 예금 카드 섹션 -->
     <div class="card-container">
-      <!-- 기존 적금들 -->
+      <!-- 기존 예금들 -->
       <div v-for="(deposit, index) in depositList" :key="deposit.depositId" class="card-safe">
         <div class="d-flex justify-content-between align-items-center">
           <!-- 삭제 버튼 -->
