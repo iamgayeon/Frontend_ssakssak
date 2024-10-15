@@ -5,11 +5,13 @@ import TeacherNavBar from './TeacherNavBar.vue';
 import StudentNavBar from './StudentNavBar.vue';
 import StudentFooter from './StudentFooter.vue';
 import TeacherFooter from './TeacherFooter.vue';
-import { isAuthenticated } from '@/util/guards';
-import { ref, watch } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { onMounted, ref, watch } from 'vue';
 
-const auth = isAuthenticated();
+
+const auth = useAuthStore();
 const role = ref("");
+
 watch(
   () => auth.roles,
   (roles) => {
@@ -27,6 +29,7 @@ watch(
   },
   { immediate: true } // 즉시 watch 시작
 );
+
 
 </script>
 
