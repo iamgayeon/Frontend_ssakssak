@@ -34,4 +34,10 @@ export default {
       throw error;
     }
   },
+
+  async getStudentCoupons(stdId) {
+    const { data } = await api.get(`${BASE_URL}/mycp/${stdId}`);
+    console.log('Student coupons GET', data);
+    return data;
+},
 };
