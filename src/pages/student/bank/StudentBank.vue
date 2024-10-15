@@ -205,15 +205,14 @@
         <div class="form-group">
           <label>상품 선택 : </label>
           <select v-model="selectedProduct" class="form-control styled-select">
-            <option value="숲속적금">숲속적금</option>
-            <option value="나무적금">나무적금</option>
-            <option value="새싹적금">새싹적금</option>
-            <option value="새싹예금">싹싹예금</option>
+            <option value="">선택</option>
+            <option v-for="(product, idx) in products" :value="product.name">{{ product.name }}
+            </option>
           </select>
         </div>
         <div class="form-group">
           <label>금리</label>
-          <input type="text" v-model="interestRate" class="form-control styled-select" disabled />
+          <input type="text" :value="calRate" class="form-control styled-select" disabled />
         </div>
         <div class="form-group">
           <label>입금 금액</label>
@@ -233,7 +232,7 @@
           <div>{{ depositAmount }} 씨드</div>
         </div>
         <div class="result-item">
-          <label>예상 이자</label>
+          <label>세후 예상 이자(세금 : 15.4%)</label>
           <div>{{ expectedInterest }} 씨드</div>
         </div>
         <div class="result-item">
@@ -265,9 +264,9 @@ onMounted(async () => {
   await bankStore.fetchSavingList();
   await bankStore.fetchSavingAccount();
 });
+
 console.log(depositAccount);
 console.log(savingAccount);
-const savingsList = ref([]);
 
 
 // 모달 상태
@@ -395,36 +394,85 @@ const cancelSaving = async (item) => {
   await bankStore.fetchSavingAccount();
 };
 
+
 // 기능3 이자계산
 // 상품 선택 및 금액과 이자율 정보
-const selectedProduct = ref('숲속적금');
-const depositAmount = ref(100);
 
+const products = computed(() => {
+  const arr = [];
+  const depositCopy = [...depositList.value];
+  const savingCopy = [...savingList.value];
+  for(const deposit of depositCopy) {
+    arr.push({
+      name: deposit.depositName,
+      maxDeposit: deposit.maxDeposit,
+      depositPeriod: deposit.depositPeriod,
+      rate: deposit.rate,
+    })
+  };
+
+  for(const saving of savingCopy) {
+    arr.push({
+        name: saving.savingName,
+        maxDeposit: saving.maxDeposit,
+        depositPeriod: saving.savingPeriod,
+        rate: saving.rate,
+      })
+  }
+  return arr;
+});
+
+
+
+const selectedProduct = ref('');
+const depositAmount = ref(100);
+const calRate = computed(() => {
+  const selProduct = products.value.find(product => product.name === selectedProduct.value);
+  if (selProduct) {
+    return selProduct.rate;
+  }
+});
 // 예상 이자와 만기 금액 계산을 위한 값
 const expectedInterest = ref(0);
 const finalAmount = ref(0);
 
 // 상품에 따른 기간 (주 단위)
-const depositPeriod = computed(() => {
-  if (selectedProduct.value === '숲속적금') {
-    return 8; // 8주
-  } else if (selectedProduct.value === '나무적금') {
-    return 4; // 4주
-  } else if (selectedProduct.value === '새싹적금') {
-    return 2; // 2주
-  }
-});
+
 
 // 이자 계산 함수
 const calculateInterest = () => {
-  // 주당 이자 계산
-  const weeklyInterest = (depositAmount.value * interestRate.value) / 100;
-  // 총 이자 = 주당 이자 * 기간(주 수)
-  const totalInterest = interestRate.value;
+  const selProduct = products.value.find(product => product.name === selectedProduct.value);
+  if (selProduct) {
+    let interestRate = selProduct.rate;
+    let depositPeriod = selProduct.depositPeriod; // 예치/적금 기간
+    let interest = 0;
 
-  // 예상 이자 및 만기 금액 계산
-  expectedInterest.value = Math.round(totalInterest);
-  finalAmount.value = depositAmount.value + expectedInterest.value;
+    console.log('name', selProduct.name);
+    
+    // 예금 이자 계산
+    if(selProduct.name.endsWith('예금')) {
+      const months = depositPeriod / 4; // 예금 기간을 월로 변환 (주 -> 월)
+      interest = depositAmount.value * (interestRate / 100) * months;
+    }
+
+    // 적금 이자 계산 (매주 납입, 총 금액과 이자를 계산)
+    if(selProduct.name.endsWith('적금')) {
+      const weeks = depositPeriod / 7; // 적금 기간을 주로 변환 (일 -> 주)
+      const totalDeposits = depositAmount.value * weeks; // 총 납입 금액
+      
+      // 적금은 매주 납입하므로, 매주 납입 금액에 대해 주당 이자를 계산하고 합산
+      // 적금이기 때문에 매주 적립한 금액에 이자가 붙고, 평균 절반 기간만큼 이자를 받음
+      interest = totalDeposits * (interestRate / 100 / 12); // 이자율을 월 기준으로 계산
+    }
+
+    // 세금 계산 (15.4%)
+    const tax = interest * 0.154;
+    const afterTaxInterest = interest - tax;
+
+    // 결과 업데이트
+    expectedInterest.value = Math.round(afterTaxInterest);
+    finalAmount.value = depositAmount.value * (depositPeriod / 7) + expectedInterest.value; // 총 납입금 + 이자
+  }
 };
 
 // 입금 금액 증가 및 감소 함수
@@ -437,18 +485,6 @@ const decreaseAmount = () => {
   }
 };
 
-// 상품 선택에 따른 금리 변경
-const interestRate = computed(() => {
-  if (selectedProduct.value === '숲속적금') {
-    return 15;
-  } else if (selectedProduct.value === '나무적금') {
-    return 5;
-  } else if (selectedProduct.value === '새싹적금') {
-    return 2;
-  } else if (selectedProduct.value === '싹싹적금') {
-    return 3;
-  }
-});
 </script>
 <style scoped>
 .container,
