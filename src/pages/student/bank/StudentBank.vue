@@ -102,8 +102,8 @@
         </div>
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
-            <span class="text-muted fw-bold">상품특징</span>
-            <span class="text-muted" style="text-align:right">{{ deposit.depositContent }}</span>
+            <span class="text-muted fw-bold d-block p-0">상품특징</span>
+            <span class="text-muted ps-5" style="text-align:left">{{ deposit.depositContent }}</span>
           </div>
           <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
             <span class="text-muted fw-bold">예치기간</span>
