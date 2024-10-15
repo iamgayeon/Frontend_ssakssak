@@ -25,7 +25,6 @@
                 @click="checkAlarm(alarm.id, idx)">
                 <i class="bi bi-info-circle-fill"></i>
                 <div class="m-auto">
-                  {{ alarm }}
                   <p>{{ alarm.message }}</p>
                 </div>
               </li>

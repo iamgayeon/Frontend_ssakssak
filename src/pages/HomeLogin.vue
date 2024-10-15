@@ -58,13 +58,7 @@
   <style scoped>
   /* 전체 페이지 설정 */
 
-  .login-page{
-      background-color: #f2fbfb; /* 원하는 배경색 */
-      min-height: 100vh; /* 최소 높이를 화면 전체로 설정 */
-      margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
-  }
+
 
   .header-back {
     padding-top: 15px;
@@ -129,7 +123,6 @@
   .login-container {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
     margin-top: 40px;
     width: 90%;
     max-width: 1200px;
