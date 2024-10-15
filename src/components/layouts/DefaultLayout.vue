@@ -1,9 +1,10 @@
 <script setup>
-import Header from './Header.vue';
+import TeacherHeader from './TeacherHeader.vue';
+import StudentHeader from './StudentHeader.vue';
 import TeacherNavBar from './TeacherNavBar.vue';
 import StudentNavBar from './StudentNavBar.vue';
-import Footer from './StudentFooter.vue';
-// import Footer from './TeacherFooter.vue';
+import StudentFooter from './StudentFooter.vue';
+import TeacherFooter from './TeacherFooter.vue';
 import { isAuthenticated } from '@/util/guards';
 import { ref, watch } from 'vue';
 
@@ -31,13 +32,15 @@ watch(
 
 <template>
   <div id="container">
-    <Header />
+    <TeacherHeader v-if="role === 'ROLE_TEACHER'" />
+    <StudentHeader v-if="role === 'ROLE_STUDENT'" />
     <TeacherNavBar v-if="role === 'ROLE_TEACHER'" />
     <StudentNavBar v-if="role === 'ROLE_STUDENT'" />
     <div :style="{ backgroundColor: '#f8f6e9' }" class="content">
       <slot></slot>
     </div>
-    <Footer class="mt-5" />
+    <TeacherFooter class="mt-5" v-if="role === 'ROLE_TEACHER'" />
+    <StudentFooter class="mt-5" v-if="role === 'ROLE_STUDENT'" />
   </div>
 </template>
 

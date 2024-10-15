@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed,onMounted } from 'vue';
 import { useStockStore } from '@/stores/stockStore';
 import { useAuthStore } from '@/stores/auth';
 import api from '@/api/studentStockApi';
@@ -9,6 +9,12 @@ const stockStore = useStockStore();
 const authStore = useAuthStore();
 const chartData = computed(() => stockStore.chartData);
 const auth = authStore.roles;
+
+
+onMounted(async () => {
+    await stockStore.fetchMyStock();
+    await stockStore.fetchChartData();
+});
 
 const highest = computed(() => {
     if (chartData.value.length === 0) {

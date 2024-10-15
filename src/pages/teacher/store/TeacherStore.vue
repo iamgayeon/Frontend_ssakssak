@@ -89,10 +89,10 @@ const productQuantity = ref(0);
 const storeItems = ref([]); // 매점 상품 목록 배열
 const imagePreview = ref(null); // 이미지 미리보기용 변수
 
-// 매점 상품 목록을 서버에서 가져오는 함수
 const fetchStoreItems = async () => {
   try {
     const data = await storeApi.getCouponlist(); // API 호출로 상품 목록을 가져옴
+    console.log("상품 목록 데이터:", data);  // 데이터 확인을 위해 콘솔에 출력
     storeItems.value = data; // 가져온 데이터를 storeItems에 저장
   } catch (error) {
     console.error('Failed to fetch store items:', error);
@@ -103,17 +103,19 @@ const fetchStoreItems = async () => {
 onMounted(() => {
   fetchStoreItems();
 });
-
 // 상품을 추가하는 함수
 const addProduct = async () => {
   if (productName.value && productDescription.value && productPrice.value && productQuantity.value && selectedFile.value) {
+    const today = new Date(); 
+    const formattedDate = today.toISOString().slice(0, 19);
     const storeDTO = {
       cpImage:imagePreview.value,
       cpName: productName.value,
       cpContent: productDescription.value,
       cpPrice: productPrice.value,
       cpQuantity: productQuantity.value,
-    };
+      cpDate: formattedDate
+      };
 
     try {
       // API로 상품 정보와 파일 전송
@@ -156,13 +158,17 @@ const onFileChange = (event) => {
   }
 };
 
-// 날짜 형식 변환 함수
 const formatDate = (dateArray) => {
-  if (Array.isArray(dateArray)) {
+  if (typeof dateArray === 'string') {
+    // 날짜가 문자열로 들어오는 경우
+    const date = new Date(dateArray);
+    return date.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  } else if (Array.isArray(dateArray)) {
+    // 날짜가 배열로 들어오는 경우
     const date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
     return date.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
   }
-  return '';
+  return ''; // 예상치 못한 형식일 경우 빈 문자열 반환
 };
 
 </script>

@@ -5,7 +5,7 @@
           <section class="col" id="sec1">
             <div class="card-body text-start"> <!-- text-start 클래스를 추가하여 전체 왼쪽 정렬 -->
               <div class="d-flex justify-content-between">
-                <div class="text-primary  text-title mb-2">현재 국고에는 {{ treasuryBalance }} 씨드가 들어있어요!</div>
+                <div class="text-primary  text-title mb-2"> 현재 국고에는 {{ formattedTreasuryBalance }} 씨드가 들어있어요!</div>
               </div>
               <div class="progress mb-3" style="height: 10px;">
                 <div 
@@ -83,6 +83,10 @@
 import { ref, computed, onMounted } from 'vue';
 import TreasuryAPI from '@/api/teacherTreasuryApi.js';
 
+// 1000단위마다 쉼표를 찍어주는 computed 속성
+const formattedTreasuryBalance = computed(() => {
+  return new Intl.NumberFormat().format(treasuryBalance.value);
+});
 
 // 상태 관리
 const previousSeedValue = ref(1000); // 기존 주간 씨드 값

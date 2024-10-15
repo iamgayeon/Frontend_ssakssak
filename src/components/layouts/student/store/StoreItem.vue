@@ -26,7 +26,7 @@ const couponBuy = () => {
 const getCouponImage = (cpImage) => {
   if (cpImage) {
     // 이미지 경로를 인코딩하여 이미지가 출력되는지 확인
-    return `/images/${encodeURIComponent(cpImage.split('/').pop())}`;
+    return '/src/assets/images/coupon.png';
   } else {
     // 이미지가 없을 경우 기본 이미지 사용
     return '/src/assets/images/coupon.png';

@@ -1,5 +1,9 @@
 <template>
   <div class="login-page">
+    <div class="header-back">
+    </div>
+
+      <!-- login-container 추가 -->
       <div class="login-container"> 
         <div class="login-card teacher-login" @mouseover="hoverCard('teacher')" @mouseleave="leaveCard('teacher')">
           <h3>선생님 로그인</h3>
