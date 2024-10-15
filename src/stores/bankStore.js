@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import api from "@/api/teacherBankApi";
+import stApi from "@/api/studentBankApi";
 import jobApi from "@/api/teacherClassApi";
 
 export const useBankStore = defineStore("bank", {
@@ -7,6 +8,9 @@ export const useBankStore = defineStore("bank", {
     savingList: [],
     jobList: [],
     depositList: [],
+    myDepositList: [],
+    mySavingList: [],
+    depositAccount: "",
   }),
   actions: {
     async fetchSavingList() {
@@ -36,6 +40,22 @@ export const useBankStore = defineStore("bank", {
         throw error;
       }
     },
-  }, 
+    async fetchDepositAccount() {
+      try {
+        const response = await stApi.getDepositAccount();
+        this.myDepositList = response;
+      } catch (error) {
+        throw error;
+      }
+    },
+    async fetchSavingAccount() {
+      try {
+        const response = await stApi.getSavingAccount();
+        this.mySavingList = response;
+      } catch (error) {
+        throw error;
+      }
+    },
+  },
   persist: true,
 });
