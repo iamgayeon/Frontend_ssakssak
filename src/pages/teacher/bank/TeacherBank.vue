@@ -12,7 +12,7 @@
         <div class="card shadow-sm p-4 card-custom" style="margin-bottom: 10px;">
           <img src="@/assets/images/safe.png" alt="금고 이미지" class="icon" />
           <p class="text-right card-text-custom">
-            현재 국고에는<br />50,000 씨드가 있어요
+            현재 국고에는<br />{{total}} 씨드가 있어요
           </p>
         </div>
       </div>
@@ -22,7 +22,7 @@
         <div class="card shadow-sm p-4 card-custom" style="margin-bottom: 10px;">
           <img src="@/assets/images/coin.png" alt="코인 이미지" class="icon" />
           <p class="text-right card-text-custom">
-            이번주 세금으로 거둔 금액은<br />10,000 씨드입니다
+            이번주 세금으로 거둔 금액은<br />{{tax}} 씨드입니다
           </p>
         </div>
       </div>
@@ -329,6 +329,10 @@
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useBankStore } from '@/stores/bankStore';
 import api from '@/api/teacherBankApi';
+import treasuryApi from '@/api/teacherTreasuryApi';
+import taxApi from '@/api/teacherTaxApi';
+
+
 
 const bankStore = useBankStore();
 
@@ -336,13 +340,26 @@ const bankStore = useBankStore();
 const savingList = computed(() => bankStore.savingList);
 const jobList = computed(() => bankStore.jobList);
 const depositList = computed(() => bankStore.depositList);
-
+const total = ref('');
+const tax = ref('');
+const MAX_BALANCE = 1000000; 
 
 onMounted(async () => {
   await bankStore.fetchSavingList();
   await bankStore.fetchJobList();
   await bankStore.fetchDepositList();
+  tax.value = await taxApi.getWeeklyTaxTotal();
+  total.value = await treasuryApi.Treasury();
+
+  tax.value = tax.value.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  total.value = total.value.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 })
+
+const calculateProgressValue = (balance) => {
+  const progress = (balance / MAX_BALANCE) * 100; // 백분율로 계산
+  return progress > 100 ? 100 :parseFloat(progress.toFixed(1)); // 최대 100%로 제한
+};
+
 
 
 // 적금 모달 상태 관리
