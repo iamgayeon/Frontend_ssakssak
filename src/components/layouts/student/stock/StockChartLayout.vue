@@ -50,30 +50,23 @@ const lastDayDiffPrice = computed(() => {
 
 <template>
     <div class="container">
-        <div class="shadow card p-4">
+        <div class="shadow card p-4  bg-card">
             <div class="row">
                 <div class="col-5">
                     <div class="mx-1 mt-2 mb-3">
-                        <h3 class="">주식 차트 조회</h3>
                     </div>
                     <div class="d-flex align-items-center mb-2">
-                        <div class="">
-                            <img src="@/assets/images/images-removebg-preview 1.png" width="40px" height="40px">
-                        </div>
-                        <div class="d-flex align-items-end">
-                            <div class="ms-1">
-                                <p class="fs-4 mb-0">싹싹주식</p>
-                            </div>
-                            <div class="ms-1">
-                                <p class="fs-5 mb-0 text-danger fw-semibold"><span class="text-gray">오늘의 가격</span> {{
-                                    lastChartData.stockPrice }} 씨드</p>
-                            </div>
-                        </div>
+                    
+                        
+                    </div>
+                    <div class="chart-title">
+                        <p class="fs-5 mb-0 text-danger fw-semibold"><span class="text-gray">오늘의 가격</span> {{
+                            lastChartData.stockPrice }} 씨드</p>
                     </div>
                     <p class="fs-5 txt-primary fw-semibold"><span class="fs-6 text-muted pe-2">어제보다</span>
                         {{ lastDayDiffPrice }} 씨드 ({{ lastChartData.change >= 0 ? `+${lastChartData.change}` :
                             lastChartData.change }}%)
-                    </p>
+                    </p>    
                     <hr>
                     <p class="fs-5 mt-3 mb-1">최고 가격 (30일): <span class="fw-bold text-danger">{{ highest.stockPrice }}
                             씨드</span>
@@ -94,6 +87,13 @@ const lastDayDiffPrice = computed(() => {
 </template>
 
 <style scoped>
+
+.bg-card {
+    background-image: url('@/assets/images/chartimg.png');
+    background-size: cover; /* 이미지를 카드 크기에 맞게 조정 */
+    background-position: center; /* 이미지를 중앙에 배치 */
+    background-repeat: no-repeat; /* 이미지 반복 방지 */
+}
 .txt-primary {
     color: #00A3FF;
 }
@@ -119,5 +119,12 @@ const lastDayDiffPrice = computed(() => {
 .btn-outline-primary:after {
     background-color: #ffffff;
     color: #00A3FF;
+}
+
+.chart-title{
+    margin-top: 150px;
+}
+hr{
+    color:#fff;
 }
 </style>

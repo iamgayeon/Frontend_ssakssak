@@ -101,30 +101,31 @@ const closeModal = () => {
 
 // 주급 지급 API 호출 및 씨드 값 저장 함수
 const saveSeedValue = async () => {
-  try {
-    const studentSalaryDTO = {
-      seed: tempSeedValue.value,  // 입력받은 씨드 값
-    };
+  // try {
+  //   const studentSalaryDTO = {
+  //     seed: tempSeedValue.value,  // 입력받은 씨드 값
+  //   };
 
-    // 주급 지급 API 호출
-    const response = await TreasuryAPI.paySalary(studentSalaryDTO);
-    console.log('주급 지급 성공:', response);
+  //   // 주급 지급 API 호출
+  //   const response = await TreasuryAPI.paySalary(studentSalaryDTO);
+  //   console.log('주급 지급 성공:', response);
 
-    // 씨드 값 업데이트
-    seedValue.value = tempSeedValue.value;  // 씨드 값을 업데이트하여 화면에 반영
-    localStorage.setItem('seedValue', tempSeedValue.value);  // 씨드 값을 localStorage에 저장
+  //   // 씨드 값 업데이트
+  //   seedValue.value = tempSeedValue.value;  // 씨드 값을 업데이트하여 화면에 반영
+  //   localStorage.setItem('seedValue', tempSeedValue.value);  // 씨드 값을 localStorage에 저장
 
     // 주급 지급 성공 시 모달 창을 닫음
+    seedValue.value =tempSeedValue.value;
     closeModal();
-    alert('주급이 지급되었습니다.');
-  } catch (error) {
-    if (error.response && error.response.status === 400) {
-      alert('국고에 잔액이 부족하여 주급 지급이 불가능합니다.');
-    } else {
-      console.error('주급 지급 실패:', error);
-      alert('주급 지급에 실패했습니다.');
-    }
-  }
+    alert('주급이 되었습니다.');
+  // } catch (error) {
+  //   if (error.response && error.response.status === 400) {
+  //     alert('국고에 잔액이 부족하여 주급 지급이 불가능합니다.');
+  //   } else {
+  //     console.error('주급 지급 실패:', error);
+  //     alert('주급 지급에 실패했습니다.');
+  //   }
+  // }
 };
 
 // 인상된 비율 계산

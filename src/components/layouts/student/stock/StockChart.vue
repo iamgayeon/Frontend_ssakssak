@@ -81,3 +81,10 @@ const chartOptions = ref({
         <apexcharts style="width:100%; height: 100%;" :type="'candlestick'" :options="chartOptions" :series="series" />
     </div>
 </template>
+
+<style scoped>
+.container{
+    background-color: #fff;
+    border-radius: 20px;
+}
+</style>

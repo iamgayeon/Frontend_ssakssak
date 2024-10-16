@@ -24,7 +24,7 @@ getSeedTax();  // 컴포넌트 마운트 시 API 호출
           <div class="tax-title">
             <span>
               <span class="highlight-seed" style="margin-left:40px; margin-top:55px;">
-                <img src="@/assets/images/sprout.png" class="seed-icon" alt="씨드 이미지">200씨드
+                <img src="@/assets/images/sprout.png" class="seed-icon" alt="씨드 이미지">1000씨드
               </span>
             </span>
           </div>
